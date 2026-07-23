@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvalMesh - Enterprise AI Agent Control Plane</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js for Live Interactive Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-dark: #07090e;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --bg-card-hover: rgba(30, 41, 59, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(59, 130, 246, 0.35);
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.08), transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.08), transparent 45%);
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            width: 270px;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            animation: pulse-glow 3s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+            100% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.6); }
+        }
+
+        .brand-text {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-tag {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-weight: 700;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            letter-spacing: 0.05em;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.85rem 1.1rem;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+        }
+
+        .nav-item button:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            transform: translateX(3px);
+        }
+
+        .nav-item button.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Area */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        header {
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11, 15, 25, 0.7);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .header-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            padding: 0.45rem 1rem;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse-dot 1.8s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .dashboard-container {
+            padding: 2rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        /* Stat Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.35rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glow);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+        }
+
+        .metric-icon { font-size: 1.1rem; opacity: 0.85; }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .metric-badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            align-self: flex-start;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .badge-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-purple { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+
+        /* Panels Grid */
+        .panels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1100px) {
+            .panels-grid { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* Filter Search Bar */
+        .log-filter-bar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .log-filter-bar input {
+            flex: 1;
+            padding: 0.55rem 0.85rem;
+            font-size: 0.82rem;
+        }
+
+        /* Terminal View */
+        .terminal {
+            background-color: #04060c;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.83rem;
+            max-height: 380px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .log-entry {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .log-meta {
+            display: flex;
+            gap: 0.85rem;
+            font-size: 0.76rem;
+            align-items: center;
+        }
+
+        .log-tag-success { color: #34d399; font-weight: 700; }
+        .log-tag-blocked { color: #f87171; font-weight: 700; }
+        .log-tag-dlp { color: #fbbf24; font-weight: 700; }
+        .log-tag-cache { color: #c084fc; font-weight: 700; }
+
+        /* Form Controls */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input, select, textarea {
+            background: #04060c;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.85rem;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        textarea {
+            font-family: 'JetBrains Mono', monospace;
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: #fff;
+            border: none;
+            padding: 0.85rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.92;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.85rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #1e293b;
+            transition: .3s;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--accent-blue); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Code Snippet Box */
+        .code-block {
+            background-color: #04060c;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #93c5fd;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        /* Toast Alert */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-blue);
+            color: #fff;
+            padding: 0.85rem 1.4rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside>
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-shield-halved" style="color: #fff"></i></div>
+            <div>
+                <div class="brand-text">EvalMesh</div>
+                <div class="brand-tag">Cloudflare for AI</div>
+            </div>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item">
+                <button class="active" onclick="switchTab('dashboard', this)">
+                    <i class="fa-solid fa-chart-line" style="color: var(--accent-blue)"></i> Control Panel
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('workbench', this)">
+                    <i class="fa-solid fa-terminal" style="color: var(--accent-cyan)"></i> Agent Workbench
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('snippets', this)">
+                    <i class="fa-solid fa-code" style="color: var(--accent-amber)"></i> SDK Code Snippets
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('keys', this)">
+                    <i class="fa-solid fa-key" style="color: var(--accent-purple)"></i> API Keys & OTel
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('calculator', this)">
+                    <i class="fa-solid fa-calculator" style="color: var(--accent-green)"></i> ROI Cost Calculator
+                </button>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main>
+        <header>
+            <div>
+                <div class="header-title" id="tab-title">Control Panel Overview</div>
+                <div class="header-subtitle">Real-Time Proxy WAF, Semantic Cache & Telemetry</div>
+            </div>
+            <div class="status-pill">
+                <div class="status-dot"></div>
+                <span>Proxy Gateway: Active (port 8000)</span>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+
+            <!-- Stat Cards Row -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">Total Requests</div>
+                        <i class="fa-solid fa-bolt metric-icon" style="color: var(--accent-blue)"></i>
+                    </div>
+                    <div class="metric-value" id="stat-requests">2,148</div>
+                    <div class="metric-badge badge-blue"><i class="fa-solid fa-arrow-trend-up"></i> +22% active</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">Injections Blocked</div>
+                        <i class="fa-solid fa-shield-virus metric-icon" style="color: var(--accent-red)"></i>
+                    </div>
+                    <div class="metric-value" id="stat-blocked" style="color: var(--accent-red)">48</div>
+                    <div class="metric-badge badge-red"><i class="fa-solid fa-lock"></i> WAF Active</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">PII Items Redacted</div>
+                        <i class="fa-solid fa-user-shield metric-icon" style="color: var(--accent-amber)"></i>
+                    </div>
+                    <div class="metric-value" id="stat-dlp" style="color: var(--accent-amber)">210</div>
+                    <div class="metric-badge badge-amber"><i class="fa-solid fa-eye-slash"></i> DLP Active</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">Saved Token Costs</div>
+                        <i class="fa-solid fa-piggy-bank metric-icon" style="color: var(--accent-green)"></i>
+                    </div>
+                    <div class="metric-value" id="stat-saved" style="color: var(--accent-green)">$642.80</div>
+                    <div class="metric-badge badge-green"><i class="fa-solid fa-leaf"></i> Cache & Breaker</div>
+                </div>
+            </div>
+
+            <!-- Tab 1: Dashboard Overview & Chart -->
+            <div id="tab-dashboard" class="panels-grid">
+                <!-- Live Telemetry Stream with Search Filter -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-stream" style="color: var(--accent-blue)"></i> Request Audit Stream</div>
+                        <div class="log-filter-bar">
+                            <input type="text" id="log-search" placeholder="Search prompt or status..." oninput="filterLogs()">
+                        </div>
+                    </div>
+                    <div class="terminal" id="live-logs">
+                        <div class="log-entry">
+                            <div class="log-meta">
+                                <span class="log-tag-blocked">[BLOCK 403]</span>
+                                <span>15:21:10</span>
+                                <span>Role: support_agent</span>
+                            </div>
+                            <div>Matched WAF Rule: 'ignore previous instructions'</div>
+                        </div>
+                        <div class="log-entry">
+                            <div class="log-meta">
+                                <span class="log-tag-cache">[CACHE HIT 200]</span>
+                                <span>15:20:42</span>
+                                <span>Similarity: 95.1%</span>
+                                <span>Latency: 3.2ms</span>
+                            </div>
+                            <div>Matched cached completion. Saved $0.03 API cost.</div>
+                        </div>
+                        <div class="log-entry">
+                            <div class="log-meta">
+                                <span class="log-tag-dlp">[SANALITIZED 200]</span>
+                                <span>15:19:05</span>
+                                <span>Redacted: EMAIL, SSN</span>
+                                <span>Latency: 11.4ms</span>
+                            </div>
+                            <div>Prompt: User PII tokens redacted. Upstream response OK.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-Time Interactive Throughput & Latency Chart -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-chart-area" style="color: var(--accent-cyan)"></i> Latency & Proxy Throughput</div>
+                        <span class="metric-badge badge-blue">p95 Latency: 12.4ms</span>
+                    </div>
+                    <div style="height: 280px; width: 100%;">
+                        <canvas id="latencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Agent Security Workbench -->
+            <div id="tab-workbench" class="panels-grid hidden">
+                <div class="panel" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-vial" style="color: var(--accent-cyan)"></i> Interactive Agent Security Workbench</div>
+                        <span style="font-size: 0.82rem; color: var(--text-muted)">Live Proxy Request Tester</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem;">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Agent Role (RBAC Scope)</label>
+                                <select id="wb-role">
+                                    <option value="support_agent">support_agent (Allowed: search_faq, create_ticket)</option>
+                                    <option value="developer_agent">developer_agent (Allowed: read_repo, run_tests)</option>
+                                    <option value="admin_agent">admin_agent (Full Access)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Prompt Version Header</label>
+                                <input type="text" id="wb-version" value="v1.5.0-canary">
+                            </div>
+                            <div class="form-group">
+                                <label>Test Input Prompt (Try emails, SSNs, or 'ignore instructions')</label>
+                                <textarea id="wb-prompt">Hello, my email is alice@company.com and SSN is 987-65-4321. Please help me reset my account.</textarea>
+                            </div>
+                            <button class="btn-primary" onclick="sendTestPrompt()">
+                                <i class="fa-solid fa-paper-plane"></i> Send Through EvalMesh Proxy
+                            </button>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <label>Proxy Inspection & Telemetry Response</label>
+                            <div class="terminal" id="wb-result" style="height: 100%; min-height: 280px;">
+                                <div style="color: var(--text-muted)">Click 'Send' to inspect proxy behavior live...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: SDK Code Snippets -->
+            <div id="tab-snippets" class="panels-grid hidden">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-brands fa-python" style="color: var(--accent-blue)"></i> Python SDK Integration</div>
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode('py-code')">Copy</button>
+                        <pre id="py-code">from evalmesh.sdk import EvalMeshClient
+
+client = EvalMeshClient(proxy_url="http://localhost:8000")
+
+response = client.create_chat_completion(
+    messages=[{"role": "user", "content": "Hello"}],
+    agent_role="support_agent",
+    prompt_version="v1.0.0"
+)</pre>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-brands fa-js" style="color: var(--accent-amber)"></i> TypeScript / Node.js SDK Integration</div>
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode('ts-code')">Copy</button>
+                        <pre id="ts-code">import { EvalMeshClient } from '@evalmesh/sdk';
+
+const client = new EvalMeshClient({ baseUrl: 'http://localhost:8000' });
+
+const res = await client.createChatCompletion({
+  messages: [{ role: 'user', content: 'Hello' }],
+  agentRole: 'support_agent',
+  promptVersion: 'v1.0.0'
+});</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: API Keys & OTel Export -->
+            <div id="tab-keys" class="panels-grid hidden">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-key" style="color: var(--accent-purple)"></i> Generate Enterprise API Key</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Key Name / Description</label>
+                        <input type="text" id="key-name" placeholder="e.g. Production Support Bot">
+                    </div>
+                    <div class="form-group">
+                        <label>Rate Limit (Req / Minute)</label>
+                        <input type="number" id="key-limit" value="120">
+                    </div>
+                    <button class="btn-primary" onclick="generateApiKey()">
+                        <i class="fa-solid fa-plus"></i> Issue New Key (`em_live_...`)
+                    </button>
+                    <div class="terminal" id="key-result" style="max-height: 140px;">
+                        <div style="color: var(--text-muted)">Generated API keys will appear here...</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-chart-diagram" style="color: var(--accent-cyan)"></i> OpenTelemetry (OTel) Export</div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted)">
+                        EvalMesh exports standard W3C OTel trace spans compatible with Datadog, Grafana Tempo, and Dynatrace.
+                    </p>
+                    <button class="btn-secondary" onclick="fetchOtelSpans()">
+                        <i class="fa-solid fa-download"></i> Fetch Current OTel JSON Spans
+                    </button>
+                    <div class="terminal" id="otel-result" style="max-height: 200px;">
+                        <div style="color: var(--text-muted)">Click button to load OTel JSON payload...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: ROI Cost Savings Calculator -->
+            <div id="tab-calculator" class="panels-grid hidden">
+                <div class="panel" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-calculator" style="color: var(--accent-green)"></i> Interactive API Cost Savings Calculator</div>
+                        <span class="metric-badge badge-green">EvalMesh Savings Engine</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+                        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                            <div class="form-group">
+                                <label>Estimated Monthly Agent Requests: <span id="calc-volume-label" style="color: #60a5fa; font-weight: 800;">500,000</span></label>
+                                <input type="range" id="calc-slider" min="10000" max="5000000" step="10000" value="500000" oninput="updateCalculator()">
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                                Based on:
+                                <ul style="margin-left: 1.2rem;">
+                                    <li><b>30% Cache Hit Ratio</b> (Served in 3ms at $0 cost)</li>
+                                    <li><b>40% Smart Routing</b> (Auto-downgraded to 15x cheaper GPT-4o-mini)</li>
+                                    <li><b>Runaway Loop Breaker</b> (Prevents infinite bill spikes)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="background: #04060c; border: 1px solid var(--border-glow); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; text-align: center;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Estimated Monthly Savings</div>
+                            <div id="calc-savings" style="font-size: 3rem; font-weight: 800; color: var(--accent-green);">$3,750.00</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted)">EvalMesh Pro ($49/mo) pays for itself <b>76x over</b>!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast Alert Notification -->
+    <div id="toast">
+        <i class="fa-solid fa-circle-check" style="color: var(--accent-green); font-size: 1.2rem;"></i>
+        <span id="toast-message">Action completed successfully</span>
+    </div>
+
+    <script>
+        // Initialize Chart.js Latency Chart
+        let chart;
+        window.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('latencyChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['15:10', '15:12', '15:14', '15:16', '15:18', '15:20', '15:22'],
+                    datasets: [
+                        {
+                            label: 'Proxy Latency (ms)',
+                            data: [14.2, 11.8, 12.5, 3.8, 13.1, 4.2, 12.4],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Semantic Cache Hits',
+                            data: [0, 1, 2, 4, 3, 6, 5],
+                            borderColor: '#c084fc',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        });
+
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-workbench').classList.add('hidden');
+            document.getElementById('tab-snippets').classList.add('hidden');
+            document.getElementById('tab-keys').classList.add('hidden');
+            document.getElementById('tab-calculator').classList.add('hidden');
+            
+            if(tabName === 'dashboard') {
+                document.getElementById('tab-dashboard').classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Control Panel Overview";
+            } else if(tabName === 'workbench') {
+                document.getElementById('tab-workbench').classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Interactive Agent Security Workbench";
+            } else if(tabName === 'snippets') {
+                document.getElementById('tab-snippets').classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "SDK Integration Code Snippets";
+            } else if(tabName === 'keys') {
+                document.getElementById('tab-keys').classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "API Key Management & OTel Traces";
+            } else if(tabName === 'calculator') {
+                document.getElementById('tab-calculator').classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "ROI API Cost Savings Calculator";
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        function copyCode(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text);
+            showToast("Code snippet copied to clipboard!");
+        }
+
+        function updateCalculator() {
+            const val = parseInt(document.getElementById('calc-slider').value);
+            document.getElementById('calc-volume-label').innerText = val.toLocaleString();
+            // Calculation: $0.0075 average savings per request via caching + routing
+            const savings = (val * 0.0075).toFixed(2);
+            document.getElementById('calc-savings').innerText = `$${parseFloat(savings).toLocaleString()}`;
+        }
+
+        function filterLogs() {
+            const term = document.getElementById('log-search').value.toLowerCase();
+            document.querySelectorAll('#live-logs .log-entry').forEach(entry => {
+                const text = entry.innerText.toLowerCase();
+                entry.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+        }
+
+        async function sendTestPrompt() {
+            const role = document.getElementById('wb-role').value;
+            const version = document.getElementById('wb-version').value;
+            const promptText = document.getElementById('wb-prompt').value;
+            const resultDiv = document.getElementById('wb-result');
+
+            resultDiv.innerHTML = `<div style="color: var(--accent-cyan)">[PRODUCING REQUEST] Sending to http://localhost:8000/v1/chat/completions...</div>`;
+
+            try {
+                const response = await fetch('/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-evalmesh-agent-role': role,
+                        'x-evalmesh-prompt-version': version
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o',
+                        messages: [{ role: 'user', content: promptText }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if(!response.ok) {
+                    resultDiv.innerHTML = `
+                        <div style="color: var(--accent-red); font-weight: 700;">❌ [SECURITY / WAF BLOCK ${response.status}]</div>
+                        <div style="color: #fca5a5; margin-top: 0.5rem;">${JSON.stringify(data, null, 2)}</div>
+                    `;
+                    showToast("Prompt Injection / Security WAF Block Triggered!");
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="color: #34d399; font-weight: 700;">✅ [PROXY PASSED 200 OK]</div>
+                        <div style="color: #93c5fd; margin-top: 0.5rem;">${JSON.stringify(data, null, 2)}</div>
+                    `;
+                    showToast("Prompt processed safely through proxy!");
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div style="color: var(--accent-red)">Error reaching proxy gateway: ${err.message}</div>`;
+            }
+        }
+
+        async function generateApiKey() {
+            const name = document.getElementById('key-name').value || "Developer Key";
+            const limit = parseInt(document.getElementById('key-limit').value) || 120;
+            const resultDiv = document.getElementById('key-result');
+
+            try {
+                const res = await fetch('/v1/keys/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, rate_limit: limit })
+                });
+                const data = await res.json();
+                resultDiv.innerHTML = `<div style="color: #34d399">Key Created Successfully!</div><div style="color: #60a5fa">${data.api_key}</div>`;
+                showToast("New API Key generated!");
+            } catch(e) {
+                resultDiv.innerHTML = `<div style="color: var(--accent-red)">Failed to generate key.</div>`;
+            }
+        }
+
+        async function fetchOtelSpans() {
+            const resultDiv = document.getElementById('otel-result');
+            try {
+                const res = await fetch('/v1/telemetry/otel');
+                const data = await res.json();
+                resultDiv.innerHTML = `<pre style="color: #c084fc">${JSON.stringify(data, null, 2)}</pre>`;
+                showToast("OTel trace spans retrieved!");
+            } catch(e) {
+                resultDiv.innerHTML = `<div style="color: var(--accent-red)">Failed to fetch OTel spans.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
