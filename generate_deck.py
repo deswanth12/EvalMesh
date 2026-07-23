@@ -1,6 +1,6 @@
 """
-EvalMesh Investor Pitch Deck Generator (Silicon Valley VC Grade)
-Creates an ultra-professional, 10-slide PowerPoint (.pptx) presentation.
+EvalMesh Executive Investor Pitch Deck Generator (Pro Tier)
+Creates an institutional-grade, highly polished 10-slide PowerPoint (.pptx) presentation.
 """
 
 from pptx import Presentation
@@ -11,22 +11,23 @@ from pptx.enum.shapes import MSO_SHAPE
 
 def create_presentation():
     prs = Presentation()
-    # 16:9 Widescreen format (13.333 x 7.5 inches)
+    # 16:9 Widescreen ratio (13.333 x 7.5 inches)
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
     blank_layout = prs.slide_layouts[6]
 
-    # Institutional VC Palette
-    COLOR_BG = RGBColor(11, 15, 25)          # Deep Slate Dark #0B0F19
-    COLOR_CARD = RGBColor(17, 24, 39)        # Translucent Slate #111827
-    COLOR_CARD_BORDER = RGBColor(31, 41, 55) # Border Gray
-    COLOR_CYAN = RGBColor(0, 240, 255)       # Electric Cyan #00F0FF
-    COLOR_BLUE = RGBColor(59, 130, 246)      # Accent Blue #3B82F6
-    COLOR_PURPLE = RGBColor(139, 92, 246)   # Accent Purple #8B5CF6
-    COLOR_GREEN = RGBColor(16, 185, 129)    # Neon Emerald #10B981
-    COLOR_RED = RGBColor(239, 68, 68)       # Crimson Warning #EF4444
-    COLOR_TEXT_MAIN = RGBColor(249, 250, 251) # Clean White #F9FAFB
-    COLOR_TEXT_MUTED = RGBColor(156, 163, 175) # Muted Silver #9CA3AF
+    # Executive Dark Theme Color Palette
+    COLOR_BG = RGBColor(8, 12, 22)           # Deep Space Dark #080C16
+    COLOR_CARD = RGBColor(15, 23, 42)         # Translucent Card #0F172A
+    COLOR_CARD_BORDER = RGBColor(30, 41, 59)  # Card Outline
+    COLOR_CYAN = RGBColor(6, 182, 212)        # Electric Cyan #06B6D4
+    COLOR_BLUE = RGBColor(59, 130, 246)       # Royal Blue #3B82F6
+    COLOR_PURPLE = RGBColor(139, 92, 246)    # Deep Purple #8B5CF6
+    COLOR_GREEN = RGBColor(16, 185, 129)     # Emerald Green #10B981
+    COLOR_RED = RGBColor(239, 68, 68)        # Crimson Red #EF4444
+    COLOR_AMBER = RGBColor(245, 158, 11)      # Warm Amber #F59E0B
+    COLOR_WHITE = RGBColor(248, 250, 252)     # Off-White #F8FAFC
+    COLOR_MUTED = RGBColor(148, 163, 184)     # Muted Silver #94A3B8
 
     def set_bg(slide):
         bg = slide.background
@@ -34,8 +35,8 @@ def create_presentation():
         fill.solid()
         fill.fore_color.rgb = COLOR_BG
 
-    def add_header(slide, title_text, tag_text="EVALMESH | AI AGENT INFRASTRUCTURE"):
-        # Category Tag
+    def add_header_and_footer(slide, title_text, tag_text="EVALMESH | AI AGENT INFRASTRUCTURE", slide_num=1):
+        # Category Tag Header
         cat_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.4), Inches(10), Inches(0.35))
         tf_cat = cat_box.text_frame
         tf_cat.word_wrap = True
@@ -53,7 +54,15 @@ def create_presentation():
         p_title.text = title_text
         p_title.font.size = Pt(26)
         p_title.font.bold = True
-        p_title.font.color.rgb = COLOR_TEXT_MAIN
+        p_title.font.color.rgb = COLOR_WHITE
+
+        # Footer Bar
+        footer_box = slide.shapes.add_textbox(Inches(0.8), Inches(7.0), Inches(11.73), Inches(0.35))
+        tf_foot = footer_box.text_frame
+        p_foot = tf_foot.paragraphs[0]
+        p_foot.text = f"EvalMesh | AI Gateway for Secure & Reliable Agent Deployment   •   Slide {slide_num} of 10"
+        p_foot.font.size = Pt(9)
+        p_foot.font.color.rgb = COLOR_MUTED
 
     # ==========================================
     # SLIDE 1: Cover / Hero Slide
@@ -62,27 +71,27 @@ def create_presentation():
     set_bg(slide1)
 
     # Hero Box Outer Frame
-    hero = slide1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.2), Inches(1.2), Inches(10.93), Inches(5.1))
+    hero = slide1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.0), Inches(1.0), Inches(11.33), Inches(5.5))
     hero.fill.solid()
     hero.fill.fore_color.rgb = COLOR_CARD
     hero.line.color.rgb = COLOR_BLUE
     hero.line.width = Pt(2)
 
-    tb1 = slide1.shapes.add_textbox(Inches(1.8), Inches(1.8), Inches(9.7), Inches(3.9))
+    tb1 = slide1.shapes.add_textbox(Inches(1.5), Inches(1.5), Inches(10.33), Inches(4.5))
     tf1 = tb1.text_frame
     tf1.word_wrap = True
 
     p1_tag = tf1.paragraphs[0]
-    p1_tag.text = "SERIES SEED PITCH DECK"
+    p1_tag.text = "SERIES SEED PITCH DECK  •  2026 EDITION"
     p1_tag.font.size = Pt(11)
     p1_tag.font.bold = True
     p1_tag.font.color.rgb = COLOR_CYAN
 
     p1_main = tf1.add_paragraph()
-    p1_main.text = "EvalMesh"
-    p1_main.font.size = Pt(52)
+    p1_main.text = "🛡️ EvalMesh"
+    p1_main.font.size = Pt(54)
     p1_main.font.bold = True
-    p1_main.font.color.rgb = COLOR_TEXT_MAIN
+    p1_main.font.color.rgb = COLOR_WHITE
 
     p1_sub = tf1.add_paragraph()
     p1_sub.text = "AI Gateway for Secure & Reliable Agent Deployment"
@@ -93,30 +102,35 @@ def create_presentation():
     p1_desc = tf1.add_paragraph()
     p1_desc.text = "\nCloudflare + GitHub Actions for Autonomous AI Agents"
     p1_desc.font.size = Pt(16)
-    p1_desc.font.color.rgb = COLOR_TEXT_MUTED
+    p1_desc.font.color.rgb = COLOR_MUTED
+
+    p1_meta = tf1.add_paragraph()
+    p1_meta.text = "\nWebsite: http://localhost:8000   │   GitHub: github.com/deswanth12/EvalMesh"
+    p1_meta.font.size = Pt(12)
+    p1_meta.font.color.rgb = COLOR_CYAN
 
     # ==========================================
-    # SLIDE 2: The Problem (Market Pain Points)
+    # SLIDE 2: The Problem
     # ==========================================
     slide2 = prs.slides.add_slide(blank_layout)
     set_bg(slide2)
-    add_header(slide2, "The Problem: Autonomous Agents Break in Production", "01 / PROBLEM DEFINITION")
+    add_header_and_footer(slide2, "The Problem: Autonomous AI Agents Break in Production", "01 / PROBLEM DEFINITION", 2)
 
     pains = [
-        ("💸 Runaway API Billing Spikes", "$2,000+ Surprise Bills", "Recursive agent loops execute 500+ calls overnight without safety limits."),
-        ("🔓 Security & PII Data Leaks", "Zero PII Redaction Egress", "Prompt injection jailbreaks trick bots into leaking system secrets & SSNs."),
-        ("💥 Silent Model Output Drift", "Broken Downstream Schema", "Upstream model updates alter JSON outputs, crashing client applications.")
+        ("💸 Runaway Billing Spikes", "$2,000+ Surprise Bills", "Recursive agent loops execute 500+ calls overnight without safety thresholds."),
+        ("🔓 Security & PII Leaks", "Zero PII Redaction Egress", "Prompt injection jailbreaks trick bots into leaking system secrets & SSNs."),
+        ("💥 Silent Output Drift", "Broken Downstream Schema", "Upstream model updates alter JSON outputs, crashing client applications.")
     ]
 
     for i, (title, highlight, desc) in enumerate(pains):
         x = Inches(0.8 + i * 3.9)
-        card = slide2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.8), Inches(3.6), Inches(4.8))
+        card = slide2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.7), Inches(3.63), Inches(5.0))
         card.fill.solid()
         card.fill.fore_color.rgb = COLOR_CARD
         card.line.color.rgb = COLOR_RED
         card.line.width = Pt(1.5)
 
-        tb = slide2.shapes.add_textbox(x + Inches(0.2), Inches(2.1), Inches(3.2), Inches(4.2))
+        tb = slide2.shapes.add_textbox(x + Inches(0.2), Inches(2.0), Inches(3.23), Inches(4.4))
         tf = tb.text_frame
         tf.word_wrap = True
 
@@ -130,19 +144,19 @@ def create_presentation():
         ph.text = f"\n{highlight}"
         ph.font.size = Pt(15)
         ph.font.bold = True
-        ph.font.color.rgb = COLOR_TEXT_MAIN
+        ph.font.color.rgb = COLOR_WHITE
 
         pd = tf.add_paragraph()
         pd.text = f"\n{desc}"
         pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_TEXT_MUTED
+        pd.font.color.rgb = COLOR_MUTED
 
     # ==========================================
-    # SLIDE 3: The Solution (EvalMesh Gateway)
+    # SLIDE 3: The Solution
     # ==========================================
     slide3 = prs.slides.add_slide(blank_layout)
     set_bg(slide3)
-    add_header(slide3, "The Solution: EvalMesh Zero-Trust Gateway", "02 / THE SOLUTION")
+    add_header_and_footer(slide3, "The Solution: EvalMesh Zero-Trust Gateway", "02 / THE SOLUTION", 3)
 
     sols = [
         ("🛡️ Cloudflare for AI", "<15ms Proxy Guardrail", "Inline proxy enforcing real-time WAF, PII DLP redactor, and tool RBAC."),
@@ -152,13 +166,13 @@ def create_presentation():
 
     for i, (title, highlight, desc) in enumerate(sols):
         x = Inches(0.8 + i * 3.9)
-        card = slide3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.8), Inches(3.6), Inches(4.8))
+        card = slide3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.7), Inches(3.63), Inches(5.0))
         card.fill.solid()
         card.fill.fore_color.rgb = COLOR_CARD
         card.line.color.rgb = COLOR_GREEN
         card.line.width = Pt(1.5)
 
-        tb = slide3.shapes.add_textbox(x + Inches(0.2), Inches(2.1), Inches(3.2), Inches(4.2))
+        tb = slide3.shapes.add_textbox(x + Inches(0.2), Inches(2.0), Inches(3.23), Inches(4.4))
         tf = tb.text_frame
         tf.word_wrap = True
 
@@ -172,26 +186,26 @@ def create_presentation():
         ph.text = f"\n{highlight}"
         ph.font.size = Pt(15)
         ph.font.bold = True
-        ph.font.color.rgb = COLOR_TEXT_MAIN
+        ph.font.color.rgb = COLOR_WHITE
 
         pd = tf.add_paragraph()
         pd.text = f"\n{desc}"
         pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_TEXT_MUTED
+        pd.font.color.rgb = COLOR_MUTED
 
     # ==========================================
     # SLIDE 4: Architecture & Data Flow
     # ==========================================
     slide4 = prs.slides.add_slide(blank_layout)
     set_bg(slide4)
-    add_header(slide4, "Architecture: In-Line Sidecar Proxy Pipeline", "03 / SYSTEM ARCHITECTURE")
+    add_header_and_footer(slide4, "Architecture: In-Line Sidecar Proxy Pipeline", "03 / SYSTEM ARCHITECTURE", 4)
 
-    arch_box = slide4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.8), Inches(11.73), Inches(4.8))
+    arch_box = slide4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.7), Inches(11.73), Inches(5.0))
     arch_box.fill.solid()
     arch_box.fill.fore_color.rgb = COLOR_CARD
     arch_box.line.color.rgb = COLOR_BLUE
 
-    tb4 = slide4.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(11.1), Inches(4.4))
+    tb4 = slide4.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(11.1), Inches(4.6))
     tf4 = tb4.text_frame
     tf4.word_wrap = True
 
@@ -205,14 +219,14 @@ def create_presentation():
     p4_2.text = "                       │\n                       ▼\n[ 1. Inbound Security Pipeline ]  ──► PII DLP Redactor + Prompt WAF + Tool RBAC\n                       │\n                       ▼\n[ 2. Proxy Execution Engine ]   ──► Semantic Cache (3ms, $0) + Smart Cost Router\n                       │\n                       ▼\n[ 3. Upstream Provider Egress ] ──► OpenAI / Anthropic / DeepSeek HA Failover\n                       │\n                       ▼\n[ 4. Observability & Evals ]   ──► OpenTelemetry Spans + Golden Datasets + Control Panel UI"
     p4_2.font.size = Pt(14)
     p4_2.font.name = "JetBrains Mono"
-    p4_2.font.color.rgb = COLOR_TEXT_MAIN
+    p4_2.font.color.rgb = COLOR_WHITE
 
     # ==========================================
-    # SLIDE 5: Core Product Capabilities
+    # SLIDE 5: Core Capabilities (16 Modules)
     # ==========================================
     slide5 = prs.slides.add_slide(blank_layout)
     set_bg(slide5)
-    add_header(slide5, "16-Module Core Engine Capability Matrix", "04 / PRODUCT CAPABILITIES")
+    add_header_and_footer(slide5, "16-Module Core Engine Capability Matrix", "04 / PRODUCT CAPABILITIES", 5)
 
     features = [
         ("PII DLP Redactor", "Redacts Emails, SSNs, Credit Cards, IPs inline"),
@@ -229,14 +243,14 @@ def create_presentation():
         row = i // 2
         col = i % 2
         x = Inches(0.8 + col * 5.9)
-        y = Inches(1.8 + row * 1.25)
+        y = Inches(1.7 + row * 1.3)
 
-        card = slide5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(5.6), Inches(1.1))
+        card = slide5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(5.63), Inches(1.15))
         card.fill.solid()
         card.fill.fore_color.rgb = COLOR_CARD
         card.line.color.rgb = COLOR_BLUE
 
-        tb = slide5.shapes.add_textbox(x + Inches(0.15), y + Inches(0.1), Inches(5.3), Inches(0.9))
+        tb = slide5.shapes.add_textbox(x + Inches(0.15), y + Inches(0.1), Inches(5.33), Inches(0.95))
         tf = tb.text_frame
         tf.word_wrap = True
 
@@ -244,19 +258,19 @@ def create_presentation():
         pt.text = f"✅ {feat}"
         pt.font.size = Pt(16)
         pt.font.bold = True
-        pt.font.color.rgb = COLOR_TEXT_MAIN
+        pt.font.color.rgb = COLOR_WHITE
 
         pd = tf.add_paragraph()
         pd.text = desc
         pd.font.size = Pt(12)
-        pd.font.color.rgb = COLOR_TEXT_MUTED
+        pd.font.color.rgb = COLOR_MUTED
 
     # ==========================================
     # SLIDE 6: Enterprise Compliance
     # ==========================================
     slide6 = prs.slides.add_slide(blank_layout)
     set_bg(slide6)
-    add_header(slide6, "Enterprise Compliance & Governance Readiness", "05 / ENTERPRISE GOVERNANCE")
+    add_header_and_footer(slide6, "Enterprise Compliance & Governance Readiness", "05 / ENTERPRISE GOVERNANCE", 6)
 
     ents = [
         ("🛡️ SOC 2 Type II", "SHA-256 tamper-proof audit trail log exporter"),
@@ -267,13 +281,13 @@ def create_presentation():
     ]
 
     for i, (title, desc) in enumerate(ents):
-        y = Inches(1.8 + i * 1.0)
+        y = Inches(1.7 + i * 1.0)
         card = slide6.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), y, Inches(11.73), Inches(0.85))
         card.fill.solid()
         card.fill.fore_color.rgb = COLOR_CARD
         card.line.color.rgb = COLOR_PURPLE
 
-        tb = slide6.shapes.add_textbox(Inches(1.0), y + Inches(0.1), Inches(11.3), Inches(0.65))
+        tb = slide6.shapes.add_textbox(Inches(1.0), y + Inches(0.1), Inches(11.33), Inches(0.65))
         tf = tb.text_frame
         tf.word_wrap = True
 
@@ -281,14 +295,14 @@ def create_presentation():
         pt.text = f"{title}:  {desc}"
         pt.font.size = Pt(16)
         pt.font.bold = True
-        pt.font.color.rgb = COLOR_TEXT_MAIN
+        pt.font.color.rgb = COLOR_WHITE
 
     # ==========================================
     # SLIDE 7: Market Opportunity (TAM)
     # ==========================================
     slide7 = prs.slides.add_slide(blank_layout)
     set_bg(slide7)
-    add_header(slide7, "Market Opportunity: $50B AI Infrastructure Frontier", "06 / MARKET OPPORTUNITY")
+    add_header_and_footer(slide7, "Market Opportunity: $50B AI Infrastructure Frontier", "06 / MARKET OPPORTUNITY", 7)
 
     tams = [
         ("$50 Billion", "Total Addressable Market (TAM)", "Enterprise AI security, governance, and infrastructure proxy sidecars by 2028."),
@@ -298,13 +312,13 @@ def create_presentation():
 
     for i, (stat, title, desc) in enumerate(tams):
         x = Inches(0.8 + i * 3.9)
-        card = slide7.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.8), Inches(3.6), Inches(4.8))
+        card = slide7.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.7), Inches(3.63), Inches(5.0))
         card.fill.solid()
         card.fill.fore_color.rgb = COLOR_CARD
         card.line.color.rgb = COLOR_CYAN
         card.line.width = Pt(1.5)
 
-        tb = slide7.shapes.add_textbox(x + Inches(0.2), Inches(2.1), Inches(3.2), Inches(4.2))
+        tb = slide7.shapes.add_textbox(x + Inches(0.2), Inches(2.0), Inches(3.23), Inches(4.4))
         tf = tb.text_frame
         tf.word_wrap = True
 
@@ -318,19 +332,19 @@ def create_presentation():
         pt.text = f"\n{title}"
         pt.font.size = Pt(16)
         pt.font.bold = True
-        pt.font.color.rgb = COLOR_TEXT_MAIN
+        pt.font.color.rgb = COLOR_WHITE
 
         pd = tf.add_paragraph()
         pd.text = f"\n{desc}"
         pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_TEXT_MUTED
+        pd.font.color.rgb = COLOR_MUTED
 
     # ==========================================
     # SLIDE 8: Business Model & Pricing
     # ==========================================
     slide8 = prs.slides.add_slide(blank_layout)
     set_bg(slide8)
-    add_header(slide8, "Business Model & Tiered Monetization", "07 / MONETIZATION MODEL")
+    add_header_and_footer(slide8, "Business Model & Tiered Monetization", "07 / MONETIZATION MODEL", 8)
 
     plans = [
         ("Starter", "$0 / mo", "100k req/mo\nPII Redactor\nPrompt WAF\nWeb Dashboard", COLOR_BLUE),
@@ -341,13 +355,13 @@ def create_presentation():
 
     for i, (name, price, text, color) in enumerate(plans):
         x = Inches(0.8 + i * 2.95)
-        card = slide8.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.8), Inches(2.75), Inches(4.8))
+        card = slide8.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, Inches(1.7), Inches(2.75), Inches(5.0))
         card.fill.solid()
         card.fill.fore_color.rgb = COLOR_CARD
         card.line.color.rgb = color
         card.line.width = Pt(2)
 
-        tb = slide8.shapes.add_textbox(x + Inches(0.15), Inches(2.0), Inches(2.45), Inches(4.4))
+        tb = slide8.shapes.add_textbox(x + Inches(0.15), Inches(1.9), Inches(2.45), Inches(4.6))
         tf = tb.text_frame
         tf.word_wrap = True
 
@@ -361,26 +375,26 @@ def create_presentation():
         pp.text = price
         pp.font.size = Pt(26)
         pp.font.bold = True
-        pp.font.color.rgb = COLOR_TEXT_MAIN
+        pp.font.color.rgb = COLOR_WHITE
 
         pd = tf.add_paragraph()
         pd.text = f"\n{text}"
         pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_TEXT_MUTED
+        pd.font.color.rgb = COLOR_MUTED
 
     # ==========================================
     # SLIDE 9: Traction & Code Verification
     # ==========================================
     slide9 = prs.slides.add_slide(blank_layout)
     set_bg(slide9)
-    add_header(slide9, "Production Readiness: 100% Operational Codebase", "08 / TRACTION & VERIFICATION")
+    add_header_and_footer(slide9, "Production Readiness: 100% Operational Codebase", "08 / TRACTION & VERIFICATION", 9)
 
-    card9 = slide9.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.8), Inches(11.73), Inches(4.8))
+    card9 = slide9.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.7), Inches(11.73), Inches(5.0))
     card9.fill.solid()
     card9.fill.fore_color.rgb = COLOR_CARD
     card9.line.color.rgb = COLOR_GREEN
 
-    tb9 = slide9.shapes.add_textbox(Inches(1.1), Inches(2.0), Inches(11.1), Inches(4.4))
+    tb9 = slide9.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(11.1), Inches(4.6))
     tf9 = tb9.text_frame
     tf9.word_wrap = True
 
@@ -393,29 +407,30 @@ def create_presentation():
     p9_2 = tf9.add_paragraph()
     p9_2.text = "\n • Live Investor Demo Script : python live_demo.py\n • 16-Module Audit Suite     : python -m evalmesh.verify_all\n • Open-Source GitHub Repo   : https://github.com/deswanth12/EvalMesh\n • Interactive Web Dashboard : http://localhost:8000\n • Docker & k8s Deployment   : Dockerfile & k8s-deployment.yaml"
     p9_2.font.size = Pt(15)
-    p9_2.font.color.rgb = COLOR_TEXT_MAIN
+    p9_2.font.color.rgb = COLOR_WHITE
 
     # ==========================================
     # SLIDE 10: Call to Action & Vision
     # ==========================================
     slide10 = prs.slides.add_slide(blank_layout)
     set_bg(slide10)
+    add_header_and_footer(slide10, "Join the Future of AI Reliability", "10 / VISION & CALL TO ACTION", 10)
 
-    card10 = slide10.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.2), Inches(1.2), Inches(10.93), Inches(5.1))
+    card10 = slide10.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.0), Inches(1.7), Inches(11.33), Inches(5.0))
     card10.fill.solid()
     card10.fill.fore_color.rgb = COLOR_CARD
     card10.line.color.rgb = COLOR_CYAN
     card10.line.width = Pt(2)
 
-    tb10 = slide10.shapes.add_textbox(Inches(1.8), Inches(1.8), Inches(9.7), Inches(3.9))
+    tb10 = slide10.shapes.add_textbox(Inches(1.5), Inches(2.1), Inches(10.33), Inches(4.2))
     tf10 = tb10.text_frame
     tf10.word_wrap = True
 
     p10_1 = tf10.paragraphs[0]
-    p10_1.text = "Join the Future of AI Reliability"
-    p10_1.font.size = Pt(42)
+    p10_1.text = "Deploy AI Agents with Zero Friction"
+    p10_1.font.size = Pt(40)
     p10_1.font.bold = True
-    p10_1.font.color.rgb = COLOR_TEXT_MAIN
+    p10_1.font.color.rgb = COLOR_WHITE
 
     p10_2 = tf10.add_paragraph()
     p10_2.text = "EvalMesh — AI Gateway for Secure & Reliable Agent Deployment"
@@ -426,12 +441,12 @@ def create_presentation():
     p10_3 = tf10.add_paragraph()
     p10_3.text = "\nGitHub Repository : https://github.com/deswanth12/EvalMesh\nLive Dashboard    : http://localhost:8000\nContact Email     : founder@evalmesh.io"
     p10_3.font.size = Pt(16)
-    p10_3.font.color.rgb = COLOR_TEXT_MUTED
+    p10_3.font.color.rgb = COLOR_MUTED
 
     # Save Presentation
     output_filename = "EvalMesh_Investor_Pitch_Deck.pptx"
     prs.save(output_filename)
-    print(f"[SUCCESS] Successfully generated VC-Grade PowerPoint pitch deck: {output_filename}")
+    print(f"[SUCCESS] Successfully generated Pro-Tier PowerPoint pitch deck: {output_filename}")
 
 if __name__ == "__main__":
     create_presentation()
