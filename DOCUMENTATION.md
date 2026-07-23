@@ -1,4 +1,4 @@
-# EvalMesh: Enterprise AI Agent Control Plane & Continuous Evaluation Harness
+# EvalMesh: AI Gateway for Secure & Reliable Agent Deployment
 
 ```text
 ┌───────────────────────────────────────────────────────────────────────────────────┐

@@ -1,4 +1,4 @@
-# 🛡️ EvalMesh — Cyber Security Toolkit & AI Agent Control Plane
+# 🛡️ EvalMesh — AI Gateway for Secure & Reliable Agent Deployment
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/deswanth12/EvalMesh)
 [![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)](https://github.com/deswanth12/EvalMesh)
@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-SDK%20Available-3178C6)](https://www.typescriptlang.org/)
 
-> **Cloudflare + GitHub Actions for Autonomous AI Agents.**  
+> **Cloudflare for AI Agents.**  
 > An ultra-low-latency (<15ms) reverse proxy gateway, real-time prompt injection WAF, PII DLP redactor, semantic prompt cache, and automated CI/CD evaluation harness for LLM workflows.
 
 ---

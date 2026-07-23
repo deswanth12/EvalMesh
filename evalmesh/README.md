@@ -1,4 +1,4 @@
-# EvalMesh: Master Documentation & Production User Guide
+# EvalMesh: AI Gateway for Secure & Reliable Agent Deployment
 
 **Version**: `0.5.0`  
 **Positioning**: 
