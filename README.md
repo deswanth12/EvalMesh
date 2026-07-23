@@ -6,6 +6,8 @@
 [![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-SDK%20Available-3178C6)](https://www.typescriptlang.org/)
 
+![EvalMesh Banner](assets/evalmesh_banner.svg)
+
 > **Cloudflare + GitHub Actions for Autonomous AI Agents.**  
 > An ultra-low-latency (<15ms) reverse proxy gateway, real-time prompt injection WAF, PII DLP redactor, semantic prompt cache, and automated CI/CD evaluation harness for LLM workflows.
 
