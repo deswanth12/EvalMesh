@@ -1,6 +1,7 @@
 """
-EvalMesh Executive Investor Pitch Deck Generator (Pro Tier)
-Creates an institutional-grade, highly polished 10-slide PowerPoint (.pptx) presentation.
+EvalMesh Executive Pitch Deck Generator (High-Contrast System Theme Compatible)
+Ensures 100% font legibility across Light Mode & Dark Mode OS settings.
+All text colors are explicitly forced to high-contrast colors (No dark/black text on dark cards).
 """
 
 from pptx import Presentation
@@ -11,23 +12,20 @@ from pptx.enum.shapes import MSO_SHAPE
 
 def create_presentation():
     prs = Presentation()
-    # 16:9 Widescreen ratio (13.333 x 7.5 inches)
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
     blank_layout = prs.slide_layouts[6]
 
-    # Executive Dark Theme Color Palette
-    COLOR_BG = RGBColor(8, 12, 22)           # Deep Space Dark #080C16
-    COLOR_CARD = RGBColor(15, 23, 42)         # Translucent Card #0F172A
-    COLOR_CARD_BORDER = RGBColor(30, 41, 59)  # Card Outline
-    COLOR_CYAN = RGBColor(6, 182, 212)        # Electric Cyan #06B6D4
-    COLOR_BLUE = RGBColor(59, 130, 246)       # Royal Blue #3B82F6
-    COLOR_PURPLE = RGBColor(139, 92, 246)    # Deep Purple #8B5CF6
-    COLOR_GREEN = RGBColor(16, 185, 129)     # Emerald Green #10B981
-    COLOR_RED = RGBColor(239, 68, 68)        # Crimson Red #EF4444
-    COLOR_AMBER = RGBColor(245, 158, 11)      # Warm Amber #F59E0B
-    COLOR_WHITE = RGBColor(248, 250, 252)     # Off-White #F8FAFC
-    COLOR_MUTED = RGBColor(148, 163, 184)     # Muted Silver #94A3B8
+    # Explicit High-Contrast Palette
+    COLOR_BG = RGBColor(11, 15, 25)          # Deep Slate #0B0F19
+    COLOR_CARD = RGBColor(17, 24, 39)        # Translucent Card #111827
+    COLOR_CYAN = RGBColor(0, 240, 255)       # High-Visibility Electric Cyan #00F0FF
+    COLOR_BLUE = RGBColor(96, 165, 250)      # High-Visibility Light Blue #60A5FA
+    COLOR_PURPLE = RGBColor(192, 132, 252)   # High-Visibility Light Purple #C084FC
+    COLOR_GREEN = RGBColor(52, 211, 153)     # High-Visibility Neon Emerald #34D399
+    COLOR_RED = RGBColor(248, 113, 113)      # High-Visibility Light Red #F87171
+    COLOR_WHITE = RGBColor(255, 255, 255)    # Pure White #FFFFFF
+    COLOR_MUTED = RGBColor(203, 213, 225)    # Bright Silver #CBD5E1
 
     def set_bg(slide):
         bg = slide.background
@@ -36,7 +34,7 @@ def create_presentation():
         fill.fore_color.rgb = COLOR_BG
 
     def add_header_and_footer(slide, title_text, tag_text="EVALMESH | AI AGENT INFRASTRUCTURE", slide_num=1):
-        # Category Tag Header
+        # Header Tag
         cat_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.4), Inches(10), Inches(0.35))
         tf_cat = cat_box.text_frame
         tf_cat.word_wrap = True
@@ -46,7 +44,7 @@ def create_presentation():
         p_cat.font.bold = True
         p_cat.font.color.rgb = COLOR_CYAN
 
-        # Main Slide Title
+        # Slide Title
         title_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.7), Inches(11.7), Inches(0.75))
         tf_title = title_box.text_frame
         tf_title.word_wrap = True
@@ -56,7 +54,7 @@ def create_presentation():
         p_title.font.bold = True
         p_title.font.color.rgb = COLOR_WHITE
 
-        # Footer Bar
+        # Footer
         footer_box = slide.shapes.add_textbox(Inches(0.8), Inches(7.0), Inches(11.73), Inches(0.35))
         tf_foot = footer_box.text_frame
         p_foot = tf_foot.paragraphs[0]
@@ -70,7 +68,6 @@ def create_presentation():
     slide1 = prs.slides.add_slide(blank_layout)
     set_bg(slide1)
 
-    # Hero Box Outer Frame
     hero = slide1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.0), Inches(1.0), Inches(11.33), Inches(5.5))
     hero.fill.solid()
     hero.fill.fore_color.rgb = COLOR_CARD
@@ -443,10 +440,9 @@ def create_presentation():
     p10_3.font.size = Pt(16)
     p10_3.font.color.rgb = COLOR_MUTED
 
-    # Save Presentation
     output_filename = "EvalMesh_Investor_Pitch_Deck.pptx"
     prs.save(output_filename)
-    print(f"[SUCCESS] Successfully generated Pro-Tier PowerPoint pitch deck: {output_filename}")
+    print(f"[SUCCESS] Successfully generated High-Contrast PPTX deck: {output_filename}")
 
 if __name__ == "__main__":
     create_presentation()
