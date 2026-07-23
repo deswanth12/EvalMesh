@@ -167,6 +167,19 @@ def run_comprehensive_double_check():
     passed_checks += 1
     print(" [PASS] Check 15: TypeScript Client SDK (@evalmesh/sdk) verified.")
 
+    # CHECK 16: Enterprise Compliance & Security Engine (SSO, HIPAA, GDPR, SOC 2)
+    total_checks += 1
+    from evalmesh.enterprise import enterprise_engine
+    sso_res = enterprise_engine.validate_sso_token("sso_okta_token_999")
+    assert sso_res["valid"] is True
+    hipaa_res = enterprise_engine.scrub_hipaa_phi("Patient MRN-12345678 diagnosed with ICD-10-E11.9")
+    assert "[REDACTED_HIPAA_MRN]" in hipaa_res["sanitized_text"]
+    assert hipaa_res["phi_redacted_count"] == 2
+    soc2_trail = enterprise_engine.export_soc2_audit_trail()
+    assert len(soc2_trail) >= 4
+    passed_checks += 1
+    print(" [PASS] Check 16: Enterprise Security & Compliance Engine (SSO, HIPAA PHI, GDPR, SOC 2) verified.")
+
     print("\n===============================================================")
     print(f" [SUCCESS] System-Wide Double Check Complete: {passed_checks}/{total_checks} Modules 100% Operational!")
     print("===============================================================")

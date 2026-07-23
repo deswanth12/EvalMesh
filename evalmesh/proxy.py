@@ -20,6 +20,7 @@ from evalmesh.smart_router import SmartCostRouter
 from evalmesh.cache import SemanticPromptCache
 from evalmesh.auto_heal import AutoHealingRetryEngine
 from evalmesh.otel import OpenTelemetryTraceExporter
+from evalmesh.enterprise import enterprise_engine
 
 app = FastAPI(
     title="EvalMesh Proxy Engine",
@@ -286,3 +287,31 @@ async def proxy_chat_completions(request: Request):
         media_type="application/json",
         headers={"x-evalmesh-latency-ms": f"{latency_ms:.2f}"}
     )
+
+# --- ENTERPRISE & COMPLIANCE ENDPOINTS ---
+
+@app.post("/v1/auth/sso/validate")
+async def validate_sso(request: Request):
+    body = await request.json()
+    token = body.get("token", "")
+    res = enterprise_engine.validate_sso_token(token)
+    if not res.get("valid"):
+        raise HTTPException(status_code=401, detail=res.get("error"))
+    return res
+
+@app.post("/v1/compliance/hipaa/scrub")
+async def scrub_hipaa(request: Request):
+    body = await request.json()
+    text = body.get("text", "")
+    return enterprise_engine.scrub_hipaa_phi(text)
+
+@app.get("/v1/compliance/soc2/audit-logs")
+async def export_soc2_logs():
+    return {"audit_trail": enterprise_engine.export_soc2_audit_trail()}
+
+@app.post("/v1/compliance/gdpr/forget")
+async def gdpr_forget(request: Request):
+    body = await request.json()
+    user_id = body.get("user_id", "")
+    return enterprise_engine.process_gdpr_forget_request(user_id)
+
