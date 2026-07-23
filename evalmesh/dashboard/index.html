@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EvalMesh - Enterprise AI Agent Control Plane</title>
+    <title>EvalMesh - Investor Control Plane</title>
     <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Chart.js for Live Interactive Analytics -->
+    <!-- Chart.js for Interactive Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-dark: #07090e;
-            --bg-card: rgba(15, 23, 42, 0.75);
-            --bg-card-hover: rgba(30, 41, 59, 0.85);
+            --bg-dark: #06080e;
+            --bg-card: rgba(13, 19, 34, 0.85);
+            --bg-card-hover: rgba(23, 32, 54, 0.9);
             --border-color: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(59, 130, 246, 0.35);
+            --border-glow: rgba(59, 130, 246, 0.4);
             --accent-blue: #3b82f6;
             --accent-cyan: #06b6d4;
             --accent-purple: #8b5cf6;
@@ -40,15 +40,15 @@
             height: 100vh;
             overflow: hidden;
             background-image: 
-                radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.08), transparent 45%),
-                radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.08), transparent 45%);
+                radial-gradient(circle at 10% 15%, rgba(59, 130, 246, 0.1), transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.1), transparent 40%);
         }
 
         /* Sidebar Navigation */
         aside {
-            width: 270px;
-            background: rgba(11, 15, 25, 0.85);
-            backdrop-filter: blur(16px);
+            width: 260px;
+            background: rgba(8, 12, 22, 0.9);
+            backdrop-filter: blur(20px);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
@@ -73,7 +73,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.3rem;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
             animation: pulse-glow 3s infinite alternate;
         }
 
@@ -92,7 +92,7 @@
         }
 
         .brand-tag {
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             text-transform: uppercase;
             background: rgba(59, 130, 246, 0.15);
             color: #60a5fa;
@@ -140,7 +140,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        /* Main Area */
+        /* Main Workspace */
         main {
             flex: 1;
             display: flex;
@@ -154,8 +154,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(11, 15, 25, 0.7);
-            backdrop-filter: blur(12px);
+            background: rgba(8, 12, 22, 0.75);
+            backdrop-filter: blur(16px);
             position: sticky;
             top: 0;
             z-index: 5;
@@ -209,22 +209,26 @@
             gap: 1.75rem;
         }
 
-        /* Stat Cards */
-        .metrics-grid {
+        /* 8 Key Metric Stat Cards Grid */
+        .metrics-grid-8 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.25rem;
+        }
+
+        @media (max-width: 1300px) {
+            .metrics-grid-8 { grid-template-columns: repeat(2, 1fr); }
         }
 
         .metric-card {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.35rem;
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.5rem;
             position: relative;
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -243,23 +247,23 @@
         }
 
         .metric-label {
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.06em;
             font-weight: 700;
         }
 
-        .metric-icon { font-size: 1.1rem; opacity: 0.85; }
+        .metric-icon { font-size: 1.1rem; opacity: 0.9; }
 
         .metric-value {
-            font-size: 2rem;
+            font-size: 1.85rem;
             font-weight: 800;
             letter-spacing: -0.03em;
         }
 
         .metric-badge {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             padding: 3px 8px;
             border-radius: 6px;
             align-self: flex-start;
@@ -274,6 +278,7 @@
         .badge-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
         .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
         .badge-purple { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .badge-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
 
         /* Panels Grid */
         .panels-grid {
@@ -288,10 +293,10 @@
 
         .panel {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.6rem;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
@@ -304,24 +309,49 @@
         }
 
         .panel-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.6rem;
         }
 
-        /* Filter Search Bar */
-        .log-filter-bar {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
+        /* Threat Table */
+        .threat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.83rem;
+            text-align: left;
         }
 
-        .log-filter-bar input {
-            flex: 1;
-            padding: 0.55rem 0.85rem;
-            font-size: 0.82rem;
+        .threat-table th {
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.72rem;
+        }
+
+        .threat-table td {
+            padding: 0.85rem 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            vertical-align: middle;
+        }
+
+        .threat-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .code-snippet-tag {
+            font-family: 'JetBrains Mono', monospace;
+            background: #04060c;
+            color: #f87171;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-size: 0.78rem;
         }
 
         /* Terminal View */
@@ -331,8 +361,8 @@
             border-radius: 12px;
             padding: 1.1rem;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.83rem;
-            max-height: 380px;
+            font-size: 0.82rem;
+            max-height: 340px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -438,71 +468,12 @@
             background: rgba(255, 255, 255, 0.12);
         }
 
-        /* Toggle Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-
-        .switch input { opacity: 0; width: 0; height: 0; }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #1e293b;
-            transition: .3s;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px; width: 16px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider { background-color: var(--accent-blue); }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* Code Snippet Box */
-        .code-block {
-            background-color: #04060c;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.82rem;
-            color: #93c5fd;
-            position: relative;
-            overflow-x: auto;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 0.6rem;
-            right: 0.6rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
-
         /* Toast Alert */
         #toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(13, 19, 34, 0.95);
             border: 1px solid var(--accent-blue);
             color: #fff;
             padding: 0.85rem 1.4rem;
@@ -541,6 +512,11 @@
             <li class="nav-item">
                 <button class="active" onclick="switchTab('dashboard', this)">
                     <i class="fa-solid fa-chart-line" style="color: var(--accent-blue)"></i> Control Panel
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('threats', this)">
+                    <i class="fa-solid fa-shield-virus" style="color: var(--accent-red)"></i> Top Blocked Threats
                 </button>
             </li>
             <li class="nav-item">
@@ -586,57 +562,102 @@
 
         <div class="dashboard-container">
 
-            <!-- Stat Cards Row -->
-            <div class="metrics-grid">
+            <!-- 8 Key Stat Metrics Row -->
+            <div class="metrics-grid-8">
+                <!-- 1. Active Requests -->
                 <div class="metric-card">
                     <div class="metric-header">
-                        <div class="metric-label">Total Requests</div>
+                        <div class="metric-label">Active Requests</div>
                         <i class="fa-solid fa-bolt metric-icon" style="color: var(--accent-blue)"></i>
                     </div>
                     <div class="metric-value" id="stat-requests">2,148</div>
                     <div class="metric-badge badge-blue"><i class="fa-solid fa-arrow-trend-up"></i> +22% active</div>
                 </div>
+
+                <!-- 2. Blocked Attacks -->
                 <div class="metric-card">
                     <div class="metric-header">
-                        <div class="metric-label">Injections Blocked</div>
+                        <div class="metric-label">Blocked Attacks</div>
                         <i class="fa-solid fa-shield-virus metric-icon" style="color: var(--accent-red)"></i>
                     </div>
                     <div class="metric-value" id="stat-blocked" style="color: var(--accent-red)">48</div>
                     <div class="metric-badge badge-red"><i class="fa-solid fa-lock"></i> WAF Active</div>
                 </div>
+
+                <!-- 3. PII Redacted -->
                 <div class="metric-card">
                     <div class="metric-header">
-                        <div class="metric-label">PII Items Redacted</div>
+                        <div class="metric-label">PII Redacted</div>
                         <i class="fa-solid fa-user-shield metric-icon" style="color: var(--accent-amber)"></i>
                     </div>
                     <div class="metric-value" id="stat-dlp" style="color: var(--accent-amber)">210</div>
                     <div class="metric-badge badge-amber"><i class="fa-solid fa-eye-slash"></i> DLP Active</div>
                 </div>
+
+                <!-- 4. Money Saved -->
                 <div class="metric-card">
                     <div class="metric-header">
-                        <div class="metric-label">Saved Token Costs</div>
+                        <div class="metric-label">Money Saved</div>
                         <i class="fa-solid fa-piggy-bank metric-icon" style="color: var(--accent-green)"></i>
                     </div>
-                    <div class="metric-value" id="stat-saved" style="color: var(--accent-green)">$642.80</div>
-                    <div class="metric-badge badge-green"><i class="fa-solid fa-leaf"></i> Cache & Breaker</div>
+                    <div class="metric-value" id="stat-saved" style="color: var(--accent-green)">$762.80</div>
+                    <div class="metric-badge badge-green"><i class="fa-solid fa-leaf"></i> Cache & Routing</div>
+                </div>
+
+                <!-- 5. Model Latency -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">Model Latency (p95)</div>
+                        <i class="fa-solid fa-gauge-high metric-icon" style="color: var(--accent-cyan)"></i>
+                    </div>
+                    <div class="metric-value" id="stat-latency" style="color: var(--accent-cyan)">11.4 ms</div>
+                    <div class="metric-badge badge-cyan"><i class="fa-solid fa-bolt-lightning"></i> Sub-15ms Target</div>
+                </div>
+
+                <!-- 6. Success Rate -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">Success Rate</div>
+                        <i class="fa-solid fa-circle-check metric-icon" style="color: var(--accent-green)"></i>
+                    </div>
+                    <div class="metric-value" id="stat-success" style="color: var(--accent-green)">98.4%</div>
+                    <div class="metric-badge badge-green"><i class="fa-solid fa-check"></i> High SLA</div>
+                </div>
+
+                <!-- 7. Error Rate -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">Error Rate</div>
+                        <i class="fa-solid fa-triangle-exclamation metric-icon" style="color: var(--accent-purple)"></i>
+                    </div>
+                    <div class="metric-value" id="stat-error" style="color: var(--accent-purple)">1.6%</div>
+                    <div class="metric-badge badge-purple"><i class="fa-solid fa-shield-cat"></i> Auto-Healed</div>
+                </div>
+
+                <!-- 8. Top Threat Category -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-label">Top Threat Guard</div>
+                        <i class="fa-solid fa-bug metric-icon" style="color: var(--accent-red)"></i>
+                    </div>
+                    <div class="metric-value" style="font-size: 1.4rem; color: #f87171;">Jailbreak WAF</div>
+                    <div class="metric-badge badge-red"><i class="fa-solid fa-hand"></i> 100% Defense</div>
                 </div>
             </div>
 
-            <!-- Tab 1: Dashboard Overview & Chart -->
+            <!-- Tab 1: Dashboard Overview & Charts -->
             <div id="tab-dashboard" class="panels-grid">
-                <!-- Live Telemetry Stream with Search Filter -->
+                <!-- Live Audit Stream -->
                 <div class="panel">
                     <div class="panel-header">
-                        <div class="panel-title"><i class="fa-solid fa-stream" style="color: var(--accent-blue)"></i> Request Audit Stream</div>
-                        <div class="log-filter-bar">
-                            <input type="text" id="log-search" placeholder="Search prompt or status..." oninput="filterLogs()">
-                        </div>
+                        <div class="panel-title"><i class="fa-solid fa-stream" style="color: var(--accent-blue)"></i> Real-Time Request Audit Stream</div>
+                        <span class="metric-badge badge-blue">Live Polling</span>
                     </div>
                     <div class="terminal" id="live-logs">
                         <div class="log-entry">
                             <div class="log-meta">
                                 <span class="log-tag-blocked">[BLOCK 403]</span>
-                                <span>15:21:10</span>
+                                <span>16:35:10</span>
                                 <span>Role: support_agent</span>
                             </div>
                             <div>Matched WAF Rule: 'ignore previous instructions'</div>
@@ -644,7 +665,7 @@
                         <div class="log-entry">
                             <div class="log-meta">
                                 <span class="log-tag-cache">[CACHE HIT 200]</span>
-                                <span>15:20:42</span>
+                                <span>16:34:42</span>
                                 <span>Similarity: 95.1%</span>
                                 <span>Latency: 3.2ms</span>
                             </div>
@@ -653,7 +674,7 @@
                         <div class="log-entry">
                             <div class="log-meta">
                                 <span class="log-tag-dlp">[SANALITIZED 200]</span>
-                                <span>15:19:05</span>
+                                <span>16:33:05</span>
                                 <span>Redacted: EMAIL, SSN</span>
                                 <span>Latency: 11.4ms</span>
                             </div>
@@ -666,7 +687,7 @@
                 <div class="panel">
                     <div class="panel-header">
                         <div class="panel-title"><i class="fa-solid fa-chart-area" style="color: var(--accent-cyan)"></i> Latency & Proxy Throughput</div>
-                        <span class="metric-badge badge-blue">p95 Latency: 12.4ms</span>
+                        <span class="metric-badge badge-cyan">p95 Latency: 11.4ms</span>
                     </div>
                     <div style="height: 280px; width: 100%;">
                         <canvas id="latencyChart"></canvas>
@@ -674,7 +695,64 @@
                 </div>
             </div>
 
-            <!-- Tab 2: Agent Security Workbench -->
+            <!-- Tab 2: Top Blocked Prompts Threat Intelligence Table -->
+            <div id="tab-threats" class="panels-grid hidden">
+                <div class="panel" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-shield-virus" style="color: var(--accent-red)"></i> Top Blocked Prompts & Threat Intelligence</div>
+                        <span class="metric-badge badge-red">WAF Threat Signatures</span>
+                    </div>
+
+                    <table class="threat-table">
+                        <thead>
+                            <tr>
+                                <th>Blocked Prompt Pattern</th>
+                                <th>Category</th>
+                                <th>Attempt Count</th>
+                                <th>Action Taken</th>
+                                <th>Risk Level</th>
+                                <th>Last Detected</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="code-snippet-tag">ignore previous instructions</span></td>
+                                <td>Context Override Jailbreak</td>
+                                <td><b>24</b></td>
+                                <td><span class="metric-badge badge-red">Blocked (HTTP 403)</span></td>
+                                <td><span class="metric-badge badge-red">CRITICAL</span></td>
+                                <td>16:35:10</td>
+                            </tr>
+                            <tr>
+                                <td><span class="code-snippet-tag">system prompt override</span></td>
+                                <td>System Instruction Exfiltration</td>
+                                <td><b>14</b></td>
+                                <td><span class="metric-badge badge-red">Blocked (HTTP 403)</span></td>
+                                <td><span class="metric-badge badge-red">HIGH</span></td>
+                                <td>16:22:04</td>
+                            </tr>
+                            <tr>
+                                <td><span class="code-snippet-tag">you are now DAN mode</span></td>
+                                <td>Persona Hijacking</td>
+                                <td><b>7</b></td>
+                                <td><span class="metric-badge badge-red">Blocked (HTTP 403)</span></td>
+                                <td><span class="metric-badge badge-amber">MEDIUM</span></td>
+                                <td>15:48:19</td>
+                            </tr>
+                            <tr>
+                                <td><span class="code-snippet-tag">reveal your secret keys</span></td>
+                                <td>Credential Harvesting</td>
+                                <td><b>3</b></td>
+                                <td><span class="metric-badge badge-red">Blocked (HTTP 403)</span></td>
+                                <td><span class="metric-badge badge-red">CRITICAL</span></td>
+                                <td>14:10:02</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Agent Security Workbench -->
             <div id="tab-workbench" class="panels-grid hidden">
                 <div class="panel" style="grid-column: span 2;">
                     <div class="panel-header">
@@ -715,7 +793,7 @@
                 </div>
             </div>
 
-            <!-- Tab 3: SDK Code Snippets -->
+            <!-- Tab 4: SDK Code Snippets -->
             <div id="tab-snippets" class="panels-grid hidden">
                 <div class="panel">
                     <div class="panel-header">
@@ -754,7 +832,7 @@ const res = await client.createChatCompletion({
                 </div>
             </div>
 
-            <!-- Tab 4: API Keys & OTel Export -->
+            <!-- Tab 5: API Keys & OTel Export -->
             <div id="tab-keys" class="panels-grid hidden">
                 <div class="panel">
                     <div class="panel-header">
@@ -792,7 +870,7 @@ const res = await client.createChatCompletion({
                 </div>
             </div>
 
-            <!-- Tab 5: ROI Cost Savings Calculator -->
+            <!-- Tab 6: ROI Cost Savings Calculator -->
             <div id="tab-calculator" class="panels-grid hidden">
                 <div class="panel" style="grid-column: span 2;">
                     <div class="panel-header">
@@ -842,20 +920,20 @@ const res = await client.createChatCompletion({
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['15:10', '15:12', '15:14', '15:16', '15:18', '15:20', '15:22'],
+                    labels: ['16:20', '16:22', '16:24', '16:26', '16:28', '16:30', '16:35'],
                     datasets: [
                         {
                             label: 'Proxy Latency (ms)',
-                            data: [14.2, 11.8, 12.5, 3.8, 13.1, 4.2, 12.4],
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            data: [13.2, 11.4, 12.1, 3.5, 11.9, 3.8, 11.4],
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'rgba(6, 182, 212, 0.1)',
                             borderWidth: 2,
                             fill: true,
                             tension: 0.4
                         },
                         {
                             label: 'Semantic Cache Hits',
-                            data: [0, 1, 2, 4, 3, 6, 5],
+                            data: [0, 2, 3, 5, 4, 8, 7],
                             borderColor: '#c084fc',
                             borderWidth: 2,
                             borderDash: [5, 5],
@@ -880,6 +958,7 @@ const res = await client.createChatCompletion({
             btn.classList.add('active');
             
             document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-threats').classList.add('hidden');
             document.getElementById('tab-workbench').classList.add('hidden');
             document.getElementById('tab-snippets').classList.add('hidden');
             document.getElementById('tab-keys').classList.add('hidden');
@@ -888,6 +967,9 @@ const res = await client.createChatCompletion({
             if(tabName === 'dashboard') {
                 document.getElementById('tab-dashboard').classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "Control Panel Overview";
+            } else if(tabName === 'threats') {
+                document.getElementById('tab-threats').classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Top Blocked Prompts & Threat Intelligence";
             } else if(tabName === 'workbench') {
                 document.getElementById('tab-workbench').classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "Interactive Agent Security Workbench";
@@ -919,17 +1001,8 @@ const res = await client.createChatCompletion({
         function updateCalculator() {
             const val = parseInt(document.getElementById('calc-slider').value);
             document.getElementById('calc-volume-label').innerText = val.toLocaleString();
-            // Calculation: $0.0075 average savings per request via caching + routing
             const savings = (val * 0.0075).toFixed(2);
             document.getElementById('calc-savings').innerText = `$${parseFloat(savings).toLocaleString()}`;
-        }
-
-        function filterLogs() {
-            const term = document.getElementById('log-search').value.toLowerCase();
-            document.querySelectorAll('#live-logs .log-entry').forEach(entry => {
-                const text = entry.innerText.toLowerCase();
-                entry.style.display = text.includes(term) ? 'flex' : 'none';
-            });
         }
 
         async function sendTestPrompt() {
@@ -1009,7 +1082,6 @@ const res = await client.createChatCompletion({
             showToast("🎬 Starting 3-Minute Live Investor Demo Suite...");
             const logsDiv = document.getElementById('live-logs');
 
-            // Scene 1: Malicious Prompt Injection WAF Block
             setTimeout(async () => {
                 showToast("🛡️ Scene 1: Malicious Prompt WAF Blocked!");
                 try {
@@ -1032,12 +1104,10 @@ const res = await client.createChatCompletion({
                     </div>
                 `);
 
-                // Update counter numbers
                 const blk = document.getElementById('stat-blocked');
                 if(blk) blk.innerText = parseInt(blk.innerText || 48) + 1;
             }, 1000);
 
-            // Scene 2: Runaway Agent Loop Circuit Breaker
             setTimeout(async () => {
                 showToast("⚡ Scene 2: Runaway Agent Loop Circuit Breaker Tripped!");
                 const now = new Date().toLocaleTimeString();
@@ -1053,10 +1123,9 @@ const res = await client.createChatCompletion({
                 `);
                 
                 const svd = document.getElementById('stat-saved');
-                if(svd) svd.innerText = "$762.80";
+                if(svd) svd.innerText = "$882.80";
             }, 3000);
 
-            // Scene 3: Malformed JSON Auto-Healing
             setTimeout(async () => {
                 showToast("🩹 Scene 3: Malformed JSON Auto-Healing Self-Corrected!");
                 try {
@@ -1080,7 +1149,6 @@ const res = await client.createChatCompletion({
                 `);
             }, 5000);
 
-            // Final Toast
             setTimeout(() => {
                 showToast("✨ Live Investor Demo Complete! 3/3 Scenarios Verified.");
             }, 6500);
