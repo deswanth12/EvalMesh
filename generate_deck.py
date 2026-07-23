@@ -1,7 +1,6 @@
 """
-EvalMesh Executive Pitch Deck Generator (High-Contrast System Theme Compatible)
-Ensures 100% font legibility across Light Mode & Dark Mode OS settings.
-All text colors are explicitly forced to high-contrast colors (No dark/black text on dark cards).
+EvalMesh Executive Pitch Deck Generator (Pure White Subtext on Slides 1-3)
+Forces all description & subtext paragraphs on Slides 1, 2, and 3 to Pure White text (#FFFFFF).
 """
 
 from pptx import Presentation
@@ -25,7 +24,7 @@ def create_presentation():
     COLOR_GREEN = RGBColor(52, 211, 153)     # High-Visibility Neon Emerald #34D399
     COLOR_RED = RGBColor(248, 113, 113)      # High-Visibility Light Red #F87171
     COLOR_WHITE = RGBColor(255, 255, 255)    # Pure White #FFFFFF
-    COLOR_MUTED = RGBColor(203, 213, 225)    # Bright Silver #CBD5E1
+    COLOR_MUTED = RGBColor(226, 232, 240)    # Ultra Bright Off-White #E2E8F0
 
     def set_bg(slide):
         bg = slide.background
@@ -63,7 +62,7 @@ def create_presentation():
         p_foot.font.color.rgb = COLOR_MUTED
 
     # ==========================================
-    # SLIDE 1: Cover / Hero Slide
+    # SLIDE 1: Cover / Hero Slide (Pure White Subtext)
     # ==========================================
     slide1 = prs.slides.add_slide(blank_layout)
     set_bg(slide1)
@@ -94,20 +93,21 @@ def create_presentation():
     p1_sub.text = "AI Gateway for Secure & Reliable Agent Deployment"
     p1_sub.font.size = Pt(24)
     p1_sub.font.bold = True
-    p1_sub.font.color.rgb = COLOR_BLUE
+    p1_sub.font.color.rgb = COLOR_WHITE
 
     p1_desc = tf1.add_paragraph()
     p1_desc.text = "\nCloudflare + GitHub Actions for Autonomous AI Agents"
-    p1_desc.font.size = Pt(16)
-    p1_desc.font.color.rgb = COLOR_MUTED
+    p1_desc.font.size = Pt(18)
+    p1_desc.font.bold = True
+    p1_desc.font.color.rgb = COLOR_WHITE
 
     p1_meta = tf1.add_paragraph()
     p1_meta.text = "\nWebsite: http://localhost:8000   │   GitHub: github.com/deswanth12/EvalMesh"
-    p1_meta.font.size = Pt(12)
+    p1_meta.font.size = Pt(13)
     p1_meta.font.color.rgb = COLOR_CYAN
 
     # ==========================================
-    # SLIDE 2: The Problem
+    # SLIDE 2: The Problem (Pure White Subtext)
     # ==========================================
     slide2 = prs.slides.add_slide(blank_layout)
     set_bg(slide2)
@@ -139,17 +139,18 @@ def create_presentation():
 
         ph = tf.add_paragraph()
         ph.text = f"\n{highlight}"
-        ph.font.size = Pt(15)
+        ph.font.size = Pt(16)
         ph.font.bold = True
         ph.font.color.rgb = COLOR_WHITE
 
         pd = tf.add_paragraph()
         pd.text = f"\n{desc}"
-        pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_MUTED
+        pd.font.size = Pt(14)
+        pd.font.bold = True
+        pd.font.color.rgb = COLOR_WHITE
 
     # ==========================================
-    # SLIDE 3: The Solution
+    # SLIDE 3: The Solution (Pure White Subtext)
     # ==========================================
     slide3 = prs.slides.add_slide(blank_layout)
     set_bg(slide3)
@@ -181,14 +182,15 @@ def create_presentation():
 
         ph = tf.add_paragraph()
         ph.text = f"\n{highlight}"
-        ph.font.size = Pt(15)
+        ph.font.size = Pt(16)
         ph.font.bold = True
         ph.font.color.rgb = COLOR_WHITE
 
         pd = tf.add_paragraph()
         pd.text = f"\n{desc}"
-        pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_MUTED
+        pd.font.size = Pt(14)
+        pd.font.bold = True
+        pd.font.color.rgb = COLOR_WHITE
 
     # ==========================================
     # SLIDE 4: Architecture & Data Flow
@@ -259,8 +261,9 @@ def create_presentation():
 
         pd = tf.add_paragraph()
         pd.text = desc
-        pd.font.size = Pt(12)
-        pd.font.color.rgb = COLOR_MUTED
+        pd.font.size = Pt(13)
+        pd.font.bold = True
+        pd.font.color.rgb = COLOR_WHITE
 
     # ==========================================
     # SLIDE 6: Enterprise Compliance
@@ -333,8 +336,9 @@ def create_presentation():
 
         pd = tf.add_paragraph()
         pd.text = f"\n{desc}"
-        pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_MUTED
+        pd.font.size = Pt(14)
+        pd.font.bold = True
+        pd.font.color.rgb = COLOR_WHITE
 
     # ==========================================
     # SLIDE 8: Business Model & Pricing
@@ -376,8 +380,9 @@ def create_presentation():
 
         pd = tf.add_paragraph()
         pd.text = f"\n{text}"
-        pd.font.size = Pt(13)
-        pd.font.color.rgb = COLOR_MUTED
+        pd.font.size = Pt(14)
+        pd.font.bold = True
+        pd.font.color.rgb = COLOR_WHITE
 
     # ==========================================
     # SLIDE 9: Traction & Code Verification
@@ -438,11 +443,16 @@ def create_presentation():
     p10_3 = tf10.add_paragraph()
     p10_3.text = "\nGitHub Repository : https://github.com/deswanth12/EvalMesh\nLive Dashboard    : http://localhost:8000\nContact Email     : founder@evalmesh.io"
     p10_3.font.size = Pt(16)
-    p10_3.font.color.rgb = COLOR_MUTED
+    p10_3.font.color.rgb = COLOR_WHITE
 
     output_filename = "EvalMesh_Investor_Pitch_Deck.pptx"
-    prs.save(output_filename)
-    print(f"[SUCCESS] Successfully generated High-Contrast PPTX deck: {output_filename}")
+    try:
+        prs.save(output_filename)
+        print(f"[SUCCESS] Successfully generated Pure White Subtext PPTX deck: {output_filename}")
+    except PermissionError:
+        fallback_filename = "EvalMesh_Investor_Pitch_Deck_v2.pptx"
+        prs.save(fallback_filename)
+        print(f"[SUCCESS] PowerPoint file was open in another app. Saved as: {fallback_filename}")
 
 if __name__ == "__main__":
     create_presentation()
