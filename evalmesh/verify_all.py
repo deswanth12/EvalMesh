@@ -263,11 +263,71 @@ def run_comprehensive_double_check():
     passed_checks += 1
     print(" [PASS] Check 23: Control Panel Web Dashboard UI (evalmesh/dashboard/index.html) verified.")
 
+    # CHECK 24: Declarative Policy Engine (evalmesh.policy_engine)
+    total_checks += 1
+    from evalmesh.policy_engine import policy_engine
+    pol_res = policy_engine.evaluate({"role": "intern", "requested_tools": ["delete_database"]})
+    assert pol_res["action"] == "BLOCK"
+    passed_checks += 1
+    print(" [PASS] Check 24: Declarative Policy Engine (evalmesh.policy_engine) verified.")
+
+    # CHECK 25: Human Approval Workflows Engine (evalmesh.human_approval)
+    total_checks += 1
+    from evalmesh.human_approval import human_approval_engine
+    appr_item = human_approval_engine.request_approval("sess_99", "Refund $10,000", "billing_agent", "Over threshold")
+    resolved = human_approval_engine.resolve_approval(appr_item["id"], "APPROVED", "deshu@evalmesh.ai")
+    assert resolved["status"] == "APPROVED"
+    passed_checks += 1
+    print(" [PASS] Check 25: Human Approval Workflows Engine (evalmesh.human_approval) verified.")
+
+    # CHECK 26: Prompt Version Registry Engine (evalmesh.prompt_registry)
+    total_checks += 1
+    from evalmesh.prompt_registry import prompt_registry_engine
+    p_reg = prompt_registry_engine.rollback_version("prompt_support", "v1.0")
+    assert p_reg["active_version"] == "v1.0"
+    passed_checks += 1
+    print(" [PASS] Check 26: Prompt Version Registry Engine (evalmesh.prompt_registry) verified.")
+
+    # CHECK 27: Encrypted Secrets Vault Engine (evalmesh.vault)
+    total_checks += 1
+    from evalmesh.vault import secrets_vault_engine
+    sec_val = secrets_vault_engine.get_secret("OPENAI_API_KEY")
+    assert "sk-proj-live-openai" in sec_val
+    passed_checks += 1
+    print(" [PASS] Check 27: Encrypted Secrets Vault Engine (evalmesh.vault) verified.")
+
+    # CHECK 28: AI Agent Memory & Session Replay Engine (evalmesh.session_replay)
+    total_checks += 1
+    from evalmesh.session_replay import session_replay_engine
+    replay_data = session_replay_engine.get_session_replay("sess_demo_replay_101")
+    assert len(replay_data["steps"]) >= 6
+    assert replay_data["steps"][0]["type"] == "USER_PROMPT"
+    passed_checks += 1
+    print(" [PASS] Check 28: AI Agent Memory Inspector & Session Replay Console ('Chrome DevTools for AI') verified.")
+
+    # CHECK 29: AI Security Score Engine (evalmesh.security_score)
+    total_checks += 1
+    from evalmesh.security_score import security_score_engine
+    sec_score = security_score_engine.compute_score()
+    assert sec_score["overall_score"] == 94
+    assert sec_score["grade"] == "A+"
+    passed_checks += 1
+    print(" [PASS] Check 29: AI Security Score Engine (94/100 A+ Rating) verified.")
+
+    # CHECK 30: Incident Timeline Logger Stream (evalmesh.incident_timeline)
+    total_checks += 1
+    from evalmesh.incident_timeline import incident_timeline_logger
+    timeline = incident_timeline_logger.get_timeline()
+    assert len(timeline) >= 4
+    passed_checks += 1
+    print(" [PASS] Check 30: GitHub-Style Incident Event Timeline Logger Stream verified.")
+
     print("\n===============================================================")
     print(f" [SUCCESS] System-Wide Double Check Complete: {passed_checks}/{total_checks} Modules 100% Operational!")
     print("===============================================================")
 
 if __name__ == "__main__":
     run_comprehensive_double_check()
+
 
 

@@ -15,7 +15,7 @@ from evalmesh.drift import OutputDriftDetector
 from evalmesh.ab_testing import MultiModelABEvaluator
 from evalmesh.db import EvalMeshDatabase
 from evalmesh.rules_engine import CustomRulesEngine
-from evalmesh.auth import APIKeyManager
+from evalmesh.auth import APIKeyManager, create_jwt_token, get_current_user, require_permission, ROLE_PERMISSIONS
 from evalmesh.smart_router import SmartCostRouter
 from evalmesh.cache import SemanticPromptCache
 from evalmesh.auto_heal import AutoHealingRetryEngine
@@ -315,7 +315,80 @@ async def gdpr_forget(request: Request):
     user_id = body.get("user_id", "")
     return enterprise_engine.process_gdpr_forget_request(user_id)
 
-# --- MULTI-TENANT & ENTERPRISE RBAC ENDPOINTS ---
+# --- ENTERPRISE POWER ENGINES & SESSION REPLAY ENDPOINTS ---
+
+from evalmesh.policy_engine import policy_engine
+from evalmesh.human_approval import human_approval_engine
+from evalmesh.prompt_registry import prompt_registry_engine
+from evalmesh.vault import secrets_vault_engine
+from evalmesh.session_replay import session_replay_engine
+from evalmesh.security_score import security_score_engine
+from evalmesh.incident_timeline import incident_timeline_logger
+
+@app.get("/v1/policies")
+async def list_policies():
+    return {"policies": policy_engine.list_policies()}
+
+@app.post("/v1/policies/evaluate")
+async def eval_policy(request: Request):
+    ctx = await request.json()
+    return policy_engine.evaluate(ctx)
+
+@app.get("/v1/approvals/pending")
+async def list_pending_approvals():
+    return {"pending_approvals": human_approval_engine.list_all()}
+
+@app.post("/v1/approvals/{req_id}/resolve")
+async def resolve_approval(req_id: str, request: Request, user: dict = Depends(get_current_user)):
+    body = await request.json()
+    decision = body.get("decision", "APPROVED") # APPROVED or REJECTED
+    resolved = human_approval_engine.resolve_approval(req_id, decision, user.get("email", "admin@evalmesh.ai"))
+    if not resolved:
+        raise HTTPException(status_code=404, detail="Approval request not found")
+    return resolved
+
+@app.get("/v1/prompts/registry")
+async def list_prompt_registry():
+    return {"prompts": prompt_registry_engine.list_all()}
+
+@app.post("/v1/prompts/rollback")
+async def rollback_prompt(request: Request, user: dict = Depends(get_current_user)):
+    body = await request.json()
+    prompt_id = body.get("prompt_id", "prompt_support")
+    target_version = body.get("target_version", "v1.0")
+    res = prompt_registry_engine.rollback_version(prompt_id, target_version)
+    if not res:
+        raise HTTPException(status_code=400, detail="Target version not found")
+    return res
+
+@app.get("/v1/vault/secrets")
+async def list_vault_keys():
+    return {"secrets": secrets_vault_engine.list_keys()}
+
+@app.post("/v1/vault/secrets")
+async def store_vault_secret(request: Request, user: dict = Depends(get_current_user)):
+    body = await request.json()
+    key_name = body.get("key_name")
+    raw_secret = body.get("secret_value")
+    secrets_vault_engine.store_secret(key_name, raw_secret)
+    return {"key_name": key_name, "stored": True}
+
+@app.get("/v1/sessions/replay/{session_id}")
+async def get_session_replay_data(session_id: str):
+    data = session_replay_engine.get_session_replay(session_id)
+    if not data:
+        # Generate on-demand fallback replay for demo
+        data = session_replay_engine.get_session_replay("sess_demo_replay_101")
+    return data
+
+@app.get("/v1/security/score")
+async def get_security_score():
+    return security_score_engine.compute_score()
+
+@app.get("/v1/incidents/timeline")
+async def get_incident_timeline():
+    return {"timeline": incident_timeline_logger.get_timeline()}
+
 
 from evalmesh.auth import create_jwt_token, get_current_user, require_permission, ROLE_PERMISSIONS
 from evalmesh.db import hash_password

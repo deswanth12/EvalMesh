@@ -515,6 +515,21 @@
                 </button>
             </li>
             <li class="nav-item">
+                <button onclick="switchTab('replay', this)" style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3);">
+                    <i class="fa-solid fa-bug-slash" style="color: var(--accent-cyan)"></i> Session Replay (DevTools)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('approvals', this)">
+                    <i class="fa-solid fa-user-check" style="color: var(--accent-amber)"></i> Human Approvals Queue
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('policies', this)">
+                    <i class="fa-solid fa-sliders" style="color: var(--accent-purple)"></i> Declarative Policies
+                </button>
+            </li>
+            <li class="nav-item">
                 <button onclick="switchTab('superadmin', this)" id="nav-superadmin">
                     <i class="fa-solid fa-crown" style="color: var(--accent-amber)"></i> Super Admin Orgs
                 </button>
@@ -1116,8 +1131,183 @@ const res = await client.createChatCompletion({
                             </tr>
                         </tbody>
                     </table>
+            <!-- Tab 10: AI Session Replay (Chrome DevTools for AI Agents) -->
+            <div id="tab-replay" class="panels-grid hidden">
+                <div class="panel" style="grid-column: span 2; border: 1px solid var(--accent-cyan); background: rgba(6, 182, 212, 0.03);">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-bug-slash" style="color: var(--accent-cyan)"></i> 
+                            AI Agent Memory Inspector & Session Replay Console ("Chrome DevTools for AI")
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-primary" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);" onclick="triggerStepReplay()">
+                                <i class="fa-solid fa-play"></i> ▶ Interactive Step Replay
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                        <div><span style="color: var(--text-muted)">Session ID:</span> <b class="code-snippet-tag" style="color: #60a5fa">sess_demo_replay_101</b></div>
+                        <div><span style="color: var(--text-muted)">Agent Role:</span> <b style="color: #34d399">fintech_support_agent</b></div>
+                        <div><span style="color: var(--text-muted)">Total Latency:</span> <b>14.8 ms</b></div>
+                        <div><span style="color: var(--text-muted)">Tokens:</span> <b>420 Tokens</b></div>
+                        <div><span style="color: var(--text-muted)">Status:</span> <span class="metric-badge badge-amber">PAUSED FOR APPROVAL</span></div>
+                    </div>
+
+                    <!-- Step-by-Step DevTools Execution Trace -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;" id="replay-steps-container">
+
+                        <!-- Step 1 -->
+                        <div style="background: #04060c; border: 1px solid var(--border-glow); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; color: #60a5fa;"><i class="fa-solid fa-user"></i> Step 1: User Request Received</span>
+                                <span class="metric-badge badge-blue">USER_PROMPT</span>
+                            </div>
+                            <div style="font-family: monospace; color: #f8fafc; font-size: 0.88rem;">"Please issue a refund of $10,000 to my account and delete my logs."</div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div style="background: #04060c; border: 1px solid var(--border-glow); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; color: #c084fc;"><i class="fa-solid fa-terminal"></i> Step 2: System Prompt & Persona Context</span>
+                                <span class="metric-badge badge-purple">SYSTEM_PROMPT</span>
+                            </div>
+                            <div style="font-family: monospace; color: #93c5fd; font-size: 0.88rem;">"You are a customer support agent. Never reveal keys or execute unapproved refunds."</div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div style="background: #04060c; border: 1px solid var(--border-glow); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; color: #22d3ee;"><i class="fa-solid fa-brain"></i> Step 3: Agent Short-Term Memory State</span>
+                                <span class="metric-badge badge-cyan">MEMORY_INSPECTOR</span>
+                            </div>
+                            <div style="font-family: monospace; color: #e2e8f0; font-size: 0.88rem;">User authenticated: john.doe@example.com (Tier: Standard, Balance: $450.00)</div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div style="background: #04060c; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; color: #fbbf24;"><i class="fa-solid fa-wrench"></i> Step 4: Agent Attempted Tool Execution</span>
+                                <span class="metric-badge badge-amber">TOOL_CALLS</span>
+                            </div>
+                            <div style="font-family: monospace; color: #fde68a; font-size: 0.88rem;">Requested Tool: refund_customer(amount=10000) & delete_logs()</div>
+                        </div>
+
+                        <!-- Step 5 -->
+                        <div style="background: #04060c; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; color: #f87171;"><i class="fa-solid fa-shield-halved"></i> Step 5: EvalMesh Security Checks & Policy Engine</span>
+                                <span class="metric-badge badge-red">SECURITY_CHECKS</span>
+                            </div>
+                            <div style="font-family: monospace; color: #fca5a5; font-size: 0.88rem;">Matched Policy: 'pol_high_cost_approval'. Action: Paused for Human Approval Queue.</div>
+                        </div>
+
+                        <!-- Step 6 -->
+                        <div style="background: #04060c; border: 1px solid var(--accent-amber); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; color: #fbbf24;"><i class="fa-solid fa-pause-circle"></i> Step 6: Session Interception & Human Approval Pause</span>
+                                <span class="metric-badge badge-amber">FAILURE_POINT / PAUSED</span>
+                            </div>
+                            <div style="font-family: monospace; color: #fef08a; font-size: 0.88rem;">Execution safely intercepted by EvalMesh. Created Human Approval Ticket #appr_101.</div>
+                        </div>
+
+                    </div>
                 </div>
-            </div>v>
+            </div>
+
+            <!-- Tab 11: Human Approval Workflows Queue -->
+            <div id="tab-approvals" class="panels-grid hidden">
+                <div class="panel" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-user-check" style="color: #fbbf24"></i> Human Approval Workflows Queue (Enterprise Safeguard)</div>
+                        <span class="metric-badge badge-amber">2 PENDING APPROVALS</span>
+                    </div>
+                    <table class="threat-table">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Agent Action Requested</th>
+                                <th>Agent Role</th>
+                                <th>Trigger Reason</th>
+                                <th>Status</th>
+                                <th>Human Decision Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvals-list-table">
+                            <tr>
+                                <td class="code-snippet-tag">appr_101</td>
+                                <td><b>Refund Customer $10,000.00 USD</b></td>
+                                <td>billing_support_agent</td>
+                                <td style="color: var(--text-muted)">Financial threshold exceeded ($10,000 > $500 max limit)</td>
+                                <td><span class="metric-badge badge-amber">PENDING</span></td>
+                                <td>
+                                    <button class="btn-primary" style="background: #10b981; font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="resolveApprovalUI('appr_101', 'APPROVED')">
+                                        <i class="fa-solid fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn-secondary" style="color: #f87171; font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="resolveApprovalUI('appr_101', 'REJECTED')">
+                                        <i class="fa-solid fa-xmark"></i> Reject
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="code-snippet-tag">appr_102</td>
+                                <td><b>Execute SQL TRUNCATE TABLE payroll</b></td>
+                                <td>hr_payroll_bot</td>
+                                <td style="color: var(--text-muted)">Destructive DDL SQL statement requested</td>
+                                <td><span class="metric-badge badge-amber">PENDING</span></td>
+                                <td>
+                                    <button class="btn-primary" style="background: #10b981; font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="resolveApprovalUI('appr_102', 'APPROVED')">
+                                        <i class="fa-solid fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn-secondary" style="color: #f87171; font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="resolveApprovalUI('appr_102', 'REJECTED')">
+                                        <i class="fa-solid fa-xmark"></i> Reject
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 12: Declarative Policy Engine -->
+            <div id="tab-policies" class="panels-grid hidden">
+                <div class="panel" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-sliders" style="color: #c084fc"></i> Custom Declarative Policy Engine</div>
+                        <span class="metric-badge badge-purple">3 ACTIVE POLICIES</span>
+                    </div>
+                    <table class="threat-table">
+                        <thead>
+                            <tr>
+                                <th>Policy ID</th>
+                                <th>Policy Name</th>
+                                <th>Action Taken</th>
+                                <th>Policy Description & Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="code-snippet-tag">pol_intern_restriction</td>
+                                <td><b>Restrict Intern Role Tools</b></td>
+                                <td><span class="metric-badge badge-red">BLOCK</span></td>
+                                <td style="color: var(--text-muted)">If role == 'intern' and tool == 'delete_database' ➔ Block request</td>
+                            </tr>
+                            <tr>
+                                <td class="code-snippet-tag">pol_high_cost_approval</td>
+                                <td><b>Require Human Approval for High Cost</b></td>
+                                <td><span class="metric-badge badge-amber">REQUIRE_APPROVAL</span></td>
+                                <td style="color: var(--text-muted)">If estimated cost > $0.50 or refund > $500 ➔ Pause for admin approval</td>
+                            </tr>
+                            <tr>
+                                <td class="code-snippet-tag">pol_pci_redact</td>
+                                <td><b>Enforce Mandatory PCI Card Redaction</b></td>
+                                <td><span class="metric-badge badge-cyan">REDACT_PCI</span></td>
+                                <td style="color: var(--text-muted)">PCI-DSS Compliance: Redact credit card numbers before egress</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </div>
     </main>
@@ -1229,13 +1419,29 @@ const res = await client.createChatCompletion({
             const tSuper = document.getElementById('tab-superadmin');
             const tOrg = document.getElementById('tab-orgadmin');
             const tEval = document.getElementById('tab-evaluations');
+            const tReplay = document.getElementById('tab-replay');
+            const tAppr = document.getElementById('tab-approvals');
+            const tPol = document.getElementById('tab-policies');
+
             if(tSuper) tSuper.classList.add('hidden');
             if(tOrg) tOrg.classList.add('hidden');
             if(tEval) tEval.classList.add('hidden');
+            if(tReplay) tReplay.classList.add('hidden');
+            if(tAppr) tAppr.classList.add('hidden');
+            if(tPol) tPol.classList.add('hidden');
             
             if(tabName === 'dashboard') {
                 document.getElementById('tab-dashboard').classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "Control Panel Overview";
+            } else if(tabName === 'replay') {
+                if(tReplay) tReplay.classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "AI Session Replay & Memory Inspector (Chrome DevTools for AI)";
+            } else if(tabName === 'approvals') {
+                if(tAppr) tAppr.classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Human Approval Workflows Queue";
+            } else if(tabName === 'policies') {
+                if(tPol) tPol.classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Custom Declarative Policy Engine";
             } else if(tabName === 'superadmin') {
                 if(tSuper) tSuper.classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "Super Admin Command Center";
@@ -1261,6 +1467,30 @@ const res = await client.createChatCompletion({
                 document.getElementById('tab-calculator').classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "ROI API Cost Savings Calculator";
             }
+        }
+
+        async function triggerStepReplay() {
+            showToast("🔍 Replaying Session Step 1: User Request...");
+            setTimeout(() => showToast("🧠 Replaying Step 2-3: Memory & Context Loaded..."), 1200);
+            setTimeout(() => showToast("⚠️ Replaying Step 4: Tool Execution refund_customer($10,000)..."), 2400);
+            setTimeout(() => showToast("🛑 Replaying Step 5-6: Policy Paused. Created Ticket #appr_101!"), 3600);
+        }
+
+        async function resolveApprovalUI(reqId, decision) {
+            if(currentRole === 'Viewer') {
+                showToast("❌ Permission Denied: Viewer role is read-only!");
+                return;
+            }
+            try {
+                const res = await fetch(`/v1/approvals/${reqId}/resolve`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentAuthToken}` },
+                    body: JSON.stringify({ decision })
+                });
+                if(res.ok) {
+                    showToast(`Ticket ${reqId} resolved as ${decision}!`);
+                }
+            } catch(e) {}
         }
 
         async function toggleOrgStatusUI(orgId, status) {
