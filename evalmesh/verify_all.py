@@ -322,12 +322,81 @@ def run_comprehensive_double_check():
     passed_checks += 1
     print(" [PASS] Check 30: GitHub-Style Incident Event Timeline Logger Stream verified.")
 
+    # CHECK 31: AI Gateway Benchmark Lab (evalmesh.benchmark_lab)
+    total_checks += 1
+    from evalmesh.benchmark_lab import benchmark_lab_engine
+    bench_res = benchmark_lab_engine.run_benchmark("Summarize contract")
+    assert len(bench_res["benchmark_results"]) == 4
+    assert bench_res["recommendations"]["cheapest_model"] == "DeepSeek R1 (DeepSeek)"
+    passed_checks += 1
+    print(" [PASS] Check 31: AI Gateway Benchmark Lab (Side-by-Side Model Comparison) verified.")
+
+    # CHECK 32: Agent Graph Visualization Engine (evalmesh.agent_graph)
+    total_checks += 1
+    from evalmesh.agent_graph import agent_graph_engine
+    graph_res = agent_graph_engine.generate_graph("sess_graph_101")
+    assert len(graph_res["graph"]["nodes"]) == 9
+    passed_checks += 1
+    print(" [PASS] Check 32: Agent Graph Execution Visualizer verified.")
+
+    # CHECK 33: Executive AI Risk Dashboard Engine (evalmesh.risk_dashboard)
+    total_checks += 1
+    from evalmesh.risk_dashboard import risk_dashboard_engine
+    risk_res = risk_dashboard_engine.get_risk_scorecard()
+    assert risk_res["overall_risk_score"] == 93
+    assert risk_res["dimensions"]["compliance"]["score"] == 100
+    passed_checks += 1
+    print(" [PASS] Check 33: Executive AI Risk Dashboard (5-Dimension Scorecard) verified.")
+
+    # CHECK 34: AI Governance Reports Exporter (evalmesh.governance_reports)
+    total_checks += 1
+    from evalmesh.governance_reports import governance_reports_engine
+    gov_rpt = governance_reports_engine.generate_report("org_acme_01")
+    assert gov_rpt["executive_summary"]["security_events_blocked"] == 48
+    passed_checks += 1
+    print(" [PASS] Check 34: AI Governance Reports Exporter verified.")
+
+    # CHECK 35: Enterprise Plugin Marketplace (evalmesh.plugins)
+    total_checks += 1
+    from evalmesh.plugins import plugin_marketplace
+    plugs = plugin_marketplace.list_plugins()
+    assert len(plugs) == 6
+    passed_checks += 1
+    print(" [PASS] Check 35: Enterprise Plugin Marketplace (Salesforce, SAP, Jira, Slack, Notion) verified.")
+
+    # CHECK 36: Custom Model Adapter SDK (evalmesh.adapter_sdk)
+    total_checks += 1
+    from evalmesh.adapter_sdk import custom_adapter_registry, CustomModelAdapter
+    adapter = CustomModelAdapter(model_name="MyTestModel")
+    out = adapter.invoke("Hello test prompt")
+    assert out["model"] == "MyTestModel"
+    passed_checks += 1
+    print(" [PASS] Check 36: Custom Model Adapter SDK (Vendor Lock-in Bypass) verified.")
+
+    # CHECK 37: Predictive AI Cost Forecasting (evalmesh.cost_forecasting)
+    total_checks += 1
+    from evalmesh.cost_forecasting import cost_forecasting_engine
+    cost_fc = cost_forecasting_engine.forecast_spend(1200.0, 18.0)
+    assert cost_fc["predicted_next_month_spend_usd"] == 1416.0
+    passed_checks += 1
+    print(" [PASS] Check 37: Predictive AI Cost Forecasting Engine verified.")
+
+    # CHECK 38: One-Click Incident Report Generator (evalmesh.incident_report)
+    total_checks += 1
+    from evalmesh.incident_report import incident_report_generator
+    inc_rpt = incident_report_generator.generate_incident_report("inc_0102")
+    assert inc_rpt["severity"] == "HIGH"
+    assert "WAF blocked" in inc_rpt["impact_summary"]
+    passed_checks += 1
+    print(" [PASS] Check 38: One-Click Post-Mortem Incident Report Generator verified.")
+
     print("\n===============================================================")
     print(f" [SUCCESS] System-Wide Double Check Complete: {passed_checks}/{total_checks} Modules 100% Operational!")
     print("===============================================================")
 
 if __name__ == "__main__":
     run_comprehensive_double_check()
+
 
 
 

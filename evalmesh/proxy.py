@@ -288,7 +288,53 @@ async def proxy_chat_completions(request: Request):
         headers={"x-evalmesh-latency-ms": f"{latency_ms:.2f}"}
     )
 
-# --- ENTERPRISE & COMPLIANCE ENDPOINTS ---
+# --- BENCHMARK LAB & ENTERPRISE INTELLIGENCE ENDPOINTS ---
+
+from evalmesh.benchmark_lab import benchmark_lab_engine
+from evalmesh.agent_graph import agent_graph_engine
+from evalmesh.risk_dashboard import risk_dashboard_engine
+from evalmesh.governance_reports import governance_reports_engine
+from evalmesh.plugins import plugin_marketplace
+from evalmesh.adapter_sdk import custom_adapter_registry
+from evalmesh.cost_forecasting import cost_forecasting_engine
+from evalmesh.incident_report import incident_report_generator
+
+@app.post("/v1/benchmark/run")
+async def run_benchmark_lab(request: Request):
+    body = await request.json()
+    prompt = body.get("prompt", "Summarize this enterprise contract.")
+    return benchmark_lab_engine.run_benchmark(prompt)
+
+@app.get("/v1/graph/visualize/{session_id}")
+async def visualize_agent_graph(session_id: str):
+    return agent_graph_engine.generate_graph(session_id)
+
+@app.get("/v1/risk/scorecard")
+async def get_risk_scorecard():
+    return risk_dashboard_engine.get_risk_scorecard()
+
+@app.get("/v1/reports/governance")
+async def get_governance_report():
+    return governance_reports_engine.generate_report()
+
+@app.get("/v1/plugins")
+async def list_plugins():
+    return {"plugins": plugin_marketplace.list_plugins()}
+
+@app.get("/v1/adapters")
+async def list_adapters():
+    return {"adapters": custom_adapter_registry.list_adapters()}
+
+@app.get("/v1/cost/forecast")
+async def get_cost_forecast():
+    return cost_forecasting_engine.forecast_spend()
+
+@app.get("/v1/incidents/report/{incident_id}")
+async def get_incident_report(incident_id: str):
+    return incident_report_generator.generate_incident_report(incident_id)
+
+
+# --- MULTI-TENANT & ENTERPRISE RBAC ENDPOINTS ---
 
 @app.post("/v1/auth/sso/validate")
 async def validate_sso(request: Request):
