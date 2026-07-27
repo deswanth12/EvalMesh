@@ -216,10 +216,58 @@ def run_comprehensive_double_check():
     passed_checks += 1
     print(" [PASS] Check 17: Multi-Tenant Hierarchy & 4-Tier RBAC Engine (Super Admin, Admin, Evaluator, Viewer) verified.")
 
+    # CHECK 18: CLI Module (evalmesh.cli)
+    total_checks += 1
+    import evalmesh.cli as cli_mod
+    assert hasattr(cli_mod, "main")
+    passed_checks += 1
+    print(" [PASS] Check 18: Command-Line Management Interface (evalmesh.cli) verified.")
+
+    # CHECK 19: Demo Test Showcase (evalmesh.demo_test)
+    total_checks += 1
+    import evalmesh.demo_test as demo_mod
+    assert hasattr(demo_mod, "run_evalmesh_verification_tests")
+    passed_checks += 1
+    print(" [PASS] Check 19: Demo Showcase Test Suite (evalmesh.demo_test) verified.")
+
+    # CHECK 20: CI Runner Pipeline (evalmesh.ci_runner)
+    total_checks += 1
+    import evalmesh.ci_runner as ci_mod
+    assert hasattr(ci_mod, "run_ci_evaluation_suite")
+    passed_checks += 1
+    print(" [PASS] Check 20: CI/CD Deployment Test Runner (evalmesh.ci_runner) verified.")
+
+    # CHECK 21: Configuration Manager (evalmesh.config)
+    total_checks += 1
+    import evalmesh.config as config_mod
+    assert hasattr(config_mod, "PROXIED_HOST")
+    passed_checks += 1
+    print(" [PASS] Check 21: Centralized Configuration Management (evalmesh.config) verified.")
+
+    # CHECK 22: Python & TypeScript SDKs (evalmesh.sdk)
+    total_checks += 1
+    from evalmesh.sdk import EvalMeshClient
+    sdk_client = EvalMeshClient(api_key="em_live_1234567890abcdef")
+    assert sdk_client.base_url == "http://localhost:8000"
+    passed_checks += 1
+    print(" [PASS] Check 22: Python & TypeScript Client SDKs (evalmesh.sdk) verified.")
+
+    # CHECK 23: Dashboard Control Plane Asset (evalmesh/dashboard/index.html)
+    total_checks += 1
+    dash_path = os.path.join(os.path.dirname(__file__), "dashboard", "index.html")
+    assert os.path.exists(dash_path)
+    with open(dash_path, "r", encoding="utf-8") as f:
+        html_content = f.read()
+    assert "Super Admin" in html_content
+    assert "EvalMesh" in html_content
+    passed_checks += 1
+    print(" [PASS] Check 23: Control Panel Web Dashboard UI (evalmesh/dashboard/index.html) verified.")
+
     print("\n===============================================================")
     print(f" [SUCCESS] System-Wide Double Check Complete: {passed_checks}/{total_checks} Modules 100% Operational!")
     print("===============================================================")
 
 if __name__ == "__main__":
     run_comprehensive_double_check()
+
 

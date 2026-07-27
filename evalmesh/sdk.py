@@ -1,5 +1,7 @@
+import json
+import urllib.request
+import urllib.error
 from typing import Optional, Dict, Any
-import requests
 
 class EvalMeshClient:
     """
@@ -8,7 +10,8 @@ class EvalMeshClient:
     """
 
     def __init__(self, proxy_url: str = "http://localhost:8000", api_key: str = "mock_key"):
-        self.proxy_url = proxy_url.rstrip("/")
+        self.base_url = proxy_url.rstrip("/")
+        self.proxy_url = self.base_url
         self.api_key = api_key
 
     def create_chat_completion(
@@ -36,8 +39,16 @@ class EvalMeshClient:
         if tools:
             payload["tools"] = tools
 
-        response = requests.post(url, json=payload, headers=headers)
-        if response.status_code != 200:
-            raise Exception(f"EvalMesh Error ({response.status_code}): {response.text}")
-            
-        return response.json()
+        data_bytes = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data_bytes, headers=headers, method="POST")
+
+        try:
+            with urllib.request.urlopen(req) as resp:
+                res_body = resp.read().decode("utf-8")
+                return json.loads(res_body)
+        except urllib.error.HTTPError as e:
+            err_body = e.read().decode("utf-8")
+            try:
+                return json.loads(err_body)
+            except Exception:
+                raise Exception(f"EvalMesh API Error [{e.code}]: {err_body}")
