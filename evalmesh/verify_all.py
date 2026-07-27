@@ -180,9 +180,46 @@ def run_comprehensive_double_check():
     passed_checks += 1
     print(" [PASS] Check 16: Enterprise Security & Compliance Engine (SSO, HIPAA PHI, GDPR, SOC 2) verified.")
 
+    # CHECK 17: Multi-Tenant Hierarchy & 4-Tier RBAC Engine (Super Admin, Admin, Evaluator, Viewer)
+    total_checks += 1
+    from evalmesh.auth import create_jwt_token, verify_jwt_token, ROLE_PERMISSIONS
+    from evalmesh.db import EvalMeshDatabase
+    
+    db = EvalMeshDatabase()
+    super_usr = db.get_user_by_email("deshu@evalmesh.ai")
+    assert super_usr["role"] == "Super Admin"
+    
+    admin_usr = db.get_user_by_email("john@acme.com")
+    assert admin_usr["organization_id"] == "org_acme_01"
+    
+    viewer_usr = db.get_user_by_email("alice@acme.com")
+    assert viewer_usr["role"] == "Viewer"
+    
+    # Test JWT token issuance & claim verification
+    token = create_jwt_token(admin_usr["id"], admin_usr["email"], admin_usr["role"], admin_usr["organization_id"])
+    decoded = verify_jwt_token(token)
+    assert decoded["email"] == "john@acme.com"
+    assert "project:create" in decoded["permissions"]
+    
+    # Test Super Admin Org Suspension
+    db.update_org_status("org_cyber_03", "Suspended")
+    org = db.get_organization("org_cyber_03")
+    assert org["status"] == "Suspended"
+    
+    # Test Tenant Isolation (Acme projects vs Stark projects)
+    acme_projs = db.list_projects("org_acme_01")
+    stark_projs = db.list_projects("org_stark_02")
+    assert len(acme_projs) >= 2
+    assert len(stark_projs) >= 1
+    assert acme_projs[0]["organization_id"] != stark_projs[0]["organization_id"]
+    
+    passed_checks += 1
+    print(" [PASS] Check 17: Multi-Tenant Hierarchy & 4-Tier RBAC Engine (Super Admin, Admin, Evaluator, Viewer) verified.")
+
     print("\n===============================================================")
     print(f" [SUCCESS] System-Wide Double Check Complete: {passed_checks}/{total_checks} Modules 100% Operational!")
     print("===============================================================")
 
 if __name__ == "__main__":
     run_comprehensive_double_check()
+

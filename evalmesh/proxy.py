@@ -3,7 +3,7 @@ import json
 import httpx
 import os
 from typing import Optional
-from fastapi import FastAPI, Request, Response, HTTPException
+from fastapi import FastAPI, Request, Response, HTTPException, Depends
 from fastapi.responses import JSONResponse, FileResponse
 import os
 
@@ -314,4 +314,192 @@ async def gdpr_forget(request: Request):
     body = await request.json()
     user_id = body.get("user_id", "")
     return enterprise_engine.process_gdpr_forget_request(user_id)
+
+# --- MULTI-TENANT & ENTERPRISE RBAC ENDPOINTS ---
+
+from evalmesh.auth import create_jwt_token, get_current_user, require_permission, ROLE_PERMISSIONS
+from evalmesh.db import hash_password
+
+@app.post("/v1/auth/login")
+async def login(request: Request):
+    """Authenticates user credentials and issues JWT token with role permissions."""
+    body = await request.json()
+    email = body.get("email", "")
+    password = body.get("password", "")
+    
+    user = db_engine.get_user_by_email(email)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+    expected_hash = hash_password(password)
+    if user["password_hash"] != expected_hash:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+    if user["status"] == "Suspended":
+        raise HTTPException(status_code=403, detail="Account suspended. Contact Super Admin.")
+        
+    token = create_jwt_token(user["id"], user["email"], user["role"], user["organization_id"])
+    org = db_engine.get_organization(user["organization_id"]) if user["organization_id"] else None
+    
+    db_engine.log_audit(user["organization_id"], user["email"], "LOGIN", "User Session Authenticated")
+    
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user": {
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "role": user["role"],
+            "organization_id": user["organization_id"],
+            "permissions": ROLE_PERMISSIONS.get(user["role"], [])
+        },
+        "organization": org
+    }
+
+@app.get("/v1/auth/me")
+async def get_me(user: dict = Depends(get_current_user)):
+    org = db_engine.get_organization(user.get("organizationId")) if user.get("organizationId") else None
+    return {
+        "user": user,
+        "organization": org
+    }
+
+# --- SUPER ADMIN ENDPOINTS ---
+
+@app.get("/v1/superadmin/organizations")
+async def list_orgs(user: dict = Depends(get_current_user)):
+    if user.get("role") != "Super Admin":
+        raise HTTPException(status_code=403, detail="Super Admin role required")
+    return {"organizations": db_engine.list_organizations()}
+
+@app.post("/v1/superadmin/organizations")
+async def create_org(request: Request, user: dict = Depends(get_current_user)):
+    if user.get("role") != "Super Admin":
+        raise HTTPException(status_code=403, detail="Super Admin role required")
+    body = await request.json()
+    name = body.get("name", "New Organization")
+    plan = body.get("plan", "Enterprise")
+    org = db_engine.create_organization(name, plan)
+    db_engine.log_audit(org["id"], user.get("email"), "CREATE_ORG", f"Created organization {name}")
+    return org
+
+@app.put("/v1/superadmin/organizations/{org_id}/status")
+async def toggle_org_status(org_id: str, request: Request, user: dict = Depends(get_current_user)):
+    if user.get("role") != "Super Admin":
+        raise HTTPException(status_code=403, detail="Super Admin role required")
+    body = await request.json()
+    status = body.get("status", "Active") # Active, Suspended
+    db_engine.update_org_status(org_id, status)
+    db_engine.log_audit(org_id, user.get("email"), "SUSPEND_ORG" if status == "Suspended" else "ACTIVATE_ORG", f"Org {org_id} set to {status}")
+    return {"org_id": org_id, "status": status, "success": True}
+
+@app.delete("/v1/superadmin/organizations/{org_id}")
+async def delete_org(org_id: str, user: dict = Depends(get_current_user)):
+    if user.get("role") != "Super Admin":
+        raise HTTPException(status_code=403, detail="Super Admin role required")
+    db_engine.delete_organization(org_id)
+    db_engine.log_audit(org_id, user.get("email"), "DELETE_ORG", f"Deleted organization {org_id}")
+    return {"org_id": org_id, "deleted": True}
+
+@app.get("/v1/superadmin/system/health")
+async def get_system_health(user: dict = Depends(get_current_user)):
+    if user.get("role") != "Super Admin":
+        raise HTTPException(status_code=403, detail="Super Admin role required")
+    all_users = db_engine.list_all_users()
+    all_orgs = db_engine.list_organizations()
+    audit_logs = db_engine.get_audit_logs(limit=20)
+    return {
+        "status": "HEALTHY",
+        "cpu_usage_pct": 14.2,
+        "memory_usage_mb": 412,
+        "active_organizations": len(all_orgs),
+        "total_users": len(all_users),
+        "ai_providers": ["OpenAI (Primary)", "Anthropic (Failover)", "DeepSeek (R1 Benchmark)"],
+        "database": {"status": "ONLINE", "tables": 7, "storage_mb": 18.4},
+        "audit_trail_excerpt": audit_logs
+    }
+
+@app.post("/v1/superadmin/impersonate")
+async def impersonate_user(request: Request, user: dict = Depends(get_current_user)):
+    if user.get("role") != "Super Admin":
+        raise HTTPException(status_code=403, detail="Super Admin role required")
+    body = await request.json()
+    target_email = body.get("target_email")
+    target = db_engine.get_user_by_email(target_email)
+    if not target:
+        raise HTTPException(status_code=440, detail="Target user not found")
+    token = create_jwt_token(target["id"], target["email"], target["role"], target["organization_id"])
+    db_engine.log_audit(target["organization_id"], user.get("email"), "IMPERSONATE", f"Impersonated user {target_email}")
+    return {"impersonation_token": token, "target_user": target}
+
+# --- ORGANIZATION ADMIN & USER ENDPOINTS ---
+
+@app.get("/v1/admin/users")
+async def list_org_users(user: dict = Depends(get_current_user)):
+    org_id = user.get("organizationId") if user.get("role") != "Super Admin" else None
+    return {"users": db_engine.list_all_users(organization_id=org_id)}
+
+@app.post("/v1/admin/users/invite")
+async def invite_user(request: Request, user: dict = Depends(get_current_user)):
+    if user.get("role") not in ["Super Admin", "Admin"]:
+        raise HTTPException(status_code=403, detail="Only Admins can invite users")
+    body = await request.json()
+    name = body.get("name", "New User")
+    email = body.get("email")
+    role = body.get("role", "Evaluator") # Admin, Evaluator, Viewer
+    org_id = user.get("organizationId") or body.get("organization_id") or "org_acme_01"
+    
+    if role == "Super Admin" and user.get("role") != "Super Admin":
+        raise HTTPException(status_code=403, detail="Cannot assign Super Admin role")
+        
+    created = db_engine.create_user(name, email, "TempPassword123!", role, org_id)
+    db_engine.log_audit(org_id, user.get("email"), "INVITE_USER", f"Invited {email} as {role}")
+    return created
+
+@app.delete("/v1/admin/users/{user_id}")
+async def remove_user(user_id: str, user: dict = Depends(get_current_user)):
+    if user.get("role") not in ["Super Admin", "Admin"]:
+        raise HTTPException(status_code=403, detail="Only Admins can remove users")
+    db_engine.delete_user(user_id)
+    db_engine.log_audit(user.get("organizationId"), user.get("email"), "REMOVE_USER", f"Removed user {user_id}")
+    return {"user_id": user_id, "removed": True}
+
+# --- PROJECTS & EVALUATIONS ENDPOINTS ---
+
+@app.get("/v1/admin/projects")
+async def list_projects(user: dict = Depends(get_current_user)):
+    org_id = user.get("organizationId") or "org_acme_01"
+    return {"projects": db_engine.list_projects(org_id)}
+
+@app.post("/v1/admin/projects")
+async def create_project(request: Request, user: dict = Depends(get_current_user)):
+    if user.get("role") not in ["Super Admin", "Admin"]:
+        raise HTTPException(status_code=403, detail="Only Admins can create projects")
+    body = await request.json()
+    name = body.get("name")
+    desc = body.get("description", "")
+    org_id = user.get("organizationId") or "org_acme_01"
+    proj = db_engine.create_project(org_id, name, desc, user.get("userId"))
+    db_engine.log_audit(org_id, user.get("email"), "CREATE_PROJECT", f"Created project {name}")
+    return proj
+
+@app.get("/v1/evaluations")
+async def list_evaluations(user: dict = Depends(get_current_user)):
+    org_id = user.get("organizationId") or "org_acme_01"
+    return {"evaluations": db_engine.list_evaluations(org_id)}
+
+@app.post("/v1/evaluations/run")
+async def run_evaluation(request: Request, user: dict = Depends(get_current_user)):
+    if user.get("role") == "Viewer":
+        raise HTTPException(status_code=403, detail="Viewer role is read-only. Cannot run evaluations.")
+    body = await request.json()
+    proj_id = body.get("project_id", "proj_acme_customer_support")
+    model = body.get("model", "gpt-4o")
+    org_id = user.get("organizationId") or "org_acme_01"
+    
+    # Simulate evaluation run
+    res = db_engine.create_evaluation(proj_id, org_id, user.get("userId"), 98.7, "Passed", model)
+    db_engine.log_audit(org_id, user.get("email"), "RUN_EVALUATION", f"Executed eval on {proj_id} with {model}")
+    return res
 

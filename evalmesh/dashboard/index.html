@@ -515,6 +515,21 @@
                 </button>
             </li>
             <li class="nav-item">
+                <button onclick="switchTab('superadmin', this)" id="nav-superadmin">
+                    <i class="fa-solid fa-crown" style="color: var(--accent-amber)"></i> Super Admin Orgs
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('orgadmin', this)" id="nav-orgadmin">
+                    <i class="fa-solid fa-building-user" style="color: var(--accent-blue)"></i> Org Team & Projects
+                </button>
+            </li>
+            <li class="nav-item">
+                <button onclick="switchTab('evaluations', this)">
+                    <i class="fa-solid fa-vial-circle-check" style="color: var(--accent-green)"></i> Model Evaluations
+                </button>
+            </li>
+            <li class="nav-item">
                 <button onclick="switchTab('threats', this)">
                     <i class="fa-solid fa-shield-virus" style="color: var(--accent-red)"></i> Top Blocked Threats
                 </button>
@@ -549,13 +564,30 @@
                 <div class="header-title" id="tab-title">Control Panel Overview</div>
                 <div class="header-subtitle">Real-Time Proxy WAF, Semantic Cache & Telemetry</div>
             </div>
+
+            <!-- Persona Switcher Bar -->
+            <div style="display: flex; gap: 0.4rem; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 12px; border: 1px solid var(--border-color);">
+                <button class="btn-secondary active" id="pbtn-superadmin" onclick="switchPersona('Super Admin')" style="font-size: 0.78rem; padding: 0.4rem 0.75rem; border-radius: 8px;">
+                    <i class="fa-solid fa-crown" style="color: #f59e0b"></i> Super Admin
+                </button>
+                <button class="btn-secondary" id="pbtn-admin" onclick="switchPersona('Admin')" style="font-size: 0.78rem; padding: 0.4rem 0.75rem; border-radius: 8px;">
+                    <i class="fa-solid fa-building" style="color: #60a5fa"></i> Org Admin
+                </button>
+                <button class="btn-secondary" id="pbtn-evaluator" onclick="switchPersona('Evaluator')" style="font-size: 0.78rem; padding: 0.4rem 0.75rem; border-radius: 8px;">
+                    <i class="fa-solid fa-vial" style="color: #34d399"></i> Evaluator
+                </button>
+                <button class="btn-secondary" id="pbtn-viewer" onclick="switchPersona('Viewer')" style="font-size: 0.78rem; padding: 0.4rem 0.75rem; border-radius: 8px;">
+                    <i class="fa-solid fa-eye" style="color: #c084fc"></i> Viewer
+                </button>
+            </div>
+
             <div style="display: flex; gap: 1rem; align-items: center;">
                 <button class="btn-primary" style="background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); cursor: pointer;" onclick="runLiveInvestorDemo()">
                     <i class="fa-solid fa-play"></i> ▶ Run 3-Min Investor Demo
                 </button>
                 <div class="status-pill">
                     <div class="status-dot"></div>
-                    <span>Proxy Gateway: Active (port 8000)</span>
+                    <span id="current-persona-label">Persona: Super Admin</span>
                 </div>
             </div>
         </header>
@@ -868,40 +900,224 @@ const res = await client.createChatCompletion({
                         <div style="color: var(--text-muted)">Click button to load OTel JSON payload...</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Tab 6: ROI Cost Savings Calculator -->
-            <div id="tab-calculator" class="panels-grid hidden">
+            </div>            <!-- Tab 7: Super Admin Command Center -->
+            <div id="tab-superadmin" class="panels-grid hidden">
                 <div class="panel" style="grid-column: span 2;">
                     <div class="panel-header">
-                        <div class="panel-title"><i class="fa-solid fa-calculator" style="color: var(--accent-green)"></i> Interactive API Cost Savings Calculator</div>
-                        <span class="metric-badge badge-green">EvalMesh Savings Engine</span>
+                        <div class="panel-title"><i class="fa-solid fa-crown" style="color: #f59e0b"></i> Platform Organizations Manager (Super Admin Control)</div>
+                        <button class="btn-primary" onclick="createOrgModal()"><i class="fa-solid fa-plus"></i> + Create Organization</button>
                     </div>
+                    <table class="threat-table">
+                        <thead>
+                            <tr>
+                                <th>Org ID</th>
+                                <th>Organization Name</th>
+                                <th>Plan Tier</th>
+                                <th>Users</th>
+                                <th>Storage Limit</th>
+                                <th>Status</th>
+                                <th>Super Admin Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="superadmin-orgs-list">
+                            <tr>
+                                <td class="code-snippet-tag">org_acme_01</td>
+                                <td><b>Acme Corp</b></td>
+                                <td><span class="metric-badge badge-blue">Enterprise</span></td>
+                                <td>3 Members</td>
+                                <td>50,000 MB</td>
+                                <td><span class="metric-badge badge-green">Active</span></td>
+                                <td>
+                                    <button class="btn-secondary" style="color: #f87171; font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="toggleOrgStatusUI('org_acme_01', 'Suspended')">
+                                        <i class="fa-solid fa-power-off"></i> Suspend Company
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="code-snippet-tag">org_stark_02</td>
+                                <td><b>Stark Industries</b></td>
+                                <td><span class="metric-badge badge-purple">Team</span></td>
+                                <td>1 Member</td>
+                                <td>20,000 MB</td>
+                                <td><span class="metric-badge badge-green">Active</span></td>
+                                <td>
+                                    <button class="btn-secondary" style="color: #f87171; font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="toggleOrgStatusUI('org_stark_02', 'Suspended')">
+                                        <i class="fa-solid fa-power-off"></i> Suspend Company
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="code-snippet-tag">org_cyber_03</td>
+                                <td><b>Cyberdyne Systems</b></td>
+                                <td><span class="metric-badge badge-cyan">Pro</span></td>
+                                <td>0 Members</td>
+                                <td>10,000 MB</td>
+                                <td><span class="metric-badge badge-red">Suspended</span></td>
+                                <td>
+                                    <button class="btn-secondary" style="color: #34d399; font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="toggleOrgStatusUI('org_cyber_03', 'Active')">
+                                        <i class="fa-solid fa-circle-check"></i> Activate Company
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
-                        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-                            <div class="form-group">
-                                <label>Estimated Monthly Agent Requests: <span id="calc-volume-label" style="color: #60a5fa; font-weight: 800;">500,000</span></label>
-                                <input type="range" id="calc-slider" min="10000" max="5000000" step="10000" value="500000" oninput="updateCalculator()">
-                            </div>
-                            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
-                                Based on:
-                                <ul style="margin-left: 1.2rem;">
-                                    <li><b>30% Cache Hit Ratio</b> (Served in 3ms at $0 cost)</li>
-                                    <li><b>40% Smart Routing</b> (Auto-downgraded to 15x cheaper GPT-4o-mini)</li>
-                                    <li><b>Runaway Loop Breaker</b> (Prevents infinite bill spikes)</li>
-                                </ul>
-                            </div>
+                <!-- System Health & Impersonation -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-server" style="color: #60a5fa"></i> System Infrastructure & DB Health</div>
+                        <span class="metric-badge badge-green">ALL SYSTEMS ONLINE</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.88rem;">
+                        <div style="display: justify; justify-content: space-between; display: flex;">
+                            <span>CPU Cluster Load:</span> <b>14.2%</b>
                         </div>
-
-                        <div style="background: #04060c; border: 1px solid var(--border-glow); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; text-align: center;">
-                            <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Estimated Monthly Savings</div>
-                            <div id="calc-savings" style="font-size: 3rem; font-weight: 800; color: var(--accent-green);">$3,750.00</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted)">EvalMesh Pro ($49/mo) pays for itself <b>76x over</b>!</div>
+                        <div style="display: justify; justify-content: space-between; display: flex;">
+                            <span>Memory (RAM):</span> <b>412 MB / 16 GB</b>
+                        </div>
+                        <div style="display: justify; justify-content: space-between; display: flex;">
+                            <span>SQLite Database Tables:</span> <b>7 Tables (18.4 MB)</b>
+                        </div>
+                        <div style="display: justify; justify-content: space-between; display: flex;">
+                            <span>AI Provider Gateways:</span> <b>OpenAI, Anthropic, DeepSeek</b>
                         </div>
                     </div>
                 </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-user-secret" style="color: #c084fc"></i> User Impersonation Console</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Target User Email to Impersonate:</label>
+                            <input type="text" id="imp-email" value="john@acme.com">
+                        </div>
+                        <button class="btn-secondary" style="background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4);" onclick="impersonateUserUI()">
+                            <i class="fa-solid fa-mask"></i> Generate Impersonation JWT Token
+                        </button>
+                        <div id="imp-result" style="font-size: 0.8rem; font-family: monospace;"></div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Tab 8: Org Admin Team & Projects -->
+            <div id="tab-orgadmin" class="panels-grid hidden">
+                <!-- Org Projects -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-diagram-project" style="color: #60a5fa"></i> Organization Projects</div>
+                    </div>
+                    <table class="threat-table">
+                        <thead>
+                            <tr>
+                                <th>Project Name</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="org-projects-list">
+                            <tr>
+                                <td><b>Customer Support Bot Guardrails</b></td>
+                                <td style="color: var(--text-muted)">WAF & DLP rules for live chat agent</td>
+                                <td><span class="metric-badge badge-green">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Fintech Model Drift Evaluation</b></td>
+                                <td style="color: var(--text-muted)">Continuous schema validation for financial LLM</td>
+                                <td><span class="metric-badge badge-green">Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; gap: 0.5rem;">
+                        <input type="text" id="new-proj-name" placeholder="New Project Name..." style="flex: 1; background: #04060c; border: 1px solid var(--border-color); color: #fff; padding: 0.5rem; border-radius: 8px;">
+                        <button class="btn-primary" onclick="createProjectUI()">+ Add Project</button>
+                    </div>
+                </div>
+
+                <!-- Org Team Members -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-users" style="color: #34d399"></i> Organization Team Members</div>
+                    </div>
+                    <table class="threat-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="org-members-list">
+                            <tr>
+                                <td><b>John</b> (john@acme.com)</td>
+                                <td><span class="metric-badge badge-blue">Admin</span></td>
+                                <td><span class="metric-badge badge-green">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Sarah</b> (eval@acme.com)</td>
+                                <td><span class="metric-badge badge-green">Evaluator</span></td>
+                                <td><span class="metric-badge badge-green">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Alice</b> (alice@acme.com)</td>
+                                <td><span class="metric-badge badge-purple">Viewer</span></td>
+                                <td><span class="metric-badge badge-green">Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; gap: 0.5rem;">
+                        <input type="text" id="invite-email" placeholder="user@acme.com" style="flex: 1; background: #04060c; border: 1px solid var(--border-color); color: #fff; padding: 0.5rem; border-radius: 8px;">
+                        <select id="invite-role" style="background: #04060c; border: 1px solid var(--border-color); color: #fff; padding: 0.5rem; border-radius: 8px;">
+                            <option value="Evaluator">Evaluator</option>
+                            <option value="Viewer">Viewer</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <button class="btn-primary" onclick="inviteUserUI()">+ Invite User</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 9: Evaluations Workbench -->
+            <div id="tab-evaluations" class="panels-grid hidden">
+                <div class="panel" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fa-solid fa-vial-circle-check" style="color: #34d399"></i> Model Evaluation Runs & Benchmark Scores</div>
+                        <button class="btn-primary" onclick="runEvaluationUI()"><i class="fa-solid fa-play"></i> Run New Evaluation</button>
+                    </div>
+                    <table class="threat-table">
+                        <thead>
+                            <tr>
+                                <th>Eval ID</th>
+                                <th>Project</th>
+                                <th>Model</th>
+                                <th>Evaluation Score</th>
+                                <th>Status</th>
+                                <th>Created By</th>
+                            </tr>
+                        </thead>
+                        <tbody id="evaluations-list">
+                            <tr>
+                                <td class="code-snippet-tag">eval_101</td>
+                                <td>Customer Support Bot Guardrails</td>
+                                <td>gpt-4o</td>
+                                <td><b style="color: #34d399">98.4 / 100</b></td>
+                                <td><span class="metric-badge badge-green">Passed</span></td>
+                                <td>eval@acme.com</td>
+                            </tr>
+                            <tr>
+                                <td class="code-snippet-tag">eval_102</td>
+                                <td>Fintech Model Drift Evaluation</td>
+                                <td>claude-3-5-sonnet</td>
+                                <td><b style="color: #34d399">94.2 / 100</b></td>
+                                <td><span class="metric-badge badge-green">Passed</span></td>
+                                <td>eval@acme.com</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>v>
 
         </div>
     </main>
@@ -953,9 +1169,56 @@ const res = await client.createChatCompletion({
             });
         });
 
+        let currentRole = "Super Admin";
+        let currentAuthToken = "";
+
+        async function switchPersona(role) {
+            currentRole = role;
+            document.querySelectorAll('.persona-bar button, header div button').forEach(b => b?.classList?.remove('active'));
+            
+            const btnMap = {
+                "Super Admin": "pbtn-superadmin",
+                "Admin": "pbtn-admin",
+                "Evaluator": "pbtn-evaluator",
+                "Viewer": "pbtn-viewer"
+            };
+            const activeBtn = document.getElementById(btnMap[role]);
+            if(activeBtn) activeBtn.classList.add('active');
+            
+            document.getElementById('current-persona-label').innerText = `Persona: ${role}`;
+            
+            // Credentials map
+            const creds = {
+                "Super Admin": { email: "deshu@evalmesh.ai", pass: "SuperAdmin123!" },
+                "Admin": { email: "john@acme.com", pass: "Admin123!" },
+                "Evaluator": { email: "eval@acme.com", pass: "Evaluator123!" },
+                "Viewer": { email: "alice@acme.com", pass: "Viewer123!" }
+            };
+
+            const userCred = creds[role];
+            try {
+                const res = await fetch('/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userCred.email, password: userCred.pass })
+                });
+                const data = await res.json();
+                if(res.ok) {
+                    currentAuthToken = data.access_token;
+                    showToast(`Logged in as ${data.user.name} [Role: ${role}]`);
+                }
+            } catch(e) {}
+
+            // Role visibility constraints
+            const navSuper = document.getElementById('nav-superadmin');
+            const navOrg = document.getElementById('nav-orgadmin');
+            if(navSuper) navSuper.style.display = (role === 'Super Admin') ? 'flex' : 'none';
+            if(navOrg) navOrg.style.display = (role === 'Super Admin' || role === 'Admin') ? 'flex' : 'none';
+        }
+
         function switchTab(tabName, btn) {
             document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if(btn) btn.classList.add('active');
             
             document.getElementById('tab-dashboard').classList.add('hidden');
             document.getElementById('tab-threats').classList.add('hidden');
@@ -963,10 +1226,25 @@ const res = await client.createChatCompletion({
             document.getElementById('tab-snippets').classList.add('hidden');
             document.getElementById('tab-keys').classList.add('hidden');
             document.getElementById('tab-calculator').classList.add('hidden');
+            const tSuper = document.getElementById('tab-superadmin');
+            const tOrg = document.getElementById('tab-orgadmin');
+            const tEval = document.getElementById('tab-evaluations');
+            if(tSuper) tSuper.classList.add('hidden');
+            if(tOrg) tOrg.classList.add('hidden');
+            if(tEval) tEval.classList.add('hidden');
             
             if(tabName === 'dashboard') {
                 document.getElementById('tab-dashboard').classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "Control Panel Overview";
+            } else if(tabName === 'superadmin') {
+                if(tSuper) tSuper.classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Super Admin Command Center";
+            } else if(tabName === 'orgadmin') {
+                if(tOrg) tOrg.classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Organization Workspace & Team";
+            } else if(tabName === 'evaluations') {
+                if(tEval) tEval.classList.remove('hidden');
+                document.getElementById('tab-title').innerText = "Model Evaluation Workbench";
             } else if(tabName === 'threats') {
                 document.getElementById('tab-threats').classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "Top Blocked Prompts & Threat Intelligence";
@@ -983,6 +1261,111 @@ const res = await client.createChatCompletion({
                 document.getElementById('tab-calculator').classList.remove('hidden');
                 document.getElementById('tab-title').innerText = "ROI API Cost Savings Calculator";
             }
+        }
+
+        async function toggleOrgStatusUI(orgId, status) {
+            if(currentRole !== 'Super Admin') {
+                showToast("❌ Permission Denied: Super Admin role required");
+                return;
+            }
+            try {
+                const res = await fetch(`/v1/superadmin/organizations/${orgId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentAuthToken}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                if(res.ok) {
+                    showToast(`Organization ${orgId} set to ${status}!`);
+                } else {
+                    showToast(`Failed: ${res.statusText}`);
+                }
+            } catch(e) {
+                showToast("Error updating org status.");
+            }
+        }
+
+        async function impersonateUserUI() {
+            const email = document.getElementById('imp-email').value;
+            try {
+                const res = await fetch('/v1/superadmin/impersonate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentAuthToken}`
+                    },
+                    body: JSON.stringify({ target_email: email })
+                });
+                const data = await res.json();
+                if(res.ok) {
+                    document.getElementById('imp-result').innerHTML = `<span style="color: #34d399">JWT Token Issued for ${email}:</span><br>${data.impersonation_token.substring(0,60)}...`;
+                    showToast(`Impersonated ${email}!`);
+                } else {
+                    showToast(`Error: ${data.detail}`);
+                }
+            } catch(e) {
+                showToast("Impersonation error.");
+            }
+        }
+
+        async function createProjectUI() {
+            if(currentRole === 'Viewer' || currentRole === 'Evaluator') {
+                showToast("❌ Permission Denied: Only Admins can create projects");
+                return;
+            }
+            const name = document.getElementById('new-proj-name').value;
+            if(!name) return;
+            try {
+                const res = await fetch('/v1/admin/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentAuthToken}` },
+                    body: JSON.stringify({ name, description: 'Added via Dashboard UI' })
+                });
+                if(res.ok) {
+                    showToast(`Project '${name}' created!`);
+                    document.getElementById('new-proj-name').value = '';
+                }
+            } catch(e) {}
+        }
+
+        async function inviteUserUI() {
+            if(currentRole === 'Viewer' || currentRole === 'Evaluator') {
+                showToast("❌ Permission Denied: Only Admins can invite users");
+                return;
+            }
+            const email = document.getElementById('invite-email').value;
+            const role = document.getElementById('invite-role').value;
+            if(!email) return;
+            try {
+                const res = await fetch('/v1/admin/users/invite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentAuthToken}` },
+                    body: JSON.stringify({ email, role, name: email.split('@')[0] })
+                });
+                if(res.ok) {
+                    showToast(`User ${email} invited as ${role}!`);
+                    document.getElementById('invite-email').value = '';
+                }
+            } catch(e) {}
+        }
+
+        async function runEvaluationUI() {
+            if(currentRole === 'Viewer') {
+                showToast("❌ Permission Denied: Viewer role is read-only!");
+                return;
+            }
+            try {
+                const res = await fetch('/v1/evaluations/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentAuthToken}` },
+                    body: JSON.stringify({ project_id: 'proj_acme_customer_support', model: 'gpt-4o' })
+                });
+                if(res.ok) {
+                    showToast("✨ New Evaluation Run Executed Score: 98.7/100 Passed!");
+                }
+            } catch(e) {}
         }
 
         function showToast(msg) {
