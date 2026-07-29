@@ -940,8 +940,11 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                 if (roleBadge) roleBadge.style.display = 'none';
                 if (loginBtn) loginBtn.style.display = 'inline-flex';
                 if (logoutBtn) logoutBtn.style.display = 'none';
+                // Open login modal automatically on initial site visit
+                setTimeout(() => { openLoginModal(); }, 300);
             }
         }
+
 
         // Interactive Live Playground Logic
         function loadSamplePrompt(type) {
