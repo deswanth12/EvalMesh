@@ -257,8 +257,10 @@ async def record_golden_pair(payload: dict):
     completion = payload.get("completion", "")
     return dataset_generator.record_pair(prompt, completion, payload.get("metadata"))
 
+@app.post("/api/v1/chat/completions")
 @app.post("/v1/chat/completions")
 async def proxy_chat_completions(request: Request):
+
     """
     Main Reverse Proxy Gateway for OpenAI / LLM chat completion calls.
     Performs API Key Auth, Smart Cost Routing, inline PII sanitization, prompt injection screening,
