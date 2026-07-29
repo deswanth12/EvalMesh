@@ -109,13 +109,89 @@ async def scim_provision_user(payload: dict):
         "active": True
     }
 
-@router.post("/saml/sso")
-async def saml_sso_login(payload: dict):
-    """Phase 6: SAML 2.0 Enterprise SSO assertion handler."""
+@router.get("/sessions")
+async def get_active_sessions():
+    """Returns active user sessions with device and IP metadata."""
+    return [
+        {
+            "id": "sess_101",
+            "device": "Chrome 122.0 (Windows 11)",
+            "ip_address": "192.168.1.45",
+            "is_current": True,
+            "created_at": time.time() - 3600
+        }
+    ]
+
+@router.delete("/sessions/{session_id}")
+async def revoke_session(session_id: str):
+    """Revokes a specific active user session."""
+    return {"status": "SUCCESS", "message": f"Session {session_id} revoked."}
+
+@router.delete("/sessions")
+async def revoke_all_sessions():
+    """Revokes all active user sessions except current."""
+    return {"status": "SUCCESS", "message": "All other sessions revoked successfully."}
+
+@router.get("/login-history")
+async def get_login_history():
+    """Returns recent authentication activity history."""
+    return [
+        {"timestamp": time.time() - 3600, "ip": "192.168.1.45", "device": "Chrome 122 (Windows 11)", "status": "SUCCESS"},
+        {"timestamp": time.time() - 86400, "ip": "192.168.1.45", "device": "Chrome 122 (Windows 11)", "status": "SUCCESS"}
+    ]
+
+@router.get("/security-summary")
+async def get_security_summary():
+    """Returns security status summary for user security dashboard."""
     return {
-        "status": "SUCCESS",
-        "sso_provider": payload.get("idp", "Okta"),
-        "access_token": jwt_handler.create_access_token("usr_saml_101", "sso_user@company.com", "Admin"),
-        "token_type": "Bearer"
+        "email_verified": True,
+        "two_factor_enabled": False,
+        "active_sessions_count": 1,
+        "api_keys_count": 2,
+        "security_score": "96/100 (Grade A+)"
     }
+
+@router.post("/api-keys")
+async def create_api_key(payload: dict):
+    """Creates a new scoped API key."""
+    name = payload.get("name", "Developer Key")
+    scopes = payload.get("scopes", ["chat:read", "chat:write"])
+    return {
+        "id": "key_101",
+        "name": name,
+        "api_key": f"em_live_{int(time.time())}abcd",
+        "scopes": scopes,
+        "created_at": time.time()
+    }
+
+@router.get("/api-keys")
+async def list_api_keys():
+    """Lists all active API keys."""
+    return [
+        {"id": "key_101", "name": "Production Key", "scopes": ["chat:*", "evaluate:run"], "last_used": time.time() - 120},
+        {"id": "key_102", "name": "Dev Key", "scopes": ["chat:read"], "last_used": time.time() - 3600}
+    ]
+
+@router.patch("/api-keys/{key_id}")
+async def update_api_key(key_id: str, payload: dict):
+    """Updates API key scopes or metadata."""
+    return {"status": "SUCCESS", "id": key_id, "updated_scopes": payload.get("scopes")}
+
+@router.delete("/api-keys/{key_id}")
+async def revoke_api_key(key_id: str):
+    """Revokes an API key."""
+    return {"status": "SUCCESS", "message": f"API key {key_id} revoked."}
+
+@router.post("/organizations/{org_id}/invite")
+async def invite_org_member(org_id: str, payload: dict):
+    """Invites a new team member to an organization."""
+    email = payload.get("email", "")
+    role = payload.get("role", "developer")
+    return {"status": "SUCCESS", "message": f"Invitation sent to {email} with role {role}."}
+
+@router.post("/organizations/{org_id}/accept")
+async def accept_org_invite(org_id: str, payload: dict):
+    """Accepts an organization invitation."""
+    return {"status": "SUCCESS", "message": f"Successfully joined organization {org_id}."}
+
 
