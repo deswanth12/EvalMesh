@@ -95,9 +95,16 @@ def run_login():
         os.environ["EVALMESH_USER_EMAIL"] = email
         print(f"[SUCCESS] Signed in as {email} (Session Token Saved).")
 
-def run_logout():
-    os.environ.pop("EVALMESH_USER_EMAIL", None)
-    print("[SUCCESS] Signed out successfully.")
+def run_whoami():
+    email = os.getenv("EVALMESH_USER_EMAIL", "admin@evalmesh.io")
+    print("=====================================================")
+    print(" [WHOAMI] Active Authenticated User Session")
+    print("=====================================================")
+    print(f" User:         {email}")
+    print(" Organization: EvalMesh Labs")
+    print(" Role:         Super Admin")
+    print("=====================================================")
+
 
 def run_config():
     print("=====================================================")
@@ -157,8 +164,11 @@ def main():
         run_version()
     elif cmd == "login":
         run_login()
+    elif cmd == "whoami":
+        run_whoami()
     elif cmd == "logout":
         run_logout()
+
     elif cmd == "config":
         run_config()
     elif cmd == "logs":

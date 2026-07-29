@@ -41,11 +41,31 @@ CREATE TABLE IF NOT EXISTS telemetry_spans (
     created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
 );
 
-CREATE TABLE IF NOT EXISTS incidents (
+CREATE TABLE IF NOT EXISTS api_keys (
     id VARCHAR(64) PRIMARY KEY,
-    severity VARCHAR(20) DEFAULT 'HIGH',
-    description TEXT NOT NULL,
-    root_cause TEXT,
-    status VARCHAR(50) DEFAULT 'MITIGATED',
+    user_id VARCHAR(64) REFERENCES users(id),
+    organization_id VARCHAR(64) REFERENCES organizations(id),
+    key_hash VARCHAR(255) UNIQUE NOT NULL,
+    permissions VARCHAR(255) DEFAULT 'developer',
+    last_used DOUBLE PRECISION,
     created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
 );
+
+CREATE TABLE IF NOT EXISTS sessions (
+    id VARCHAR(64) PRIMARY KEY,
+    user_id VARCHAR(64) REFERENCES users(id),
+    refresh_token_hash VARCHAR(255) NOT NULL,
+    device VARCHAR(255),
+    ip_address VARCHAR(45),
+    expires_at DOUBLE PRECISION NOT NULL,
+    created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
+);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id VARCHAR(64) PRIMARY KEY,
+    user_id VARCHAR(64) REFERENCES users(id),
+    action VARCHAR(255) NOT NULL,
+    details TEXT,
+    created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
+);
+
