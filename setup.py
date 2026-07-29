@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name="evalmesh",
-    version="0.3.0",
-    author="EvalMesh Team",
-    author_email="hello@evalmesh.com",
+    version="1.0.0",
+    author="EvalMesh Enterprise Team",
+    author_email="security@evalmesh.io",
     description="Cloudflare & GitHub Actions for AI Agents - Real-Time WAF, DLP, RBAC & Evals",
-    long_description=open("evalmesh/README.md", encoding="utf-8").read(),
+    long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/evalmesh/evalmesh",
+    url="https://github.com/deswanth12/EvalMesh",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -23,6 +23,7 @@ setup(
             "evalmesh=evalmesh.cli:main",
         ],
     },
+
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
