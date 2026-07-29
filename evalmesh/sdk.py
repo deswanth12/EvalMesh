@@ -15,6 +15,14 @@ class EvalMeshClient:
         self.proxy_url = self.base_url
         self.api_key = api_key
 
+    def wrap(self, agent_instance: Any, agent_role: str = "support_agent"):
+        """
+        Wraps any LangGraph, CrewAI, AutoGen, or custom agent instance with EvalMesh WAF & DLP protection without modifying original agent code.
+        """
+        guardrail = EvalMeshAgentGuardrail(agent_role=agent_role)
+        return guardrail.wrap(agent_instance)
+
+
     def create_chat_completion(
         self,
         messages: list,

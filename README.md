@@ -13,9 +13,16 @@
 > An ultra-low-latency (<15ms) reverse proxy gateway, real-time prompt injection WAF, PII DLP redactor, semantic prompt cache, AI session replay console ("Chrome DevTools for AI"), declarative policy engine, and 41-module enterprise governance framework for LLM applications.
 
 
+```text
+                         EvalMesh Continuous AI Reliability Flywheel
+
+     Build AI Agents  ➔  Test & Evaluate  ➔  Secure & Govern AI  ➔  Monitor Production  ➔  Improve Continuously
+```
+
 📖 **[Read Complete Enterprise Documentation & Developer Guide](DOCUMENTATION.md)**
 
 ---
+
 
 ## 🚀 Get Started with EvalMesh
 
