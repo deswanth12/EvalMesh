@@ -100,6 +100,13 @@ async def get_reliability_scorecard():
         "status": "Grade A+ Enterprise"
     }
 
+@app.get("/api/analytics")
+async def get_usage_analytics():
+    """Returns platform usage telemetry (DAU, evaluations run, session duration, retention)."""
+    from evalmesh.analytics import platform_analytics
+    return platform_analytics.get_platform_analytics()
+
+
 @app.get("/api/incidents")
 async def get_active_incidents():
     """Returns active AI Incident Center entries."""
