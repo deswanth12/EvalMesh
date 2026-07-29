@@ -189,9 +189,61 @@ async def invite_org_member(org_id: str, payload: dict):
     role = payload.get("role", "developer")
     return {"status": "SUCCESS", "message": f"Invitation sent to {email} with role {role}."}
 
-@router.post("/organizations/{org_id}/accept")
-async def accept_org_invite(org_id: str, payload: dict):
-    """Accepts an organization invitation."""
-    return {"status": "SUCCESS", "message": f"Successfully joined organization {org_id}."}
+@router.post("/service-accounts")
+async def create_service_account(payload: dict):
+    """Creates a non-human Service Account for CI/CD automation."""
+    name = payload.get("name", "CI/CD Pipeline Service Account")
+    scopes = payload.get("scopes", ["deploy:execute", "evaluate:run"])
+    raw_token = f"em_sa_{int(time.time())}x7799"
+    return {
+        "id": "sa_101",
+        "name": name,
+        "service_account_token": raw_token,
+        "scopes": scopes,
+        "message": "Store this token securely. It will only be shown once."
+    }
+
+@router.get("/service-accounts")
+async def list_service_accounts():
+    """Lists active organization service accounts."""
+    return [
+        {"id": "sa_101", "name": "GitHub Actions CI Pipeline", "scopes": ["deploy:execute", "evaluate:run"], "created_at": time.time() - 86400}
+    ]
+
+@router.patch("/service-accounts/{sa_id}")
+async def update_service_account(sa_id: str, payload: dict):
+    """Updates service account scopes."""
+    return {"status": "SUCCESS", "id": sa_id, "updated_scopes": payload.get("scopes")}
+
+@router.delete("/service-accounts/{sa_id}")
+async def revoke_service_account(sa_id: str):
+    """Revokes a service account."""
+    return {"status": "SUCCESS", "message": f"Service account {sa_id} revoked."}
+
+@router.post("/personal-access-tokens")
+async def create_pat(payload: dict):
+    """Creates a user Personal Access Token (PAT) for CLI & IDE extensions."""
+    name = payload.get("name", "VS Code Extension PAT")
+    raw_pat = f"em_pat_{int(time.time())}v8822"
+    return {
+        "id": "pat_101",
+        "name": name,
+        "personal_access_token": raw_pat,
+        "expires_in_days": 90,
+        "message": "Store this token securely. It will only be shown once."
+    }
+
+@router.get("/personal-access-tokens")
+async def list_pats():
+    """Lists user Personal Access Tokens."""
+    return [
+        {"id": "pat_101", "name": "VS Code IDE Extension", "last_used": time.time() - 300, "expires_at": time.time() + 7776000}
+    ]
+
+@router.delete("/personal-access-tokens/{pat_id}")
+async def revoke_pat(pat_id: str):
+    """Revokes a Personal Access Token."""
+    return {"status": "SUCCESS", "message": f"Personal Access Token {pat_id} revoked."}
+
 
 
