@@ -10,6 +10,7 @@ class PromptInjectionFirewall:
         "ignore previous instructions",
         "ignore all prior prompts",
         "system prompt override",
+        "system: override",
         "you are now dan",
         "do anything now",
         "bypass safety filter",
@@ -52,12 +53,21 @@ class ToolRBACEnforcer:
         """
         allowed = self.permissions.get(role, [])
         if "*" in allowed:
-            return [] # Admin has full access
-            
+            return []  # Admin has full access
+
         violations = []
         for tool in requested_tools:
             tool_name = tool.get("function", {}).get("name") or tool.get("name")
             if tool_name and tool_name not in allowed:
                 violations.append(tool_name)
-                
+
         return violations
+
+    def is_tool_allowed(self, role: str, tool_name: str) -> bool:
+        """
+        Convenience method: returns True if a specific tool is permitted for a given role.
+        """
+        allowed = self.permissions.get(role, [])
+        if "*" in allowed:
+            return True
+        return tool_name in allowed

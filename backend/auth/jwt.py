@@ -60,8 +60,19 @@ class JWTHandler:
         parts = token.split(".")
         if len(parts) != 3:
             raise ValueError("Invalid JWT format")
-        padding = "=" * (4 - len(parts[1]) % 4)
-        body_bytes = base64.b64decode(parts[1] + padding)
+        header, body, signature = parts
+        # Re-compute expected signature and verify with constant-time comparison
+        expected_sig = hmac.new(
+            SECRET_KEY.encode('utf-8'),
+            f"{header}.{body}".encode('utf-8'),
+            hashlib.sha256
+        ).digest()
+        expected_signature = base64.b64encode(expected_sig).decode('utf-8').rstrip('=')
+        if not hmac.compare_digest(signature, expected_signature):
+            raise ValueError("Invalid JWT signature")
+        padding = "=" * (4 - len(body) % 4)
+        body_bytes = base64.b64decode(body + padding)
         return json.loads(body_bytes.decode('utf-8'))
+
 
 jwt_handler = JWTHandler()
