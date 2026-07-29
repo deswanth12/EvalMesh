@@ -95,15 +95,21 @@ def run_login():
         os.environ["EVALMESH_USER_EMAIL"] = email
         print(f"[SUCCESS] Signed in as {email} (Session Token Saved).")
 
-def run_whoami():
-    email = os.getenv("EVALMESH_USER_EMAIL", "admin@evalmesh.io")
+def run_api_keys_list():
     print("=====================================================")
-    print(" [WHOAMI] Active Authenticated User Session")
+    print(" [API-KEYS] Active API Keys for EvalMesh Labs")
     print("=====================================================")
-    print(f" User:         {email}")
-    print(" Organization: EvalMesh Labs")
-    print(" Role:         Super Admin")
+    print(" 1. Production Key  | em_live_8841... | Scopes: chat:*, evaluate:run | Last Used: 2m ago")
+    print(" 2. Dev Staging Key | em_live_3920... | Scopes: chat:read           | Last Used: 1h ago")
     print("=====================================================")
+
+
+def run_api_keys_create():
+    name = input("Enter Key Name (e.g. Production Key): ").strip() or "New Key"
+    new_key = f"em_live_{int(time.time())}abcd"
+    print(f"[SUCCESS] Created API Key '{name}': {new_key}")
+    print("🔒 Save this key securely. It will not be shown again.")
+
 
 
 def run_config():
@@ -166,8 +172,13 @@ def main():
         run_login()
     elif cmd == "whoami":
         run_whoami()
+    elif cmd in ["api-keys", "api-keys-list"]:
+        run_api_keys_list()
+    elif cmd == "api-keys-create":
+        run_api_keys_create()
     elif cmd == "logout":
         run_logout()
+
 
     elif cmd == "config":
         run_config()

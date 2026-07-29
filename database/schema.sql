@@ -41,13 +41,25 @@ CREATE TABLE IF NOT EXISTS telemetry_spans (
     created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
 );
 
+CREATE TABLE IF NOT EXISTS organization_members (
+    user_id VARCHAR(64) REFERENCES users(id),
+    organization_id VARCHAR(64) REFERENCES organizations(id),
+    role VARCHAR(50) DEFAULT 'developer',
+    joined_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW()),
+    PRIMARY KEY (user_id, organization_id)
+);
+
 CREATE TABLE IF NOT EXISTS api_keys (
     id VARCHAR(64) PRIMARY KEY,
+    name VARCHAR(255) DEFAULT 'Developer Key',
+    description TEXT,
     user_id VARCHAR(64) REFERENCES users(id),
     organization_id VARCHAR(64) REFERENCES organizations(id),
     key_hash VARCHAR(255) UNIQUE NOT NULL,
-    permissions VARCHAR(255) DEFAULT 'developer',
+    scopes TEXT DEFAULT 'chat:read,chat:write,evaluate:run',
+    expires_at DOUBLE PRECISION,
     last_used DOUBLE PRECISION,
+    revoked BOOLEAN DEFAULT FALSE,
     created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
 );
 
@@ -55,17 +67,25 @@ CREATE TABLE IF NOT EXISTS sessions (
     id VARCHAR(64) PRIMARY KEY,
     user_id VARCHAR(64) REFERENCES users(id),
     refresh_token_hash VARCHAR(255) NOT NULL,
-    device VARCHAR(255),
+    user_agent VARCHAR(255),
     ip_address VARCHAR(45),
+    last_seen_at DOUBLE PRECISION,
     expires_at DOUBLE PRECISION NOT NULL,
+    revoked_at DOUBLE PRECISION,
     created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
 );
 
 CREATE TABLE IF NOT EXISTS audit_logs (
     id VARCHAR(64) PRIMARY KEY,
-    user_id VARCHAR(64) REFERENCES users(id),
+    request_id VARCHAR(64),
+    actor VARCHAR(255) NOT NULL,
+    organization_id VARCHAR(64) REFERENCES organizations(id),
     action VARCHAR(255) NOT NULL,
+    resource VARCHAR(255),
+    result VARCHAR(50) DEFAULT 'SUCCESS',
+    ip_address VARCHAR(45),
     details TEXT,
     created_at DOUBLE PRECISION DEFAULT EXTRACT(EPOCH FROM NOW())
 );
+
 
