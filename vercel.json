@@ -1,9 +1,10 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/evalmesh/dashboard/$1"
+      "dest": "/$1"
     }
   ]
 }
