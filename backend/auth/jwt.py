@@ -5,9 +5,12 @@ import hmac
 import hashlib
 from typing import Dict, Any, Tuple
 
-SECRET_KEY = "evalmesh_jwt_secret_key_production_2026"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+import os
+
+SECRET_KEY = os.getenv("EVALMESH_JWT_SECRET_KEY", "evalmesh_jwt_secret_key_production_2026_fallback")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("EVALMESH_ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("EVALMESH_REFRESH_TOKEN_EXPIRE_DAYS", "7"))
+
 
 class JWTHandler:
     """

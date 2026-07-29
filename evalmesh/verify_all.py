@@ -292,9 +292,10 @@ def run_comprehensive_double_check():
     total_checks += 1
     from evalmesh.vault import secrets_vault_engine
     sec_val = secrets_vault_engine.get_secret("OPENAI_API_KEY")
-    assert "sk-proj-live-openai" in sec_val
+    assert "sk-proj-test-mock" in sec_val
     passed_checks += 1
     print(" [PASS] Check 27: Encrypted Secrets Vault Engine (evalmesh.vault) verified.")
+
 
     # CHECK 28: AI Agent Memory & Session Replay Engine (evalmesh.session_replay)
     total_checks += 1

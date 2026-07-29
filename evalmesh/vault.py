@@ -13,13 +13,16 @@ class SecretsVaultEngine:
     """
 
     def __init__(self):
-        self.master_key = "evalmesh_master_vault_key"
+        import os
+        self.master_key = os.getenv("EVALMESH_VAULT_MASTER_KEY", "evalmesh_master_vault_key_fallback")
         self._vault: Dict[str, str] = {
-            "OPENAI_API_KEY": self._encrypt("sk-proj-live-openai-sec-991823"),
-            "ANTHROPIC_API_KEY": self._encrypt("sk-ant-api03-anthropic-key-7712"),
-            "STRIPE_SECRET_KEY": self._encrypt("sk_live_stripe_key_881290"),
-            "SLACK_BOT_TOKEN": self._encrypt("xoxb-slack-bot-token-99120")
+            "OPENAI_API_KEY": self._encrypt(os.getenv("OPENAI_API_KEY", "sk-proj-test-mock-openai-key")),
+            "ANTHROPIC_API_KEY": self._encrypt(os.getenv("ANTHROPIC_API_KEY", "sk-ant-test-mock-anthropic-key")),
+            "STRIPE_SECRET_KEY": self._encrypt(os.getenv("STRIPE_SECRET_KEY", "sk_test_mock_stripe_key")),
+            "SLACK_BOT_TOKEN": self._encrypt(os.getenv("SLACK_BOT_TOKEN", "xoxb-test-mock-slack-token"))
         }
+
+
 
     def _encrypt(self, raw_secret: str) -> str:
         data_bytes = raw_secret.encode('utf-8')
