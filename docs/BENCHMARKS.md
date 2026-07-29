@@ -38,10 +38,44 @@ This document outlines the benchmark methodology, hardware environment, test con
 
 ## 🔬 Benchmark Execution Command
 
-To reproduce these benchmarks locally on your machine, run:
-
+To reproduce these empirical latency measurements on your local machine:
 ```bash
-python -c "
+python -m evalmesh.demo_test
+```
+
+---
+
+## 🛡️ 4-Tier Graceful Degradation Strategy
+
+EvalMesh implements a robust 4-tier degradation strategy when upstream dependencies experience outages:
+
+```text
+                  Primary Provider Outage / HTTP 5xx
+                                  │
+                                  ▼
+                   Tier 1: Upstream Primary LLM
+                                  │ (Failed)
+                                  ▼
+                Tier 2: Serve Valid Semantic Cache Response
+                                  │ (Cache Miss)
+                                  ▼
+               Tier 3: Economy Fallback Model (Ollama / GPT-4o-mini)
+                                  │ (Unreachable)
+                                  ▼
+            Tier 4: Return Structured HTTP 503 Error (Retry-After: 5s)
+```
+
+---
+
+## 🔒 Security Hardening Roadmap
+- [x] **AES-256 Encrypted Secrets Vault** ([vault.py](file:///c:/EvalMesh/evalmesh/vault.py))
+- [x] **Declarative Security Policy Engine** ([policy_engine.py](file:///c:/EvalMesh/evalmesh/policy_engine.py))
+- [x] **Multi-Tenant 4-Tier RBAC Scopes** ([auth.py](file:///c:/EvalMesh/evalmesh/auth.py))
+- [x] **Tamper-Proof Security Audit Exporter** (SOC 2 / HIPAA CSV)
+- [ ] **Request Signature HMAC Verification** for operator endpoints
+- [ ] **Automated API Key Rotation** with 24-hour expiration windows
+
+```python
 import time
 from evalmesh.cache import SemanticPromptCache
 from evalmesh.dlp import PIIDLPScanner
