@@ -22,11 +22,38 @@ from evalmesh.auto_heal import AutoHealingRetryEngine
 from evalmesh.otel import OpenTelemetryTraceExporter
 from evalmesh.enterprise import enterprise_engine
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(
     title="EvalMesh Proxy Engine",
     description="Cloudflare & GitHub Actions for AI Agents - Real-Time WAF, DLP, RBAC, Smart Caching, Auto-Healing & Evals",
-    version="0.5.0"
+    version="1.0.0"
 )
+
+# Secure CORS Middleware Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.getenv("EVALMESH_CORS_ORIGINS", "*").split(","),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["x-request-id", "x-evalmesh-agent-role", "x-evalmesh-prompt-version"]
+)
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Global Exception Handler returning structured JSON errors without leaking raw tracebacks."""
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": {
+                "type": "internal_server_error",
+                "message": "An internal proxy server error occurred. Please contact system administrator.",
+                "code": 500
+            }
+        }
+    )
+
 
 # Core Component Instances
 dlp_scanner = PIIDLPScanner()
