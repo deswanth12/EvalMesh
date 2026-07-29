@@ -1,8 +1,8 @@
 # 🛡️ EvalMesh — AI Gateway for Secure & Reliable Agent Deployment
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/deswanth12/EvalMesh)
-[![System Verification](https://img.shields.io/badge/suite-38%2F38%20passing-brightgreen.svg)](https://github.com/deswanth12/EvalMesh)
-[![Version](https://img.shields.io/badge/version-0.8.0-blue.svg)](https://github.com/deswanth12/EvalMesh)
+[![System Verification](https://img.shields.io/badge/suite-41%2F41%20passing-brightgreen.svg)](https://github.com/deswanth12/EvalMesh)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/deswanth12/EvalMesh)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-SDK%20Available-3178C6)](https://www.typescriptlang.org/)
@@ -10,7 +10,8 @@
 ![EvalMesh Banner](assets/evalmesh_banner.svg)
 
 > **Cloudflare + GitHub Actions for Autonomous AI Agents.**  
-> An ultra-low-latency (<15ms) reverse proxy gateway, real-time prompt injection WAF, PII DLP redactor, semantic prompt cache, AI session replay console ("Chrome DevTools for AI"), declarative policy engine, and 38-module enterprise governance framework for LLM applications.
+> An ultra-low-latency (<15ms) reverse proxy gateway, real-time prompt injection WAF, PII DLP redactor, semantic prompt cache, AI session replay console ("Chrome DevTools for AI"), declarative policy engine, and 41-module enterprise governance framework for LLM applications.
+
 
 📖 **[Read Complete Enterprise Documentation & Developer Guide](DOCUMENTATION.md)**
 
@@ -31,7 +32,7 @@ EvalMesh features a calm, high-trust B2B dark aesthetic inspired by **Linear**, 
 
 ---
 
-## ⚡ 38 Verified Engine Modules
+## ⚡ 40 Verified Engine Modules
 
 | Category | # | Module Name | Implementation File | Feature & Capability Overview |
 |---|---|---|---|---|
@@ -72,9 +73,12 @@ EvalMesh features a calm, high-trust B2B dark aesthetic inspired by **Linear**, 
 | | 35 | **Command-Line CLI** | `cli.py` | CLI management utility (`evalmesh start`, `evalmesh keys`, `evalmesh verify`). |
 | | 36 | **3-Min Live Investor Demo** | `live_demo.py` | Terminal walkthrough simulating WAF, Loop Breaker, Auto-Healing, & Telemetry. |
 | | 37 | **Kubernetes Production Manifest**| `k8s-deployment.yaml`| 3-replica HA deployment with Horizontal Pod Autoscaler (HPA). |
-| | 38 | **38-Check Verification Suite**| `verify_all.py` | Automated test harness validating system health & security rules. |
+| | 38 | **Enterprise Storage Adapters**| `db.py`, `cache.py` | Pluggable `BaseStorageAdapter` (SQLite & PostgreSQL) + Redis Cache backend. |
+| | 39 | **Agent Framework Guardrails**| `sdk.py` | `EvalMeshAgentGuardrail` & `@guardrail` for LangGraph, CrewAI, AutoGen. |
+| | 40 | **40-Check Verification Suite**| `verify_all.py` | Automated test harness validating system health & security rules. |
 
 ---
+
 
 ## 🚀 Quickstart & Installation (30 Seconds)
 

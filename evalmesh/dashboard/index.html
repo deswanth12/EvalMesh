@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EvalMesh — Enterprise AI Control Plane & Gateway</title>
+    <title>EvalMesh — The Operating System for AI Agent Reliability & Security</title>
+    <meta name="description" content="EvalMesh is the all-in-one AI Control Plane: Cloudflare + GitHub Actions + Datadog + Snyk for Autonomous AI Agents and LLM Applications.">
 
-    <!-- Google Fonts & FontAwesome -->
+    <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Chart.js -->
+    <!-- Chart.js for High-Trust Data Visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            /* Linear & Vercel Clean Dark Palette */
+            /* Linear & Vercel Inspired Dark Palette */
             --bg-primary: #0b0f17;
             --bg-surface: #111827;
             --bg-card: #161e2e;
@@ -28,14 +29,17 @@
             --text-secondary: #9ca3af;
             --text-muted: #6b7280;
             
-            /* Strict 4 Accent Colors */
+            /* Curated 5-Color Accent Palette */
             --accent-blue: #3b82f6;
             --accent-green: #10b981;
             --accent-orange: #f59e0b;
             --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
             
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+            --glass-bg: rgba(17, 24, 39, 0.75);
         }
 
         * {
@@ -48,18 +52,20 @@
             background-color: var(--bg-primary);
             color: var(--text-primary);
             font-family: var(--font-sans);
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
         /* Top Header Bar */
         header {
             height: 60px;
-            background-color: var(--bg-surface);
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
@@ -74,49 +80,51 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: -0.02em;
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.03em;
             color: var(--text-primary);
             text-decoration: none;
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
-            border-radius: 8px;
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
             font-size: 1rem;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
         }
 
         .header-search {
             position: relative;
-            width: 320px;
+            width: 360px;
         }
 
         .header-search input {
             width: 100%;
             background-color: var(--bg-primary);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 0.45rem 0.75rem 0.45rem 2.2rem;
             color: var(--text-primary);
             font-size: 0.85rem;
             outline: none;
-            transition: border-color 0.15s ease;
+            transition: all 0.2s ease;
         }
 
         .header-search input:focus {
             border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
         }
 
         .header-search i {
             position: absolute;
-            left: 0.75rem;
+            left: 0.85rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
@@ -129,126 +137,110 @@
             gap: 1rem;
         }
 
-        /* Persona Switcher Bar */
-        .persona-bar {
+        /* Deployment Environment Selector */
+        .env-selector {
             display: flex;
-            background: var(--bg-primary);
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 2px;
         }
 
-        .persona-btn {
+        .env-btn {
             background: transparent;
             border: none;
             color: var(--text-secondary);
             font-size: 0.75rem;
-            font-weight: 500;
-            padding: 0.3rem 0.65rem;
-            border-radius: 4px;
+            font-weight: 600;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
         }
 
-        .persona-btn.active {
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            font-weight: 600;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        .env-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
         }
 
-        .icon-nav-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            width: 34px;
-            height: 34px;
-            border-radius: 6px;
+        .status-pill {
             display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.15s ease;
+            gap: 0.4rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--accent-green);
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
-        .icon-nav-btn:hover {
-            border-color: var(--border-hover);
-            color: var(--text-primary);
-        }
-
-        .badge-dot {
+        .pulse-dot {
             width: 7px;
             height: 7px;
-            background: var(--accent-red);
+            background-color: var(--accent-green);
             border-radius: 50%;
-            position: absolute;
-            top: 6px;
-            right: 6px;
+            animation: pulse 1.8s infinite;
         }
 
-        /* Dropdown Notifications */
-        .dropdown-menu {
-            position: absolute;
-            top: 50px;
-            right: 1.5rem;
-            width: 320px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            padding: 0.75rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            z-index: 200;
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        .dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            background: var(--bg-primary);
+        .role-badge {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
-        /* App Layout Container */
+        /* Main Container Layout */
         .app-container {
             display: flex;
             flex: 1;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar Navigation - 4 Core Pillars */
         aside {
-            width: 220px;
+            width: 250px;
             background-color: var(--bg-surface);
             border-right: 1px solid var(--border-color);
             padding: 1rem 0.75rem;
             display: flex;
             flex-direction: column;
             gap: 0.25rem;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
         }
 
+        aside::-webkit-scrollbar { width: 4px; }
+        aside::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
         .nav-category {
-            font-size: 0.7rem;
-            font-weight: 700;
+            font-size: 0.68rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
             color: var(--text-muted);
-            padding: 0.75rem 0.75rem 0.35rem 0.75rem;
+            padding: 0.85rem 0.75rem 0.35rem 0.75rem;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.5rem 0.75rem;
+            padding: 0.55rem 0.75rem;
             color: var(--text-secondary);
-            border-radius: 6px;
+            border-radius: 7px;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.83rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -264,9 +256,10 @@
         }
 
         .nav-item.active {
-            background-color: var(--bg-hover);
-            color: var(--text-primary);
+            background-color: rgba(59, 130, 246, 0.12);
+            color: var(--accent-blue);
             font-weight: 600;
+            border-left: 3px solid var(--accent-blue);
         }
 
         .nav-item i {
@@ -275,14 +268,38 @@
             text-align: center;
         }
 
-        /* Main Workspace Content */
+        .nav-count {
+            margin-left: auto;
+            background: var(--bg-primary);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+
+        /* Workspace Main View */
         main {
             flex: 1;
-            padding: 1.5rem;
+            padding: 1.75rem;
             overflow-y: auto;
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
             width: 100%;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .page-header {
@@ -293,12 +310,61 @@
         }
 
         .page-title {
-            font-size: 1.35rem;
-            font-weight: 700;
+            font-size: 1.4rem;
+            font-weight: 800;
             letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
-        /* 6 KPI Cards Grid (First Screen) */
+        .page-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Signature Score Card */
+        .score-hero-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-big-number {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            color: var(--accent-purple);
+            line-height: 1;
+        }
+
+        .score-breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            width: 70%;
+        }
+
+        .score-item {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem;
+            text-align: center;
+        }
+
+        .score-item-val {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        /* 6 KPI First Impression Cards */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -306,26 +372,29 @@
             margin-bottom: 1.5rem;
         }
 
-        @media (max-width: 1200px) {
-            .kpi-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        @media (max-width: 1280px) {
+            .kpi-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
         .kpi-card {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 1rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             gap: 0.5rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .kpi-card:hover {
+            border-color: var(--border-hover);
         }
 
         .kpi-label {
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-secondary);
             display: flex;
             align-items: center;
@@ -333,37 +402,37 @@
         }
 
         .kpi-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
             color: var(--text-primary);
         }
 
         .kpi-subtext {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.3rem;
         }
 
         .tag-green { color: var(--accent-green); }
         .tag-blue { color: var(--accent-blue); }
-        .tag-orange { color: var(--accent-orange); }
         .tag-red { color: var(--accent-red); }
+        .tag-purple { color: var(--accent-purple); }
 
-        /* Panels Layout Grid */
-        .panels-grid {
+        /* Grid Layout Cards */
+        .grid-2 {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
+            gap: 1.25rem;
             margin-bottom: 1.5rem;
         }
 
-        .panel {
+        .panel-card {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 1.25rem;
             display: flex;
             flex-direction: column;
@@ -374,759 +443,443 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
         }
 
         .panel-title {
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
         /* Buttons */
-        .btn-primary {
-            background-color: var(--accent-blue);
-            color: #fff;
-            border: none;
-            padding: 0.45rem 0.9rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 7px;
+            font-size: 0.82rem;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.15s ease;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        .btn-secondary {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.45rem 0.9rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
+            border: 1px solid transparent;
             transition: all 0.15s ease;
         }
 
-        .btn-secondary:hover {
-            border-color: var(--border-hover);
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
         }
 
-        /* Clean Threat Cards */
-        .threat-card-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+        .btn-secondary {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+            color: var(--text-primary);
         }
 
-        .threat-card {
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-blocked { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+
+        .code-box {
             background-color: var(--bg-primary);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0.85rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .threat-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .threat-title {
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .threat-meta {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .badge-critical {
-            background-color: rgba(239, 68, 68, 0.15);
-            color: var(--accent-red);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .badge-warning {
-            background-color: rgba(245, 158, 11, 0.15);
-            color: var(--accent-orange);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .badge-success {
-            background-color: rgba(16, 185, 129, 0.15);
-            color: var(--accent-green);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        /* Flagship AI Replay Console (DevTools Style) */
-        .replay-step-tree {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .replay-step-node {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .replay-step-header {
-            padding: 0.65rem 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.85rem;
-            user-select: none;
-        }
-
-        .replay-step-header:hover {
-            background-color: var(--bg-hover);
-        }
-
-        .replay-step-body {
-            padding: 0.75rem 0.85rem;
-            border-top: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
             font-family: var(--font-mono);
             font-size: 0.8rem;
-            color: var(--text-secondary);
-            background-color: #070a0f;
-        }
-
-        /* Animated AI Gateway Map */
-        .gateway-map-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem 1rem;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-        }
-
-        .map-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .map-node-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 8px;
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: var(--accent-blue);
-        }
-
-        .map-line {
-            flex: 1;
-            height: 2px;
-            background-color: var(--border-color);
-            margin: 0 0.5rem;
-            position: relative;
-        }
-
-        .map-pulse {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-blue);
-            border-radius: 50%;
-            position: absolute;
-            top: -3px;
-            left: 0%;
-            animation: pulse-flow 2s infinite linear;
-        }
-
-        @keyframes pulse-flow {
-            0% { left: 0%; opacity: 1; }
-            100% { left: 100%; opacity: 0; }
-        }
-
-        /* Circular Security Score Gauge */
-        .gauge-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 0;
-        }
-
-        .gauge-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: conic-gradient(var(--accent-green) 0% 96%, var(--border-color) 96% 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .gauge-inner {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            background-color: var(--bg-surface);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .gauge-score {
-            font-size: 1.8rem;
-            font-weight: 800;
-            line-height: 1;
-            color: var(--text-primary);
-        }
-
-        .gauge-grade {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--accent-green);
-        }
-
-        .gauge-breakdown {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-        }
-
-        .gauge-metric {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.4rem 0.6rem;
-            background: var(--bg-primary);
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-        }
-
-        .hidden { display: none !important; }
-
-        /* Toast Notifications */
-        #toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--bg-surface);
-            border: 1px solid var(--accent-blue);
-            color: var(--text-primary);
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        #toast.show {
-            opacity: 1;
-            pointer-events: auto;
+            color: #38bdf8;
+            overflow-x: auto;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Bar -->
+    <!-- Header Navigation -->
     <header>
         <a href="#" class="logo-brand">
             <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            <span>EvalMesh</span>
+            EvalMesh
         </a>
 
         <div class="header-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search sessions, prompts, or security policies...">
+            <input type="text" id="globalSearch" placeholder="Search WAF, caching, session replay, SOC2... (Press '/')" onkeyup="filterGlobalSearch()">
         </div>
 
         <div class="header-right">
-            <!-- Persona Switcher -->
-            <div class="persona-bar">
-                <button class="persona-btn active" id="pbtn-superadmin" onclick="switchPersona('Super Admin')">Super Admin</button>
-                <button class="persona-btn" id="pbtn-admin" onclick="switchPersona('Admin')">Admin</button>
-                <button class="persona-btn" id="pbtn-evaluator" onclick="switchPersona('Evaluator')">Evaluator</button>
-                <button class="persona-btn" id="pbtn-viewer" onclick="switchPersona('Viewer')">Viewer</button>
+            <!-- Deployment Environment Switcher -->
+            <div class="env-selector">
+                <button class="env-btn" onclick="setEnv('dev')">Dev</button>
+                <button class="env-btn" onclick="setEnv('staging')">Staging</button>
+                <button class="env-btn active" onclick="setEnv('prod')">Production</button>
             </div>
 
-            <button class="icon-nav-btn" onclick="toggleNotifications()">
-                <i class="fa-regular fa-bell"></i>
-                <span class="badge-dot"></span>
-            </button>
-        </div>
+            <div class="status-pill">
+                <div class="pulse-dot"></div>
+                Gateway Online (12ms)
+            </div>
 
-        <!-- Dropdown Notifications Menu -->
-        <div id="notifications-menu" class="dropdown-menu hidden">
-            <div style="font-weight: 600; font-size: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border-color);">
-                System Status & Alerts
-            </div>
-            <div class="dropdown-item">
-                <i class="fa-solid fa-circle-check tag-green"></i>
-                <div>
-                    <div><b>OpenAI Proxy Healthy</b></div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">Latency 12ms • Uptime 100%</div>
-                </div>
-            </div>
-            <div class="dropdown-item">
-                <i class="fa-solid fa-triangle-exclamation tag-red"></i>
-                <div>
-                    <div><b>Prompt Injection Blocked</b></div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">12 seconds ago • WAF 403</div>
-                </div>
-            </div>
-            <div class="dropdown-item">
-                <i class="fa-solid fa-chart-line tag-blue"></i>
-                <div>
-                    <div><b>Cache Hit Rate 82%</b></div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">Saved $1,284 this month</div>
-                </div>
+            <div class="org-switcher" style="font-size:0.8rem;">
+                <i class="fa-solid fa-building"></i> Acme Corp
+                <span class="role-badge">Super Admin</span>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace App Container -->
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation Organized Around 4 Pillars -->
         <aside>
-            <div class="nav-category">Control Plane</div>
-            <button class="nav-item active" onclick="switchTab('dashboard', this)">
-                <i class="fa-solid fa-house tag-blue"></i> Dashboard
-            </button>
-            <button class="nav-item" onclick="switchTab('security', this)">
-                <i class="fa-solid fa-shield-virus tag-red"></i> Security Center
-            </button>
-            <button class="nav-item" onclick="switchTab('sessions', this)">
-                <i class="fa-regular fa-comments tag-blue"></i> Sessions
-            </button>
-            <button class="nav-item" onclick="switchTab('replay', this)">
-                <i class="fa-solid fa-bug tag-orange"></i> AI Replay
-            </button>
-            <button class="nav-item" onclick="switchTab('policies', this)">
-                <i class="fa-solid fa-sliders tag-green"></i> Policies
-            </button>
-            <button class="nav-item" onclick="switchTab('models', this)">
-                <i class="fa-solid fa-microchip tag-blue"></i> Models
-            </button>
-            <button class="nav-item" onclick="switchTab('analytics', this)">
-                <i class="fa-solid fa-chart-pie tag-green"></i> Analytics
-            </button>
-            <button class="nav-item" onclick="switchTab('billing', this)">
-                <i class="fa-solid fa-wallet tag-orange"></i> Billing
-            </button>
-            <button class="nav-item" onclick="switchTab('settings', this)">
-                <i class="fa-solid fa-gear tag-blue"></i> Settings
-            </button>
+            <div class="nav-category">Overview</div>
+            <button class="nav-item active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Executive Dashboard</button>
 
-            <div class="nav-category" style="margin-top: 1rem;" id="nav-cat-admin">Administration</div>
-            <button class="nav-item" id="nav-superadmin" onclick="switchTab('superadmin', this)">
-                <i class="fa-solid fa-crown tag-orange"></i> Super Admin Orgs
-            </button>
-            <button class="nav-item" id="nav-orgadmin" onclick="switchTab('orgadmin', this)">
-                <i class="fa-solid fa-building-user tag-blue"></i> Org Workspace
-            </button>
+            <div class="nav-category">Pillar 1: Security & Guardrails</div>
+            <button class="nav-item" onclick="switchTab('pillar_security')"><i class="fa-solid fa-shield-virus" style="color:var(--accent-red)"></i> Prompt Injection WAF & DLP</button>
+            <button class="nav-item" onclick="switchTab('pillar_security_policy')"><i class="fa-solid fa-filter-circle-xmark" style="color:var(--accent-orange)"></i> Declarative Policies & Approvals</button>
+
+            <div class="nav-category">Pillar 2: Cost & Performance</div>
+            <button class="nav-item" onclick="switchTab('pillar_cost')"><i class="fa-solid fa-bolt" style="color:var(--accent-green)"></i> Semantic Cache & Smart Router</button>
+            <button class="nav-item" onclick="switchTab('pillar_cost_optimizer')"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent-blue)"></i> Cost Optimizer & Failover</button>
+
+            <div class="nav-category">Pillar 3: Observability & DevTools</div>
+            <button class="nav-item" onclick="switchTab('pillar_observability')"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-cyan)"></i> AI Session Replay & Graph</button>
+            <button class="nav-item" onclick="switchTab('pillar_observability_copilot')"><i class="fa-solid fa-vial" style="color:var(--accent-purple)"></i> Benchmark Lab & AI Debugger</button>
+
+            <div class="nav-category">Pillar 4: Enterprise & Governance</div>
+            <button class="nav-item" onclick="switchTab('pillar_enterprise')"><i class="fa-solid fa-file-contract" style="color:var(--accent-blue)"></i> SOC2 / HIPAA Compliance</button>
+            <button class="nav-item" onclick="switchTab('pillar_enterprise_vault')"><i class="fa-solid fa-vault" style="color:var(--accent-orange)"></i> SSO, SCIM & Secrets Vault</button>
         </aside>
 
-        <!-- Main Body Workspace -->
+        <!-- Main Workspace -->
         <main>
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title" id="page-title-label">AI Gateway Overview</h1>
-                    <div style="font-size: 0.8rem; color: var(--text-secondary);" id="persona-status-label">
-                        Active Persona: <b style="color: var(--accent-blue)">Super Admin</b>
+            <!-- 1. EXECUTIVE DASHBOARD (CLEAN FIRST SCREEN) -->
+            <section id="dashboard" class="view-section active">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-chart-line" style="color:var(--accent-blue)"></i> Executive AI Control Plane</h1>
+                        <p class="page-desc">Clean high-level overview of AI agent health, security posture, and token efficiency.</p>
                     </div>
                 </div>
-                <div>
-                    <button class="btn-primary" onclick="showToast('AI Gateway Routing Live: Port 8000')">
-                        <i class="fa-solid fa-circle tag-green" style="font-size: 0.6rem;"></i> Gateway Healthy
-                    </button>
-                </div>
-            </div>
 
-            <!-- Tab 1: Primary Dashboard -->
-            <div id="tab-dashboard">
-                <!-- 6 KPI Cards Grid (First Screen) -->
+                <!-- SIGNATURE AI RELIABILITY SCORE CARD -->
+                <div class="score-hero-card">
+                    <div>
+                        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.2rem;">SIGNATURE METRIC</div>
+                        <div style="font-size:1.1rem; font-weight:800; color:var(--text-primary);">Overall AI Reliability Score</div>
+                        <div class="score-big-number">94<span style="font-size:1.5rem; color:var(--text-muted);">/100</span></div>
+                        <span class="badge badge-success" style="margin-top:0.4rem;"><i class="fa-solid fa-arrow-trend-up"></i> +4 pts this week</span>
+                    </div>
+
+                    <div class="score-breakdown-grid">
+                        <div class="score-item"><div style="font-size:0.7rem; color:var(--text-secondary);">Accuracy</div><div class="score-item-val" style="color:var(--accent-green)">98%</div></div>
+                        <div class="score-item"><div style="font-size:0.7rem; color:var(--text-secondary);">Hallucination</div><div class="score-item-val" style="color:var(--accent-blue)">99.8%</div></div>
+                        <div class="score-item"><div style="font-size:0.7rem; color:var(--text-secondary);">Safety WAF</div><div class="score-item-val" style="color:var(--accent-purple)">100%</div></div>
+                        <div class="score-item"><div style="font-size:0.7rem; color:var(--text-secondary);">Cost Score</div><div class="score-item-val" style="color:var(--accent-green)">92%</div></div>
+                        <div class="score-item"><div style="font-size:0.7rem; color:var(--text-secondary);">Latency Score</div><div class="score-item-val" style="color:var(--accent-orange)">95%</div></div>
+                        <div class="score-item"><div style="font-size:0.7rem; color:var(--text-secondary);">Tool Success</div><div class="score-item-val" style="color:var(--accent-green)">100%</div></div>
+                    </div>
+                </div>
+
+                <!-- 6 KPI FIRST IMPRESSION CARDS -->
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-label">AI Requests <i class="fa-solid fa-bolt tag-blue"></i></div>
+                        <div class="kpi-label">AI Requests <span><i class="fa-solid fa-paper-plane"></i></span></div>
                         <div class="kpi-value">1.2M</div>
-                        <div class="kpi-subtext tag-green"><i class="fa-solid fa-arrow-trend-up"></i> ↑ 12% vs last week</div>
+                        <div class="kpi-subtext tag-green"><i class="fa-solid fa-arrow-trend-up"></i> +12% this month</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">Blocked Attacks <i class="fa-solid fa-shield-xmark tag-red"></i></div>
+                        <div class="kpi-label">Blocked Attacks <span><i class="fa-solid fa-shield-xmark"></i></span></div>
                         <div class="kpi-value">189</div>
-                        <div class="kpi-subtext tag-red">Today (WAF 403)</div>
+                        <div class="kpi-subtext tag-red"><i class="fa-solid fa-ban"></i> 100% WAF Mitigation</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">Money Saved <i class="fa-solid fa-piggy-bank tag-green"></i></div>
+                        <div class="kpi-label">Money Saved <span><i class="fa-solid fa-sack-dollar"></i></span></div>
                         <div class="kpi-value">$1,284</div>
-                        <div class="kpi-subtext tag-green">This Month (Cache 82%)</div>
+                        <div class="kpi-subtext tag-green"><i class="fa-solid fa-bolt"></i> 82% Semantic Cache</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">Latency <i class="fa-solid fa-stopwatch tag-blue"></i></div>
+                        <div class="kpi-label">Proxy Latency <span><i class="fa-solid fa-gauge-high"></i></span></div>
                         <div class="kpi-value">12 ms</div>
-                        <div class="kpi-subtext tag-green">Excellent (< 15ms)</div>
+                        <div class="kpi-subtext tag-blue"><i class="fa-solid fa-check"></i> Sub-15ms Target</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">Success Rate <i class="fa-solid fa-circle-check tag-green"></i></div>
+                        <div class="kpi-label">Success Rate <span><i class="fa-solid fa-heart-pulse"></i></span></div>
                         <div class="kpi-value">99.98%</div>
-                        <div class="kpi-subtext tag-green">Healthy (Zero Failures)</div>
+                        <div class="kpi-subtext tag-green"><i class="fa-solid fa-circle-check"></i> Healthy SLA</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">Security Score <i class="fa-solid fa-award tag-orange"></i></div>
+                        <div class="kpi-label">Security Score <span><i class="fa-solid fa-award"></i></span></div>
                         <div class="kpi-value">96/100</div>
-                        <div class="kpi-subtext tag-green">Grade A+ (Zero Trust)</div>
+                        <div class="kpi-subtext tag-purple"><i class="fa-solid fa-star"></i> Grade A+ Enterprise</div>
                     </div>
                 </div>
 
-                <!-- Animated AI Gateway Map -->
-                <div class="panel" style="margin-bottom: 1.5rem;">
-                    <div class="panel-header">
-                        <div class="panel-title"><i class="fa-solid fa-network-wired tag-blue"></i> AI Gateway Real-Time Workflow Map</div>
-                        <span class="badge-success">LIVE PIPELINE ACTIVE</span>
-                    </div>
-                    <div class="gateway-map-container">
-                        <div class="map-node">
-                            <div class="map-node-icon"><i class="fa-solid fa-mobile-screen"></i></div>
-                            <span>Client App</span>
-                        </div>
-                        <div class="map-line"><div class="map-pulse"></div></div>
-                        <div class="map-node">
-                            <div class="map-node-icon" style="color: var(--accent-green);"><i class="fa-solid fa-shield-halved"></i></div>
-                            <span>EvalMesh Security</span>
-                        </div>
-                        <div class="map-line"><div class="map-pulse" style="animation-delay: 0.5s;"></div></div>
-                        <div class="map-node">
-                            <div class="map-node-icon" style="color: var(--accent-orange);"><i class="fa-solid fa-route"></i></div>
-                            <span>Smart Router</span>
-                        </div>
-                        <div class="map-line"><div class="map-pulse" style="animation-delay: 1s;"></div></div>
-                        <div class="map-node">
-                            <div class="map-node-icon" style="color: #a855f7;"><i class="fa-solid fa-brain"></i></div>
-                            <span>OpenAI / Claude / Gemini</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panels Grid (Security & Replay) -->
-                <div class="panels-grid">
-                    <!-- Left Panel: Security Threats Feed -->
-                    <div class="panel">
+                <div class="grid-2">
+                    <div class="panel-card">
                         <div class="panel-header">
-                            <div class="panel-title"><i class="fa-solid fa-shield-virus tag-red"></i> Security Center Threats Feed</div>
-                            <button class="btn-secondary" onclick="switchTab('security')">View All</button>
+                            <div class="panel-title"><i class="fa-solid fa-chart-area" style="color:var(--accent-blue)"></i> Real-Time Request Volume & Latency Trend</div>
+                            <span class="badge badge-info">SLA: 99.99%</span>
                         </div>
-                        <div class="threat-card-list">
-                            <div class="threat-card">
-                                <div class="threat-info">
-                                    <div class="threat-title">Prompt Injection Attack Blocked</div>
-                                    <div class="threat-meta">Matched pattern: "Ignore Previous Instructions" • 12 seconds ago</div>
-                                </div>
-                                <span class="badge-critical">BLOCKED</span>
-                            </div>
-                            <div class="threat-card">
-                                <div class="threat-info">
-                                    <div class="threat-title">PII Credit Card Sanitized</div>
-                                    <div class="threat-meta">Redacted 1 credit card number inline • 2 minutes ago</div>
-                                </div>
-                                <span class="badge-warning">REDACTED</span>
-                            </div>
-                            <div class="threat-card">
-                                <div class="threat-info">
-                                    <div class="threat-title">Agent Loop Halted by Circuit Breaker</div>
-                                    <div class="threat-meta">Session depth 26 > limit 25 • 5 minutes ago</div>
-                                </div>
-                                <span class="badge-warning">HALTED</span>
-                            </div>
-                        </div>
+                        <canvas id="requestChart" height="110"></canvas>
                     </div>
 
-                    <!-- Right Panel: Security Score Gauge -->
-                    <div class="panel">
-                        <div class="panel-header">
-                            <div class="panel-title"><i class="fa-solid fa-chart-pie tag-green"></i> Security Scorecard</div>
-                        </div>
-                        <div class="gauge-wrapper">
-                            <div class="gauge-circle">
-                                <div class="gauge-inner">
-                                    <div class="gauge-score">96</div>
-                                    <div class="gauge-grade">Grade A+</div>
-                                </div>
+                    <div class="panel-card">
+                        <div class="panel-title"><i class="fa-solid fa-cubes-stacked" style="color:var(--accent-purple)"></i> The 4 Core Pillars Overview</div>
+                        <div style="display:flex; flex-direction:column; gap:0.6rem; font-size:0.8rem;">
+                            <div style="padding:0.5rem; background:var(--bg-primary); border-radius:6px; border:1px solid var(--border-color)">
+                                <strong>🛡️ Security & Guardrails</strong>: Real-Time WAF, PII DLP, Tool RBAC
                             </div>
-                            <div class="gauge-breakdown">
-                                <div class="gauge-metric">
-                                    <span>Prompt Safety</span>
-                                    <b class="tag-green">99</b>
-                                </div>
-                                <div class="gauge-metric">
-                                    <span>PII Protection</span>
-                                    <b class="tag-green">100</b>
-                                </div>
-                                <div class="gauge-metric">
-                                    <span>Reliability</span>
-                                    <b class="tag-blue">94</b>
-                                </div>
-                                <div class="gauge-metric">
-                                    <span>Compliance</span>
-                                    <b class="tag-green">96</b>
-                                </div>
+                            <div style="padding:0.5rem; background:var(--bg-primary); border-radius:6px; border:1px solid var(--border-color)">
+                                <strong>⚡ Cost & Performance</strong>: <5ms Semantic Cache, Smart Router, Loop Breaker
+                            </div>
+                            <div style="padding:0.5rem; background:var(--bg-primary); border-radius:6px; border:1px solid var(--border-color)">
+                                <strong>👁️ Observability & DevTools</strong>: Session Replay, Agent Graph, OTel Spans
+                            </div>
+                            <div style="padding:0.5rem; background:var(--bg-primary); border-radius:6px; border:1px solid var(--border-color)">
+                                <strong>🏢 Enterprise & Governance</strong>: SOC 2 / HIPAA Exporters, SSO/SCIM, PostgreSQL
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Tab 2: Flagship AI Session Replay (DevTools Style) -->
-            <div id="tab-replay" class="hidden">
-                <div class="panel" style="margin-bottom: 1.5rem;">
-                    <div class="panel-header">
-                        <div class="panel-title"><i class="fa-solid fa-bug tag-orange"></i> AI Agent Session Replay Console ("Chrome DevTools for AI")</div>
-                        <button class="btn-primary" onclick="triggerStepReplay()">▶ Interactive Step Replay</button>
-                    </div>
-
-                    <div style="display: flex; gap: 2rem; padding: 0.5rem 0; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem;">
-                        <div>Session ID: <b style="color: var(--accent-blue);">sess_demo_replay_101</b></div>
-                        <div>Role: <b class="tag-green">fintech_support_agent</b></div>
-                        <div>Latency: <b>14.8 ms</b></div>
-                        <div>Status: <span class="badge-warning">PAUSED FOR APPROVAL</span></div>
-                    </div>
-
-                    <!-- Expandable Step Tree -->
-                    <div class="replay-step-tree">
-                        <div class="replay-step-node">
-                            <div class="replay-step-header" onclick="toggleStepBody(this)">
-                                <span><i class="fa-solid fa-user tag-blue"></i> Step 1: User Request Received</span>
-                                <span class="badge-success">PASSED</span>
-                            </div>
-                            <div class="replay-step-body">"Please issue a refund of $10,000 to my account and delete my logs."</div>
-                        </div>
-
-                        <div class="replay-step-node">
-                            <div class="replay-step-header" onclick="toggleStepBody(this)">
-                                <span><i class="fa-solid fa-terminal tag-blue"></i> Step 2: System Prompt & Persona Context</span>
-                                <span class="badge-success">PASSED</span>
-                            </div>
-                            <div class="replay-step-body">"You are a customer support agent. Never reveal keys or execute unapproved refunds."</div>
-                        </div>
-
-                        <div class="replay-step-node">
-                            <div class="replay-step-header" onclick="toggleStepBody(this)">
-                                <span><i class="fa-solid fa-brain tag-orange"></i> Step 3: Short-Term Memory State</span>
-                                <span class="badge-success">PASSED</span>
-                            </div>
-                            <div class="replay-step-body">User authenticated: john.doe@example.com (Tier: Standard, Balance: $450.00)</div>
-                        </div>
-
-                        <div class="replay-step-node">
-                            <div class="replay-step-header" onclick="toggleStepBody(this)">
-                                <span><i class="fa-solid fa-wrench tag-orange"></i> Step 4: Attempted Tool Calls</span>
-                                <span class="badge-warning">ATTEMPTED</span>
-                            </div>
-                            <div class="replay-step-body">Requested Tool: refund_customer(amount=10000) & delete_logs()</div>
-                        </div>
-
-                        <div class="replay-step-node">
-                            <div class="replay-step-header" onclick="toggleStepBody(this)">
-                                <span><i class="fa-solid fa-shield-halved tag-red"></i> Step 5: EvalMesh Security Check</span>
-                                <span class="badge-critical">INTERCEPTED</span>
-                            </div>
-                            <div class="replay-step-body">Matched Policy: 'pol_high_cost_approval'. Action: Paused for Human Approval Queue.</div>
-                        </div>
+            <!-- PILLAR 1: SECURITY & GUARDRAILS -->
+            <section id="pillar_security" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-shield-virus" style="color:var(--accent-red)"></i> Pillar 1: Security & Guardrails</h1>
+                        <p class="page-desc">Real-time prompt injection firewall, PII data loss prevention, and tool RBAC enforcement.</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Tab 3: Security Center -->
-            <div id="tab-security" class="hidden">
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title"><i class="fa-solid fa-shield-virus tag-red"></i> Real-Time Security Intelligence Center</div>
-                    </div>
-                    <div class="threat-card-list">
-                        <div class="threat-card">
-                            <div class="threat-info">
-                                <div class="threat-title">Jailbreak System Override Blocked</div>
-                                <div class="threat-meta">Origin: 192.168.1.45 • Target: gpt-4o • Action: 403 Forbidden</div>
-                            </div>
-                            <span class="badge-critical">CRITICAL</span>
-                        </div>
-                        <div class="threat-card">
-                            <div class="threat-info">
-                                <div class="threat-title">SSN PII Redaction</div>
-                                <div class="threat-meta">Sanitized SSN pattern [XXX-XX-XXXX] inline</div>
-                            </div>
-                            <span class="badge-warning">REDACTED</span>
-                        </div>
+                <div class="panel-card">
+                    <div class="panel-title">Prompt Injection WAF & PII Redactor Status</div>
+                    <div class="code-box" style="color:#f87171">
+[WAF ENGINE]: Active | 189 Attacks Blocked Today | 0 False Positives
+[PII DLP]: Redacting Emails, Credit Cards, SSNs, and IP Addresses before LLM egress.
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Tab 4: Policies -->
-            <div id="tab-policies" class="hidden">
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title"><i class="fa-solid fa-sliders tag-green"></i> Declarative Policy Engine</div>
-                    </div>
-                    <div class="threat-card-list">
-                        <div class="threat-card">
-                            <div class="threat-info">
-                                <div class="threat-title">Restrict Intern Role Database Operations</div>
-                                <div class="threat-meta">If role == 'intern' and tool == 'delete_database' ➔ Block</div>
-                            </div>
-                            <span class="badge-critical">BLOCK</span>
-                        </div>
-                        <div class="threat-card">
-                            <div class="threat-info">
-                                <div class="threat-title">Require Human Approval for Large Financial Refunds</div>
-                                <div class="threat-meta">If refund > $500 ➔ Pause for Admin Approval Queue</div>
-                            </div>
-                            <span class="badge-warning">REQUIRE APPROVAL</span>
-                        </div>
+            <section id="pillar_security_policy" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-filter-circle-xmark" style="color:var(--accent-orange)"></i> Declarative Policies & Human Approvals</h1>
+                        <p class="page-desc">Dynamic rules engine and human approval intercepts for dangerous agent tool calls.</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Tab 5: Super Admin -->
-            <div id="tab-superadmin" class="hidden">
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title"><i class="fa-solid fa-crown tag-orange"></i> Super Admin Command Center</div>
-                    </div>
-                    <div class="threat-card-list">
-                        <div class="threat-card">
-                            <div class="threat-info">
-                                <div class="threat-title">Acme Corporation (org_acme_01)</div>
-                                <div class="threat-meta">12 Active Projects • Status: Active</div>
-                            </div>
-                            <span class="badge-success">ACTIVE</span>
-                        </div>
-                        <div class="threat-card">
-                            <div class="threat-info">
-                                <div class="threat-title">CyberShield Inc (org_cyber_03)</div>
-                                <div class="threat-meta">1 Active Project • Status: Suspended</div>
-                            </div>
-                            <span class="badge-critical">SUSPENDED</span>
-                        </div>
+                <div class="panel-card">
+                    <div class="code-box" style="color:#fde047">
+IF role == "support_agent" AND tool_called == "delete_database" THEN BLOCK (403 Forbidden)
+IF action_cost > $10,000 THEN PAUSE_AGENT AND REQUEST_HUMAN_APPROVAL (Require 2 Approvers)
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- PILLAR 2: COST & PERFORMANCE -->
+            <section id="pillar_cost" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-bolt" style="color:var(--accent-green)"></i> Pillar 2: Cost & Performance</h1>
+                        <p class="page-desc">Sub-5ms semantic prompt caching and smart model auto-downgrading.</p>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="code-box" style="color:#a7f3d0">
+[SEMANTIC CACHE]: 82% Hit Rate | $1,284 Saved | Average Latency: 3ms
+[SMART ROUTER]: Auto-downgraded 14,000 simple prompts from GPT-4o to GPT-4o-mini (Saved ~90% cost).
+                    </div>
+                </div>
+            </section>
+
+            <section id="pillar_cost_optimizer" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent-blue)"></i> AI Cost Optimizer & HA Failover</h1>
+                        <p class="page-desc">Intelligent cost reduction recommendations and multi-provider failover chains.</p>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="code-box" style="color:#93c5fd">
+💡 Insight: Routing FAQ queries to DeepSeek-V3 saves $820/month.
+[HA FAILOVER]: Active Chain -> OpenAI ➔ Anthropic ➔ DeepSeek ➔ Ollama Local
+                    </div>
+                </div>
+            </section>
+
+            <!-- PILLAR 3: OBSERVABILITY & DEVTOOLS -->
+            <section id="pillar_observability" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--accent-cyan)"></i> Pillar 3: Observability & DevTools</h1>
+                        <p class="page-desc">"Chrome DevTools for AI": Session replay console, visual node graph, and OTel trace exporters.</p>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="code-box">
+Trace ID: trace_session_994821
+├── 1. User Request ("My credit card is 4111-2222-3333-4444")
+├── 2. [EvalMesh DLP] Redacted -> "My credit card is [REDACTED_CREDIT_CARD]"
+├── 3. [EvalMesh WAF] Jailbreak Scan -> PASS
+└── 4. Output -> Safe response generated in 12ms.
+                    </div>
+                </div>
+            </section>
+
+            <section id="pillar_observability_copilot" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-vial" style="color:var(--accent-purple)"></i> Benchmark Lab & AI Debugger</h1>
+                        <p class="page-desc">Side-by-side prompt benchmarks and AI Copilot root cause analyzer.</p>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="code-box" style="color:#a7f3d0">
+[AI COPILOT DEBUGGER]:
+* Root Cause: Agent loop caused by missing output JSON schema boundary.
+* Resolution: Wrap agent with @guardrail decorator (evalmesh.sdk).
+                    </div>
+                </div>
+            </section>
+
+            <!-- PILLAR 4: ENTERPRISE & GOVERNANCE -->
+            <section id="pillar_enterprise" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-file-contract" style="color:var(--accent-blue)"></i> Pillar 4: Enterprise & Governance</h1>
+                        <p class="page-desc">Tamper-proof SOC 2 Type II, HIPAA PHI redaction, and GDPR compliance exporters.</p>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="code-box">
+SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signature Enabled
+                    </div>
+                </div>
+            </section>
+
+            <section id="pillar_enterprise_vault" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-vault" style="color:var(--accent-orange)"></i> SSO, SCIM & Encrypted Secrets Vault</h1>
+                        <p class="page-desc">Okta/Auth0 SSO, SCIM v2.0 user provisioning, and AES-256 encrypted key vault.</p>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="code-box" style="color:#fde047">
+[SSO / SAML]: Okta SAML 2.0 Connected
+[SCIM PROVISIONING]: User directory sync active
+[SECRETS VAULT]: OpenAI, Anthropic, Stripe keys encrypted (AES-256-GCM)
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast">
-        <i class="fa-solid fa-circle-check tag-green"></i>
-        <span id="toast-msg">Action executed successfully</span>
-    </div>
-
+    <!-- JavaScript Logic & Chart Initialization -->
     <script>
-        let currentRole = "Super Admin";
-
-        function switchPersona(role) {
-            currentRole = role;
-            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
-            const map = { "Super Admin": "pbtn-superadmin", "Admin": "pbtn-admin", "Evaluator": "pbtn-evaluator", "Viewer": "pbtn-viewer" };
-            if(document.getElementById(map[role])) document.getElementById(map[role]).classList.add('active');
+        function switchTab(tabId) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             
-            document.getElementById('persona-status-label').innerHTML = `Active Persona: <b style="color: var(--accent-blue)">${role}</b>`;
-            showToast(`Logged in as ${role}`);
+            const targetSection = document.getElementById(tabId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
 
-            const navSuper = document.getElementById('nav-superadmin');
-            const navOrg = document.getElementById('nav-orgadmin');
-            const navAdminCat = document.getElementById('nav-cat-admin');
-            
-            if(navSuper) navSuper.style.display = (role === 'Super Admin') ? 'flex' : 'none';
-            if(navOrg) navOrg.style.display = (role === 'Super Admin' || role === 'Admin') ? 'flex' : 'none';
-            if(navAdminCat) navAdminCat.style.display = (role === 'Super Admin' || role === 'Admin') ? 'block' : 'none';
-        }
-
-        function switchTab(tabName, btn) {
-            document.querySelectorAll('aside .nav-item').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-
-            const tabs = ['dashboard', 'replay', 'security', 'policies', 'superadmin'];
-            tabs.forEach(t => {
-                const el = document.getElementById('tab-' + t);
-                if(el) el.classList.add('hidden');
-            });
-
-            const activeEl = document.getElementById('tab-' + tabName);
-            if(activeEl) activeEl.classList.remove('hidden');
-
-            const titleMap = {
-                'dashboard': 'AI Gateway Overview',
-                'replay': 'AI Agent Session Replay Console',
-                'security': 'Security Center Intelligence',
-                'policies': 'Declarative Policy Engine',
-                'superadmin': 'Super Admin Command Center'
-            };
-            document.getElementById('page-title-label').innerText = titleMap[tabName] || 'AI Control Plane';
-        }
-
-        function toggleStepBody(el) {
-            const body = el.nextElementSibling;
-            if(body) {
-                body.style.display = (body.style.display === 'none') ? 'block' : 'none';
+            const activeBtn = Array.from(document.querySelectorAll('.nav-item')).find(btn => btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId));
+            if (activeBtn) {
+                activeBtn.classList.add('active');
             }
         }
 
-        function toggleNotifications() {
-            const menu = document.getElementById('notifications-menu');
-            if(menu) menu.classList.toggle('hidden');
+        function setEnv(env) {
+            document.querySelectorAll('.env-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
         }
 
-        function triggerStepReplay() {
-            showToast("🔍 Replaying Step 1: User Request...");
-            setTimeout(() => showToast("🧠 Replaying Step 2-3: Persona & Memory Loaded..."), 1000);
-            setTimeout(() => showToast("🛑 Replaying Step 5: Intercepted by Policy!"), 2000);
+        function filterGlobalSearch() {
+            const query = document.getElementById('globalSearch').value.toLowerCase();
+            if (!query) return;
+            if (query.includes('waf') || query.includes('security')) switchTab('pillar_security');
+            else if (query.includes('cache') || query.includes('cost')) switchTab('pillar_cost');
+            else if (query.includes('replay') || query.includes('trace')) switchTab('pillar_observability');
+            else if (query.includes('soc2') || query.includes('sso') || query.includes('vault')) switchTab('pillar_enterprise');
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+        // Connect to FastAPI REST & WebSockets Backend
+        async function loadBackendData() {
+            try {
+                const res = await fetch('/api/reliability');
+                if (res.ok) {
+                    const data = await res.json();
+                    const scoreEl = document.getElementById('reliabilityScoreNum');
+                    if (scoreEl) scoreEl.innerText = data.score;
+                }
+            } catch(e) {}
+
+            try {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/ws`;
+                const ws = new WebSocket(wsUrl);
+                ws.onmessage = (event) => {
+                    const telemetry = JSON.parse(event.data);
+                    const statusEl = document.getElementById('gatewayStatusText');
+                    if (statusEl) {
+                        statusEl.innerText = `Gateway Online (${telemetry.latency_ms}ms)`;
+                    }
+                };
+            } catch(e) {}
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadBackendData();
+
+            const ctx = document.getElementById('requestChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                        datasets: [{
+                            label: 'AI Requests (req/min)',
+                            data: [1200, 1900, 3400, 5200, 4800, 6100, 5800],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }, {
+                            label: 'Proxy Latency (ms)',
+                            data: [14, 12, 11, 13, 12, 10, 11],
+                            borderColor: '#10b981',
+                            borderDash: [5, 5],
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Inter' } } } },
+                        scales: {
+                            x: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' } },
+                            y: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' } }
+                        }
+                    }
+                });
+            }
+        });
     </script>
+
 </body>
 </html>

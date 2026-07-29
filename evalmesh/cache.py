@@ -1,18 +1,91 @@
 import time
+import os
+import json
 from typing import Dict, Any, Optional, Tuple
+from abc import ABC, abstractmethod
+
+class BaseCacheBackend(ABC):
+    @abstractmethod
+    def get(self, key: str) -> Optional[Dict[str, Any]]:
+        pass
+
+    @abstractmethod
+    def set(self, key: str, value: Dict[str, Any]):
+        pass
+
+    @abstractmethod
+    def all_entries(self) -> Dict[str, Dict[str, Any]]:
+        pass
+
+class InMemoryCacheBackend(BaseCacheBackend):
+    """In-memory cache backend for single-node deployments."""
+    def __init__(self):
+        self.store: Dict[str, Dict[str, Any]] = {}
+
+    def get(self, key: str) -> Optional[Dict[str, Any]]:
+        return self.store.get(key)
+
+    def set(self, key: str, value: Dict[str, Any]):
+        self.store[key] = value
+
+    def all_entries(self) -> Dict[str, Dict[str, Any]]:
+        return self.store
+
+class RedisCacheBackend(BaseCacheBackend):
+    """Distributed Redis Cache Backend for multi-region gateway clusters."""
+    def __init__(self, redis_url: str = "redis://localhost:6379/0"):
+        self.redis_url = redis_url
+        self.fallback = InMemoryCacheBackend()
+        self.redis_available = False
+        try:
+            import redis
+            self.client = redis.Redis.from_url(redis_url)
+            self.redis_available = True
+        except Exception:
+            pass
+
+    def get(self, key: str) -> Optional[Dict[str, Any]]:
+        if self.redis_available:
+            try:
+                val = self.client.get(key)
+                if val:
+                    return json.loads(val.decode('utf-8'))
+            except Exception:
+                pass
+        return self.fallback.get(key)
+
+    def set(self, key: str, value: Dict[str, Any]):
+        if self.redis_available:
+            try:
+                self.client.set(key, json.dumps(value))
+            except Exception:
+                pass
+        self.fallback.set(key, value)
+
+    def all_entries(self) -> Dict[str, Dict[str, Any]]:
+        return self.fallback.all_entries()
 
 class SemanticPromptCache:
     """
-    Semantic Prompt Caching Engine.
+    Semantic Prompt Caching Engine with Hybrid Redis & Memory support.
     Caches high-scoring completions and matches incoming prompts using N-gram token similarity.
     If similarity >= threshold, serves cached response in <5ms at $0 API cost.
     """
 
-    def __init__(self, similarity_threshold: float = 0.90):
+    def __init__(self, similarity_threshold: float = 0.90, backend_type: Optional[str] = None):
         self.similarity_threshold = similarity_threshold
-        # In-memory prompt cache store: {prompt_hash: {prompt, completion, timestamp, hits}}
-        self.cache_store: Dict[str, Dict[str, Any]] = {}
+        self.backend_type = backend_type or os.getenv("EVALMESH_CACHE_BACKEND", "memory").lower()
+        
+        if self.backend_type == "redis":
+            self.backend = RedisCacheBackend(os.getenv("EVALMESH_REDIS_URL", "redis://localhost:6379/0"))
+        else:
+            self.backend = InMemoryCacheBackend()
+            
         self.total_savings_usd: float = 0.0
+
+    @property
+    def cache_store(self) -> Dict[str, Dict[str, Any]]:
+        return self.backend.all_entries()
 
     @staticmethod
     def _tokenize(text: str) -> set:
@@ -40,7 +113,7 @@ class SemanticPromptCache:
         best_match = None
         highest_score = 0.0
 
-        for key, entry in self.cache_store.items():
+        for key, entry in self.backend.all_entries().items():
             score = self.compute_similarity(prompt, entry["prompt"])
             if score > highest_score:
                 highest_score = score
@@ -60,10 +133,12 @@ class SemanticPromptCache:
         if not prompt or not completion:
             return
 
-        cache_id = f"cache_{hash(prompt)}"
-        self.cache_store[cache_id] = {
+        cache_id = f"cache_{abs(hash(prompt))}"
+        entry = {
             "prompt": prompt,
             "completion": completion,
             "timestamp": time.time(),
             "hits": 0
         }
+        self.backend.set(cache_id, entry)
+

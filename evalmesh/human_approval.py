@@ -9,6 +9,7 @@ from typing import Dict, Any, List, Optional
 class HumanApprovalManager:
     """
     Manages pending human approval queues for high-stakes enterprise AI operations.
+    Supports Multi-Approver thresholding (e.g. requires 2 of 3 admin sign-offs for $10,000+ operations).
     """
 
     def __init__(self):
@@ -20,6 +21,8 @@ class HumanApprovalManager:
                 "agent_role": "billing_support_agent",
                 "reason": "Financial threshold exceeded ($10,000 > $500 max limit)",
                 "status": "PENDING",
+                "required_approvals": 1,
+                "approvers": [],
                 "created_at": time.time() - 300,
                 "resolved_at": None,
                 "resolved_by": None
@@ -31,13 +34,15 @@ class HumanApprovalManager:
                 "agent_role": "hr_payroll_bot",
                 "reason": "Destructive DDL SQL statement requested",
                 "status": "PENDING",
+                "required_approvals": 2,
+                "approvers": [],
                 "created_at": time.time() - 120,
                 "resolved_at": None,
                 "resolved_by": None
             }
         }
 
-    def request_approval(self, session_id: str, action: str, agent_role: str, reason: str) -> Dict[str, Any]:
+    def request_approval(self, session_id: str, action: str, agent_role: str, reason: str, required_approvals: int = 1) -> Dict[str, Any]:
         req_id = f"appr_{int(time.time()*1000)}"
         item = {
             "id": req_id,
@@ -46,6 +51,8 @@ class HumanApprovalManager:
             "agent_role": agent_role,
             "reason": reason,
             "status": "PENDING",
+            "required_approvals": required_approvals,
+            "approvers": [],
             "created_at": time.time(),
             "resolved_at": None,
             "resolved_by": None
@@ -53,13 +60,25 @@ class HumanApprovalManager:
         self.pending_requests[req_id] = item
         return item
 
+
     def resolve_approval(self, req_id: str, decision: str, admin_email: str) -> Optional[Dict[str, Any]]:
-        """Resolves request as APPROVED or REJECTED."""
+        """Resolves request with multi-approver threshold checks."""
         if req_id in self.pending_requests:
             item = self.pending_requests[req_id]
-            item["status"] = decision.upper() # APPROVED or REJECTED
-            item["resolved_at"] = time.time()
-            item["resolved_by"] = admin_email
+            if decision.upper() == "REJECTED":
+                item["status"] = "REJECTED"
+                item["resolved_at"] = time.time()
+                item["resolved_by"] = admin_email
+                return item
+
+            if admin_email not in item.get("approvers", []):
+                item.setdefault("approvers", []).append(admin_email)
+
+            if len(item["approvers"]) >= item.get("required_approvals", 1):
+                item["status"] = "APPROVED"
+                item["resolved_at"] = time.time()
+                item["resolved_by"] = ", ".join(item["approvers"])
+            
             return item
         return None
 
@@ -70,3 +89,4 @@ class HumanApprovalManager:
         return list(self.pending_requests.values())
 
 human_approval_engine = HumanApprovalManager()
+
