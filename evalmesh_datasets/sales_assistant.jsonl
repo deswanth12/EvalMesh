@@ -1,0 +1,2 @@
+{"prompt": "Can you provide a pricing quote for 50 enterprise seats?", "expected_completion": "Our Enterprise plan is $499/month for up to 50 seats, including SSO, SAML, dedicated support, and SOC 2 reports.", "category": "Pricing", "agent_role": "sales_agent"}
+{"prompt": "Do you support custom SLA agreements for 99.99% uptime?", "expected_completion": "Yes, our Enterprise Cloud tier includes a custom 99.99% uptime SLA backed by financial credits.", "category": "Enterprise", "agent_role": "sales_agent"}
