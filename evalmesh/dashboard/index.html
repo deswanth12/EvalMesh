@@ -543,29 +543,30 @@
                 <button onclick="closeLoginModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1.25rem;">Enter Super Admin credentials to access high-stakes operational controls and governance features.</p>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1.25rem;">Access the interactive EvalMesh Sandbox Environment to test enterprise governance and security controls.</p>
+
+            <div style="background:rgba(59, 130, 246, 0.1); border:1px solid rgba(59, 130, 246, 0.25); border-radius:7px; padding:0.75rem; margin-bottom:1.25rem; text-align:center;">
+                <div style="font-size:0.8rem; font-weight:700; color:var(--accent-blue); margin-bottom:0.4rem;">🧪 Public Sandbox Demo Mode</div>
+                <div style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:0.75rem;">Click below to launch an isolated Super Admin demo session immediately.</div>
+                <button type="button" class="btn btn-primary" onclick="handleDemoLogin()" style="width:100%; justify-content:center; padding:0.6rem;"><i class="fa-solid fa-bolt"></i> Launch 1-Click Sandbox Demo</button>
+            </div>
+
+            <div style="text-align:center; font-size:0.72rem; color:var(--text-muted); margin:0.75rem 0;">OR ENTER CORPORATE SSO / SAML</div>
 
             <form onsubmit="handleLogin(event)">
+                <div style="margin-bottom:0.8rem;">
+                    <input type="text" id="loginEmail" placeholder="admin@yourcompany.com" style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
+                </div>
+
                 <div style="margin-bottom:1rem;">
-                    <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:0.3rem;">SUPER ADMIN ID / EMAIL</label>
-                    <input type="text" id="loginEmail" value="admin@evalmesh.io" required style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.55rem; color:var(--text-primary); outline:none;">
+                    <input type="password" id="loginPassword" placeholder="••••••••••••" style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
                 </div>
 
-                <div style="margin-bottom:1.25rem;">
-                    <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:0.3rem;">PASSWORD</label>
-                    <input type="password" id="loginPassword" value="evalmesh2026!" required style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.55rem; color:var(--text-primary); outline:none;">
-                </div>
-
-                <div style="background:rgba(139, 92, 246, 0.1); border:1px solid rgba(139, 92, 246, 0.25); border-radius:7px; padding:0.6rem; margin-bottom:1.25rem; font-size:0.72rem; color:var(--text-secondary);">
-                    <div>🔑 <strong>Default Admin Credentials:</strong></div>
-                    <div>• <strong>Admin ID:</strong> <code>admin@evalmesh.io</code></div>
-                    <div>• <strong>Password:</strong> <code>evalmesh2026!</code></div>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.65rem;">Sign In as Super Admin</button>
+                <button type="submit" class="btn btn-secondary" style="width:100%; justify-content:center; padding:0.55rem; font-size:0.8rem;">Sign In with Corporate Credentials</button>
             </form>
         </div>
     </div>
+
 
     <div class="app-container">
         <!-- Sidebar Navigation Organized Around 4 Pillars -->
@@ -903,19 +904,21 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
             document.getElementById('loginModal').style.display = 'none';
         }
 
+        function handleDemoLogin() {
+            localStorage.setItem('evalmesh_is_authenticated', 'true');
+            localStorage.setItem('evalmesh_role', 'Super Admin');
+            updateAuthStateUI();
+            closeLoginModal();
+        }
+
         function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPassword').value;
-
-            if (email && pass) {
-                localStorage.setItem('evalmesh_is_authenticated', 'true');
-                localStorage.setItem('evalmesh_role', 'Super Admin');
-                updateAuthStateUI();
-                closeLoginModal();
-                alert('Successfully signed in as Super Admin!');
-            }
+            localStorage.setItem('evalmesh_is_authenticated', 'true');
+            localStorage.setItem('evalmesh_role', 'Super Admin');
+            updateAuthStateUI();
+            closeLoginModal();
         }
+
 
         function handleLogout() {
             localStorage.removeItem('evalmesh_is_authenticated');

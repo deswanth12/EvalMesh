@@ -17,6 +17,103 @@
 
 ---
 
+## 🚀 Get Started with EvalMesh
+
+### 1. Explore the Dashboard
+Visit the live control panel: **[https://evalmesh.vercel.app](https://evalmesh.vercel.app)**  
+Within your first minute, you can:
+* View the signature **AI Reliability Score (94/100)**
+* Monitor live request traffic and 6 core executive KPIs
+* Inspect real-time WAF security metrics and agent health
+
+### 2. Try the Interactive Playground
+Test EvalMesh scenarios live in your browser:
+* 🛡️ **Prompt Injection Protection**: Real-time jailbreak attack blocking (`403 Forbidden`).
+* 🔒 **PII Redaction**: Redact credit cards, SSNs, and emails before LLM egress.
+* ⚡ **Semantic Cache**: Sub-3ms prompt caching at $0 cost.
+* 👤 **Tool RBAC**: Pauses unauthorized database operations for human approval.
+* 📊 **Live Telemetry & Agent Timeline**: Visual interaction trace logging.
+
+### 3. Protect an AI Agent in 1 Line of Code
+
+**Python**:
+```bash
+pip install evalmesh
+```
+```python
+from evalmesh.sdk import guardrail
+
+@guardrail(agent_role="support_agent")
+def run_agent(prompt: str):
+    return llm.invoke(prompt)
+```
+
+**TypeScript**:
+```bash
+npm install @evalmesh/sdk
+```
+```typescript
+import { EvalMeshClient } from "@evalmesh/sdk";
+const client = new EvalMeshClient();
+```
+
+### 4. Automated Agent Monitoring
+Once connected, EvalMesh automatically provides:
+* AI Reliability Scorecard
+* Prompt Injection Protection & PII DLP
+* Sub-5ms Semantic Prompt Cache
+* Tool Permission Enforcement & Human Approvals
+* Live Telemetry & Session Replay Console
+* Cost Analytics & Incident Detection
+
+### 5. Enterprise Governance Controls
+Organizations can easily enable:
+* SAML 2.0 / OIDC & SCIM User Provisioning
+* Tamper-Proof Audit Logs (SOC 2 / HIPAA)
+* AES-256 Encrypted Secrets Vault
+* Sovereign Data Residency & Data Retention Purging
+
+### 6. Deploy Anywhere
+
+**Local Run**:
+```bash
+git clone https://github.com/deswanth12/EvalMesh.git
+cd EvalMesh
+python evalmesh_start.py
+```
+
+**Cloud Deploy**:
+* **Docker / Docker Compose**: `docker-compose up -d`
+* **Kubernetes**: `kubectl apply -f kubernetes/`
+* **PaaS**: Render, Railway, Vercel, AWS, GCP, Azure
+
+### 7. Observability & API Probes
+* Health Probes: `/health`, `/ready`, `/live`
+* Metrics Probe: `/metrics` (Prometheus format)
+* Streaming: `/ws` (WebSockets)
+* REST API: `/api/v1/*`
+
+### 8. System Architecture Blueprint
+```text
+Browser (React + TypeScript)
+      │
+      ▼ REST API / WebSockets
+FastAPI Gateway Backend
+      │
+ ├── Security Engine (security.py, dlp.py)
+ ├── Evaluation Engine (drift.py, dataset.py)
+ ├── Agent Registry (backend/models/database.py)
+ ├── Policy Engine (policy_engine.py)
+ ├── Telemetry & Session Replay (otel.py, session_replay.py)
+ └── Enterprise Governance (enterprise.py)
+      │
+      ▼
+PostgreSQL 15 + Redis 7.2
+```
+
+---
+
+
 ## 🎨 New Linear & Vercel-Grade Enterprise UI
 
 EvalMesh features a calm, high-trust B2B dark aesthetic inspired by **Linear**, **Vercel**, **Stripe**, **Datadog**, and **Grafana Labs**:
