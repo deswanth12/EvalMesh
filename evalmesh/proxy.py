@@ -41,10 +41,12 @@ key_manager = APIKeyManager()
 smart_router = SmartCostRouter()
 prompt_cache = SemanticPromptCache(similarity_threshold=0.90)
 auto_healer = AutoHealingRetryEngine()
-otel_exporter = OpenTelemetryTraceExporter()
+from backend.auth.routes import router as auth_router
+app.include_router(auth_router)
 
 UPSTREAM_OPENAI = "https://api.openai.com"
 DASHBOARD_PATH = os.path.join(os.path.dirname(__file__), "dashboard", "index.html")
+
 
 @app.get("/")
 @app.get("/dashboard")
