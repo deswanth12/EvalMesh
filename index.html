@@ -555,11 +555,17 @@
 
             <form onsubmit="handleLogin(event)">
                 <div style="margin-bottom:0.8rem;">
-                    <input type="text" id="loginEmail" placeholder="admin@yourcompany.com" style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
+                    <input type="email" id="loginEmail" placeholder="admin@yourcompany.com" required autocomplete="username"
+                        style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none; box-sizing:border-box;">
                 </div>
 
-                <div style="margin-bottom:1rem;">
-                    <input type="password" id="loginPassword" placeholder="••••••••••••" style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
+                <div style="margin-bottom:0.6rem;">
+                    <input type="password" id="loginPassword" placeholder="••••••••••••" required autocomplete="current-password"
+                        style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none; box-sizing:border-box;">
+                </div>
+
+                <div id="loginErrorMsg" style="display:none; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); border-radius:6px; padding:0.45rem 0.65rem; font-size:0.75rem; color:#f87171; margin-bottom:0.75rem;">
+                    ⚠️ <span id="loginErrorText">Invalid email or password.</span>
                 </div>
 
                 <button type="submit" class="btn btn-secondary" style="width:100%; justify-content:center; padding:0.55rem; font-size:0.8rem;">Sign In with Corporate Credentials</button>
@@ -913,10 +919,64 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
 
         function handleLogin(e) {
             e.preventDefault();
-            localStorage.setItem('evalmesh_is_authenticated', 'true');
-            localStorage.setItem('evalmesh_role', 'Super Admin');
-            updateAuthStateUI();
-            closeLoginModal();
+
+            const emailEl = document.getElementById('loginEmail');
+            const passEl  = document.getElementById('loginPassword');
+            const errBox  = document.getElementById('loginErrorMsg');
+            const errText = document.getElementById('loginErrorText');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+
+            const email    = (emailEl.value || '').trim().toLowerCase();
+            const password = (passEl.value || '').trim();
+
+            // --- Reset error state ---
+            errBox.style.display = 'none';
+            emailEl.style.border = '1px solid var(--border-color)';
+            passEl.style.border  = '1px solid var(--border-color)';
+
+            // --- Field presence validation ---
+            if (!email) {
+                emailEl.style.border = '1px solid rgba(239,68,68,0.7)';
+                errText.textContent = 'Email address is required.';
+                errBox.style.display = 'block';
+                emailEl.focus();
+                return;
+            }
+            if (!password) {
+                passEl.style.border = '1px solid rgba(239,68,68,0.7)';
+                errText.textContent = 'Password is required.';
+                errBox.style.display = 'block';
+                passEl.focus();
+                return;
+            }
+
+            // --- Credential check (demo account) ---
+            const VALID_EMAIL    = 'admin@evalmesh.io';
+            const VALID_PASSWORD = 'evalmesh2026!';
+
+            if (email !== VALID_EMAIL || password !== VALID_PASSWORD) {
+                emailEl.style.border = '1px solid rgba(239,68,68,0.7)';
+                passEl.style.border  = '1px solid rgba(239,68,68,0.7)';
+                errText.textContent  = 'Invalid email or password. Use the 1-Click Sandbox Demo for instant access.';
+                errBox.style.display = 'block';
+                passEl.value = '';
+                passEl.focus();
+                return;
+            }
+
+            // --- Success: brief loading state then authenticate ---
+            submitBtn.textContent = 'Signing in…';
+            submitBtn.disabled    = true;
+            setTimeout(() => {
+                localStorage.setItem('evalmesh_is_authenticated', 'true');
+                localStorage.setItem('evalmesh_role', 'Super Admin');
+                localStorage.setItem('evalmesh_user_email', email);
+                passEl.value = '';  // clear password from DOM immediately
+                updateAuthStateUI();
+                closeLoginModal();
+                submitBtn.textContent = 'Sign In with Corporate Credentials';
+                submitBtn.disabled    = false;
+            }, 600);
         }
 
 
