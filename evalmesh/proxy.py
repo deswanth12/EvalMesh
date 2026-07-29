@@ -109,12 +109,16 @@ import uuid
 
 @app.middleware("http")
 async def correlation_id_middleware(request: Request, call_next):
-    """Assigns unique X-Request-ID correlation ID to every request and response."""
+    """Assigns unique X-Request-ID correlation ID and security headers to every response."""
     request_id = request.headers.get("x-request-id", str(uuid.uuid4()))
     request.state.request_id = request_id
     response = await call_next(request)
     response.headers["x-request-id"] = request_id
+    response.headers["x-frame-options"] = "DENY"
+    response.headers["x-content-type-options"] = "nosniff"
+    response.headers["x-xss-protection"] = "1; mode=block"
     return response
+
 
 @app.get("/metrics")
 async def prometheus_metrics():

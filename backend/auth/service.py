@@ -23,39 +23,63 @@ class AuthService:
             }
         }
         self._sessions: Dict[str, Dict[str, Any]] = {}
+        self._failed_attempts: Dict[str, int] = {}
+        self._lockout_until: Dict[str, float] = {}
 
     def register_user(self, name: str, email: str, password: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-        if email.lower() in self._users:
+        clean_email = email.strip().lower()
+        if clean_email in self._users:
             return False, "Email already registered.", None
         
         user_id = f"usr_{uuid.uuid4().hex[:12]}"
         user = {
             "id": user_id,
             "name": name,
-            "email": email.lower(),
+            "email": clean_email,
             "password_hash": hasher.hash_password(password),
             "email_verified": False,
             "role": "developer",
             "organization_id": "org_evalmesh_labs"
         }
-        self._users[email.lower()] = user
+        self._users[clean_email] = user
         return True, "User registered successfully.", user
 
     def authenticate_user(self, email: str, password: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-        user = self._users.get(email.lower())
-        if not user:
+        clean_email = email.strip().lower()
+        now = time.time()
+
+        # Check Account Lockout
+        if clean_email in self._lockout_until:
+            if now < self._lockout_until[clean_email]:
+                remaining = int(self._lockout_until[clean_email] - now)
+                return False, f"Account locked due to 5 consecutive failed attempts. Try again in {remaining} seconds.", None
+            else:
+                # Lockout expired
+                del self._lockout_until[clean_email]
+                self._failed_attempts[clean_email] = 0
+
+        user = self._users.get(clean_email)
+        if not user or not hasher.verify_password(password, user["password_hash"]):
+            # Track failed attempt
+            fails = self._failed_attempts.get(clean_email, 0) + 1
+            self._failed_attempts[clean_email] = fails
+            if fails >= 5:
+                self._lockout_until[clean_email] = now + 900  # Lockout for 15 minutes (900s)
+                return False, "Account locked due to 5 consecutive failed attempts. Try again in 15 minutes.", None
             return False, "Invalid email or password.", None
-        
-        if not hasher.verify_password(password, user["password_hash"]):
-            return False, "Invalid email or password.", None
+
+        # Reset failed attempts on successful login
+        self._failed_attempts[clean_email] = 0
+        self._lockout_until.pop(clean_email, None)
 
         access_token = jwt_handler.create_access_token(user["id"], user["email"], user["role"])
         refresh_token = jwt_handler.create_refresh_token(user["id"])
         
         self._sessions[user["id"]] = {
             "refresh_token": refresh_token,
-            "created_at": time.time()
+            "created_at": now
         }
+
 
         return True, "Authentication successful.", {
             "access_token": access_token,
