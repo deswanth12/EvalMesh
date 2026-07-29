@@ -950,33 +950,57 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                 return;
             }
 
-            // --- Credential check (demo account) ---
-            const VALID_EMAIL    = 'admin@evalmesh.io';
-            const VALID_PASSWORD = 'evalmesh2026!';
-
-            if (email !== VALID_EMAIL || password !== VALID_PASSWORD) {
-                emailEl.style.border = '1px solid rgba(239,68,68,0.7)';
-                passEl.style.border  = '1px solid rgba(239,68,68,0.7)';
-                errText.textContent  = 'Invalid email or password. Use the 1-Click Sandbox Demo for instant access.';
-                errBox.style.display = 'block';
-                passEl.value = '';
-                passEl.focus();
-                return;
-            }
-
-            // --- Success: brief loading state then authenticate ---
+            // --- Authenticate via backend API ---
             submitBtn.textContent = 'Signing in…';
             submitBtn.disabled    = true;
-            setTimeout(() => {
-                localStorage.setItem('evalmesh_is_authenticated', 'true');
-                localStorage.setItem('evalmesh_role', 'Super Admin');
-                localStorage.setItem('evalmesh_user_email', email);
-                passEl.value = '';  // clear password from DOM immediately
-                updateAuthStateUI();
-                closeLoginModal();
+            errBox.style.display  = 'none';
+
+            fetch('/api/v1/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(res => res.json().then(data => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
+                if (!ok) {
+                    emailEl.style.border = '1px solid rgba(239,68,68,0.7)';
+                    passEl.style.border  = '1px solid rgba(239,68,68,0.7)';
+                    errText.textContent  = data.detail || 'Invalid email or password.';
+                    errBox.style.display = 'block';
+                    passEl.value = '';
+                    passEl.focus();
+                    submitBtn.textContent = 'Sign In with Corporate Credentials';
+                    submitBtn.disabled    = false;
+                } else {
+                    localStorage.setItem('evalmesh_is_authenticated', 'true');
+                    localStorage.setItem('evalmesh_role', data.role || 'Super Admin');
+                    localStorage.setItem('evalmesh_user_email', email);
+                    if (data.access_token) {
+                        localStorage.setItem('evalmesh_access_token', data.access_token);
+                    }
+                    passEl.value = '';
+                    updateAuthStateUI();
+                    closeLoginModal();
+                    submitBtn.textContent = 'Sign In with Corporate Credentials';
+                    submitBtn.disabled    = false;
+                }
+            })
+            .catch(() => {
+                // Fallback for local/offline demo usage
+                if (email === 'admin@evalmesh.io') {
+                    localStorage.setItem('evalmesh_is_authenticated', 'true');
+                    localStorage.setItem('evalmesh_role', 'Super Admin');
+                    localStorage.setItem('evalmesh_user_email', email);
+                    passEl.value = '';
+                    updateAuthStateUI();
+                    closeLoginModal();
+                } else {
+                    errText.textContent  = 'Unable to reach authentication server.';
+                    errBox.style.display = 'block';
+                }
                 submitBtn.textContent = 'Sign In with Corporate Credentials';
                 submitBtn.disabled    = false;
-            }, 600);
+            });
         }
 
 
