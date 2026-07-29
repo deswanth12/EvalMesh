@@ -240,10 +240,62 @@ async def list_pats():
         {"id": "pat_101", "name": "VS Code IDE Extension", "last_used": time.time() - 300, "expires_at": time.time() + 7776000}
     ]
 
-@router.delete("/personal-access-tokens/{pat_id}")
-async def revoke_pat(pat_id: str):
-    """Revokes a Personal Access Token."""
-    return {"status": "SUCCESS", "message": f"Personal Access Token {pat_id} revoked."}
+@router.post("/introspect")
+async def introspect_token(payload: dict):
+    """Token Introspection Endpoint for internal services & API gateways."""
+    token = payload.get("token", "").strip()
+    if not token:
+        return {"active": False, "error": "Token is required"}
+
+    # Determine token type and return metadata
+    token_type = "api_key"
+    if token.startswith("em_sa_"):
+        token_type = "service_account"
+    elif token.startswith("em_pat_"):
+        token_type = "personal_access_token"
+    elif token.startswith("em_live_"):
+        token_type = "api_key"
+    else:
+        # Check JWT signature
+        is_valid, jwt_meta = jwt_handler.verify_token(token)
+        if is_valid:
+            return {
+                "active": True,
+                "type": "jwt_access_token",
+                "user_id": jwt_meta.get("sub"),
+                "email": jwt_meta.get("email"),
+                "role": jwt_meta.get("role"),
+                "organization": "EvalMesh Labs",
+                "scopes": ["chat:*", "evaluate:run"],
+                "expires_at": jwt_meta.get("exp")
+            }
+        return {"active": False, "error": "Invalid token"}
+
+    return {
+        "active": True,
+        "type": token_type,
+        "organization": "EvalMesh Labs",
+        "scopes": ["deploy:execute", "evaluate:run", "chat:read", "chat:write"],
+        "created_at": time.time() - 86400,
+        "expires_at": time.time() + 7776000,
+        "rotation_policy": "90_days"
+    }
+
+@router.post("/tokens/rotate")
+async def rotate_token(payload: dict):
+    """Token Rotation Endpoint (Supports 30-day, 60-day, 90-day schedules)."""
+    token_id = payload.get("token_id", "key_101")
+    rotation_days = payload.get("rotation_days", 90)
+    new_token = f"em_live_{int(time.time())}rot99"
+    return {
+        "status": "SUCCESS",
+        "token_id": token_id,
+        "new_token": new_token,
+        "rotation_policy_days": rotation_days,
+        "next_rotation_date": time.time() + (rotation_days * 86400),
+        "message": "Token rotated successfully. Previous token has been scheduled for deprecation."
+    }
+
 
 
 
