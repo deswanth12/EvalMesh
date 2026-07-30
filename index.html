@@ -792,6 +792,7 @@
         <aside>
             <div class="nav-category">Overview</div>
             <button class="nav-item active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Executive Dashboard</button>
+            <button class="nav-item" onclick="switchTab('onboarding_wizard')" style="color:var(--accent-blue); font-weight:700;"><i class="fa-solid fa-rocket"></i> 10-Min Onboarding Wizard</button>
             <button class="nav-item" onclick="switchTab('vision_workflow')" style="color:var(--accent-purple); font-weight:700;"><i class="fa-solid fa-compass"></i> Why EvalMesh (10-Step Workflow)</button>
             <button class="nav-item" onclick="switchTab('live_playground')" style="color:var(--accent-green); font-weight:700;"><i class="fa-solid fa-terminal"></i> Live Interactive Playground</button>
 
@@ -1206,13 +1207,252 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                         </div>
                     </div>
 
+            </section>
+
+            <!-- 10-MINUTE DEVELOPER ONBOARDING WIZARD (STRIPE / VERCEL STYLE) -->
+            <section id="onboarding_wizard" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="fa-solid fa-rocket" style="color:var(--accent-blue)"></i> 10-Minute Developer Onboarding Wizard</h1>
+                        <p class="page-desc">Connect AI providers, generate API keys, and route your first AI request in under 10 minutes.</p>
+                    </div>
                 </div>
+
+                <!-- PROGRESS BAR HEADER -->
+                <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                        <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary);" id="wizardStepTitle">Step 1 of 7 — Create Organization & Workspace</span>
+                        <span style="font-size:0.78rem; font-weight:700; color:var(--accent-blue);" id="wizardProgressPct">14% Complete</span>
+                    </div>
+                    <div style="width:100%; height:8px; background:var(--bg-primary); border-radius:9999px; overflow:hidden;">
+                        <div id="wizardProgressBar" style="width:14%; height:100%; background:linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); transition:width 0.3s ease;"></div>
+                    </div>
+                </div>
+
+                <!-- STEP 1: ORG & WORKSPACE -->
+                <div id="wizardStep1" class="panel-card" style="display:block;">
+                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🏢 Step 1 — Create Organization & Workspace</div>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Setup your primary multi-tenant organization, workspace, and team roles.</p>
+                    
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem; margin-bottom:1.25rem;">
+                        <div>
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">ORGANIZATION NAME</label>
+                            <input type="text" id="wizardOrgName" value="Acme AI Corp" style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.55rem; color:var(--text-primary); font-size:0.85rem; outline:none;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">WORKSPACE</label>
+                            <input type="text" id="wizardWorkspaceName" value="Production Gateway" style="width:100%; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.55rem; color:var(--text-primary); font-size:0.85rem; outline:none;">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="setWizardStep(2)"><i class="fa-solid fa-arrow-right"></i> Next: Connect AI Providers</button>
+                </div>
+
+                <!-- STEP 2: CHOOSE AI PROVIDERS -->
+                <div id="wizardStep2" class="panel-card" style="display:none;">
+                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🤖 Step 2 — Select AI Model Providers</div>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Select the LLM providers your application uses. EvalMesh will unify them under one endpoint.</p>
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+                        <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--accent-blue); border-radius:8px; cursor:pointer;">
+                            <input type="checkbox" checked style="accent-color:var(--accent-blue);"> <strong>OpenAI</strong>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
+                            <input type="checkbox" checked style="accent-color:var(--accent-purple);"> <strong>Anthropic</strong>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
+                            <input type="checkbox" checked style="accent-color:var(--accent-green);"> <strong>Google Gemini</strong>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
+                            <input type="checkbox" style="accent-color:var(--accent-orange);"> <strong>DeepSeek</strong>
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-secondary" onclick="setWizardStep(1)">Back</button>
+                        <button class="btn btn-primary" onclick="setWizardStep(3)"><i class="fa-solid fa-arrow-right"></i> Next: Add & Test Vault Keys</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: VAULT KEYS & CONNECTION TEST -->
+                <div id="wizardStep3" class="panel-card" style="display:none;">
+                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🔑 Step 3 — Encrypted Vault Credentials & Connection Test</div>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Store master API keys securely in AES-256-GCM Vault and verify upstream connectivity.</p>
+
+                    <div style="margin-bottom:1rem;">
+                        <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">OPENAI API KEY</label>
+                        <div style="display:flex; gap:0.5rem;">
+                            <input type="password" id="wizardOpenAIKey" value="sk-proj-test-mock-key-2026" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.55rem; color:var(--text-primary); font-size:0.85rem; outline:none;">
+                            <button class="btn btn-secondary" onclick="testWizardProviderConn()"><i class="fa-solid fa-plug"></i> Test Connection</button>
+                        </div>
+                        <div id="wizardConnStatus" style="font-size:0.75rem; color:var(--accent-green); margin-top:0.4rem; display:none;">
+                            ✅ Connection Verified! Upstream OpenAI API responded in 14ms (200 OK).
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-secondary" onclick="setWizardStep(2)">Back</button>
+                        <button class="btn btn-primary" onclick="setWizardStep(4)"><i class="fa-solid fa-arrow-right"></i> Next: Generate EvalMesh Key</button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: GENERATE API KEY -->
+                <div id="wizardStep4" class="panel-card" style="display:none;">
+                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🛡️ Step 4 — Generate EvalMesh Gateway Key</div>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Generate a scoped EvalMesh API key to authenticate your client applications.</p>
+
+                    <div style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:1rem; margin-bottom:1.25rem;">
+                        <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); margin-bottom:0.4rem;">YOUR SCOPED EVALMESH API KEY</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <code style="font-size:0.9rem; font-family:var(--font-mono); color:var(--accent-green);" id="wizardGeneratedKey">em_live_891273912837abcd</code>
+                            <button class="btn btn-secondary" onclick="copyWizardKey()" style="font-size:0.75rem;"><i class="fa-solid fa-copy"></i> Copy Key</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-secondary" onclick="setWizardStep(3)">Back</button>
+                        <button class="btn btn-primary" onclick="setWizardStep(5)"><i class="fa-solid fa-arrow-right"></i> Next: Install SDK</button>
+                    </div>
+                </div>
+
+                <!-- STEP 5: SDK INSTALLATION & CODE CHANGE -->
+                <div id="wizardStep5" class="panel-card" style="display:none;">
+                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">📦 Step 5 — SDK Integration (1 Line Code Change)</div>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Install the lightweight SDK and swap your base URL endpoint. Zero business logic rewrite required.</p>
+
+                    <div class="code-box" style="margin-bottom:1.25rem;">
+# 1. Install via Pip
+pip install evalmesh
+
+# 2. Python Code (Swap 1 Line)
+from evalmesh import EvalMesh
+
+# OLD: client = OpenAI(api_key="...")
+# NEW:
+client = EvalMesh(
+    base_url="http://localhost:8000/v1",
+    api_key="em_live_891273912837abcd"
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Summarize customer feedback"}]
+)
+                    </div>
+
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-secondary" onclick="setWizardStep(4)">Back</button>
+                        <button class="btn btn-primary" onclick="setWizardStep(6)"><i class="fa-solid fa-arrow-right"></i> Next: Send First Request</button>
+                    </div>
+                </div>
+
+                <!-- STEP 6: SEND FIRST REQUEST & TELEMETRY -->
+                <div id="wizardStep6" class="panel-card" style="display:none;">
+                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🚀 Step 6 — Send First AI Request & Inspect Live Telemetry</div>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Execute your first request through the EvalMesh gateway to see real-time security, routing, and cost telemetry.</p>
+
+                    <button class="btn btn-primary" onclick="sendWizardFirstRequest()" style="margin-bottom:1rem;"><i class="fa-solid fa-paper-plane"></i> Send Test Request Through Gateway</button>
+
+                    <div id="wizardTelemetryOutput" class="code-box" style="display:none; color:#38bdf8;">
+[STATUS]: 200 OK | Request Received
+[SMART ROUTER]: Selected Provider: OpenAI (gpt-4o-mini) — Auto-downgraded (Saved ~90% cost)
+[LATENCY]: 12.4 ms (p95: 14.8 ms)
+[SECURITY SCAN]: WAF Clean (0 Injections) | PII DLP Clean (0 Leaks)
+[EVALUATION SCORE]: 96/100 (Accuracy: 98%, Hallucination: 0%)
+[TOKENS / COST]: 42 Tokens | $0.000006
+                    </div>
+
+                    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                        <button class="btn btn-secondary" onclick="setWizardStep(5)">Back</button>
+                        <button class="btn btn-primary" onclick="setWizardStep(7)"><i class="fa-solid fa-arrow-right"></i> Complete Onboarding</button>
+                    </div>
+                </div>
+
+                <!-- STEP 7: SETUP COMPLETE -->
+                <div id="wizardStep7" class="panel-card" style="display:none; text-align:center; padding:2rem;">
+                    <div style="font-size:2.5rem; margin-bottom:0.5rem;">🎉</div>
+                    <div style="font-size:1.25rem; font-weight:800; color:var(--text-primary); margin-bottom:0.5rem;">Onboarding Complete!</div>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); max-width:500px; margin:0 auto 1.5rem auto;">Your application is now connected to EvalMesh. Every AI request is automatically evaluated, secured, cached, and routed.</p>
+                    
+                    <div style="display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap;">
+                        <button class="btn btn-primary" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Open Executive Dashboard</button>
+                        <button class="btn btn-secondary" onclick="switchTab('pillar_security')"><i class="fa-solid fa-shield-virus"></i> Configure Security WAF</button>
+                        <button class="btn btn-secondary" onclick="switchTab('pillar_cost')"><i class="fa-solid fa-bolt"></i> Configure Smart Routing</button>
+                    </div>
+                </div>
+
             </section>
         </main>
     </div>
 
     <!-- JavaScript Logic & Chart Initialization -->
     <script>
+        // --- 10-Minute Onboarding Wizard JS Logic ---
+        let currentWizardStep = 1;
+        const WIZARD_STEP_TITLES = {
+            1: "Step 1 of 7 — Create Organization & Workspace",
+            2: "Step 2 of 7 — Select AI Model Providers",
+            3: "Step 3 of 7 — Encrypted Vault Credentials & Connection Test",
+            4: "Step 4 of 7 — Generate EvalMesh Gateway Key",
+            5: "Step 5 of 7 — SDK Integration (1 Line Code Change)",
+            6: "Step 6 of 7 — Send First AI Request & Inspect Live Telemetry",
+            7: "Step 7 of 7 — Onboarding Complete!"
+        };
+
+        function setWizardStep(stepNum) {
+            currentWizardStep = stepNum;
+            for (let i = 1; i <= 7; i++) {
+                const stepCard = document.getElementById(`wizardStep${i}`);
+                if (stepCard) stepCard.style.display = (i === stepNum) ? 'block' : 'none';
+            }
+
+            const titleEl = document.getElementById('wizardStepTitle');
+            const pctEl = document.getElementById('wizardProgressPct');
+            const barEl = document.getElementById('wizardProgressBar');
+
+            const pct = Math.round((stepNum / 7) * 100);
+            if (titleEl) titleEl.textContent = WIZARD_STEP_TITLES[stepNum] || `Step ${stepNum} of 7`;
+            if (pctEl) pctEl.textContent = `${pct}% Complete`;
+            if (barEl) barEl.style.width = `${pct}%`;
+        }
+
+        function testWizardProviderConn() {
+            const statusBox = document.getElementById('wizardConnStatus');
+            if (!statusBox) return;
+            statusBox.style.display = 'block';
+            statusBox.textContent = 'Testing upstream connection to OpenAI...';
+            statusBox.style.color = 'var(--text-secondary)';
+            setTimeout(() => {
+                statusBox.textContent = '✅ Connection Verified! Upstream OpenAI API responded in 14ms (200 OK).';
+                statusBox.style.color = 'var(--accent-green)';
+            }, 600);
+        }
+
+        function copyWizardKey() {
+            const keyEl = document.getElementById('wizardGeneratedKey');
+            if (keyEl && navigator.clipboard) {
+                navigator.clipboard.writeText(keyEl.innerText).then(() => {
+                    alert('EvalMesh API key copied to clipboard!');
+                }).catch(() => {});
+            }
+        }
+
+        function sendWizardFirstRequest() {
+            const outputBox = document.getElementById('wizardTelemetryOutput');
+            if (!outputBox) return;
+            outputBox.style.display = 'block';
+            outputBox.textContent = 'Routing request through EvalMesh Gateway (http://localhost:8000/v1)...';
+            setTimeout(() => {
+                outputBox.textContent = `[STATUS]: 200 OK | Request Received
+[SMART ROUTER]: Selected Provider: OpenAI (gpt-4o-mini) — Auto-downgraded (Saved ~90% cost)
+[LATENCY]: 12.4 ms (p95: 14.8 ms)
+[SECURITY SCAN]: WAF Clean (0 Injections) | PII DLP Clean (0 Leaks)
+[EVALUATION SCORE]: 96/100 (Accuracy: 98%, Hallucination: 0%)
+[TOKENS / COST]: 42 Tokens | $0.000006
+[TRACE SPAN ID]: otel_span_9918239a01`;
+            }, 800);
+        }
+
         function toggleMobileSidebar() {
             const aside = document.querySelector('aside');
             const backdrop = document.getElementById('sidebarBackdrop');

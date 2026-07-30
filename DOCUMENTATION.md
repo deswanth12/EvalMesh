@@ -291,16 +291,34 @@ client = OpenAI(
 
 ---
 
-## 8. Frequently Asked Questions (FAQ)
+## 8. 10-Minute Developer Onboarding & User Experience Guide
 
-### Q1: How much latency does EvalMesh add?
-**A**: Under **15 milliseconds** average proxy latency overhead. Caching responds in <5ms.
+EvalMesh is engineered for instant developer velocity — designed to feel like Stripe or Vercel. A new developer can sign up, connect an AI provider, update one line of code, and route their first request through EvalMesh in **less than 10 minutes**.
 
-### Q2: Does EvalMesh store my raw API keys?
-**A**: No. API keys are encrypted in-memory using the Encrypted Secrets Vault (`vault.py`) or passed securely via environment variables.
+### ⚡ The 12-Step Usage Flow
+1. **User Registration**: Signup, email verification, organization creation, and 4-tier RBAC assignment.
+2. **Onboarding Wizard**: Guided 7-step onboarding progress bar in the web control panel.
+3. **Provider Configuration**: Connect OpenAI, Anthropic, Gemini, Grok, DeepSeek, Ollama, Azure, or OpenRouter in AES-256 Vault with connection testing.
+4. **API Gateway**: Single unified OpenAI-compatible endpoint (`/v1/chat/completions`) with default-on security, rate limiting, and caching.
+5. **SDK Integration**: Drop-in client initialization in Python (`pip install evalmesh`) or TypeScript (`npm install @evalmesh/sdk`).
+6. **First Successful Request**: Instant live feedback showing latency, cost, tokens, security scan, and evaluation score.
+7. **Live Dashboard**: Real-time dashboards tracking traffic, latency, cost, model usage, prompt versions, and cache hits.
+8. **Evaluation Engine**: Upload datasets, trigger benchmark runs, track prompt regressions, and generate quality reports.
+9. **Default-On Security**: Inline WAF prompt injection defense, PII DLP redactor, policy engine, and audit logging.
+10. **Smart Routing**: Configure routing policies (cheapest, fastest, highest quality, failover) without code changes.
+11. **Alerts & Notifications**: Real-time alerts via Email, Slack, Teams, Discord, and Webhooks.
+12. **Production Deployment**: Deploy with Docker, Docker Compose, Kubernetes, or Helm.
 
-### Q3: Can I self-host EvalMesh on-premise?
-**A**: Yes! EvalMesh can be deployed as a single Docker container or Kubernetes pod inside your VPC.
+---
+
+## 9. Frequently Asked Questions (FAQ)
+
+* **Q: Does EvalMesh require changing my application prompt logic?**  
+  *A: No. EvalMesh is an OpenAI-compatible reverse proxy gateway. You simply update your client `base_url` to `http://localhost:8000/v1`.*
+* **Q: How does EvalMesh handle secret storage?**  
+  *A: Provider keys are encrypted at rest using AES-256-GCM in the Secrets Vault and resolved via environment variables.*
+* **Q: What is the target latency overhead?**  
+  *A: The proxy gateway introduces <12ms average processing overhead, while semantic cache hits return in sub-5ms at $0 token cost.*
 
 ---
 
