@@ -495,16 +495,165 @@
             overflow-x: auto;
             white-space: pre-wrap;
         }
+
+        /* Mobile Hamburger & Drawer Navigation Styles */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.4rem 0.65rem;
+            border-radius: 7px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100vw;
+            height: calc(100vh - 60px);
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 80;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .score-breakdown-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                width: 100% !important;
+            }
+            .score-hero-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: inline-flex;
+            }
+
+            header {
+                padding: 0 0.85rem;
+            }
+
+            .header-search {
+                display: none;
+            }
+
+            .env-selector {
+                display: none;
+            }
+
+            .status-pill {
+                font-size: 0.68rem;
+                padding: 0.2rem 0.45rem;
+            }
+
+            .org-switcher {
+                font-size: 0.75rem !important;
+            }
+
+            /* Slide-Over Drawer Navigation for Mobile */
+            aside {
+                position: fixed;
+                top: 60px;
+                left: -270px;
+                width: 260px;
+                height: calc(100vh - 60px);
+                max-height: calc(100vh - 60px);
+                z-index: 90;
+                transition: left 0.25s ease-in-out;
+                box-shadow: 10px 0 25px rgba(0, 0, 0, 0.6);
+            }
+
+            aside.open {
+                left: 0;
+            }
+
+            .sidebar-backdrop.open {
+                display: block;
+            }
+
+            main {
+                padding: 1rem 0.75rem;
+                width: 100%;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.65rem;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr !important;
+            }
+
+            .score-hero-card {
+                padding: 1rem;
+            }
+
+            .score-big-number {
+                font-size: 2.2rem;
+            }
+
+            .score-breakdown-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.5rem;
+            }
+
+            #loginModal > div {
+                width: 92vw !important;
+                max-width: 400px !important;
+                padding: 1.25rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-grid {
+                grid-template-columns: repeat(1, 1fr) !important;
+            }
+
+            .score-breakdown-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .page-title {
+                font-size: 1.15rem;
+            }
+
+            .badge {
+                font-size: 0.68rem;
+            }
+        }
     </style>
 </head>
 <body>
 
     <!-- Header Navigation -->
     <header>
-        <a href="#" class="logo-brand">
-            <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            EvalMesh
-        </a>
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <a href="#" class="logo-brand">
+                <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                EvalMesh
+            </a>
+        </div>
 
         <div class="header-search">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -532,6 +681,9 @@
             </div>
         </div>
     </header>
+
+    <!-- Mobile Navigation Overlay Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleMobileSidebar()"></div>
 
     <!-- Login Modal Overlay -->
     <div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center;">
@@ -999,6 +1151,24 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
 
     <!-- JavaScript Logic & Chart Initialization -->
     <script>
+        function toggleMobileSidebar() {
+            const aside = document.querySelector('aside');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (aside && backdrop) {
+                aside.classList.toggle('open');
+                backdrop.classList.toggle('open');
+            }
+        }
+
+        function closeMobileSidebar() {
+            const aside = document.querySelector('aside');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (aside && backdrop) {
+                aside.classList.remove('open');
+                backdrop.classList.remove('open');
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
@@ -1012,6 +1182,9 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
             if (activeBtn) {
                 activeBtn.classList.add('active');
             }
+
+            // Close mobile drawer on tab selection
+            closeMobileSidebar();
         }
 
         function setEnv(env) {
