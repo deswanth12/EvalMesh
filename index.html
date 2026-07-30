@@ -1323,7 +1323,7 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                     <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">📦 Step 5 — SDK Integration (2 Line Code Change)</div>
                     <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Install the lightweight SDK and swap your API key & base URL endpoint. Zero business logic rewrite required.</p>
 
-                    <div class="code-box" style="margin-bottom:1.25rem;">
+                    <div class="code-box" id="wizardCodeSnippet" style="margin-bottom:1.25rem;">
 # BEFORE (Direct to Provider)
 client = OpenAI(
     api_key="sk-proj-xxxxxxxxxxxxxxxxx"
@@ -1331,7 +1331,7 @@ client = OpenAI(
 
 # AFTER (Routed through EvalMesh Control Plane)
 client = OpenAI(
-    api_key="em_live_xxxxxxxxxxxxxxxxx",
+    api_key="em_live_7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e",
     base_url="https://api.evalmesh.ai/v1" # Local Dev: http://localhost:8000/v1
 )
 
@@ -1407,6 +1407,7 @@ client = OpenAI(
             
             const keyEl = document.getElementById('wizardGeneratedKey');
             if (keyEl) keyEl.textContent = activeGeneratedKey;
+            updateWizardCodeSnippet(activeGeneratedKey);
 
             fetch('/v1/keys/generate', {
                 method: 'POST',
@@ -1416,8 +1417,27 @@ client = OpenAI(
                 if (data && data.api_key) {
                     activeGeneratedKey = data.api_key;
                     if (keyEl) keyEl.textContent = data.api_key;
+                    updateWizardCodeSnippet(data.api_key);
                 }
             }).catch(() => {});
+        }
+
+        function updateWizardCodeSnippet(key) {
+            const snippetEl = document.getElementById('wizardCodeSnippet');
+            if (snippetEl) {
+                snippetEl.textContent = `# BEFORE (Direct to Provider)
+client = OpenAI(
+    api_key="sk-proj-xxxxxxxxxxxxxxxxx"
+)
+
+# AFTER (Routed through EvalMesh Control Plane)
+client = OpenAI(
+    api_key="${key}",
+    base_url="https://api.evalmesh.ai/v1" # Local Dev: http://localhost:8000/v1
+)
+
+# 👉 No other code changes required!`;
+            }
         }
 
         function setWizardStep(stepNum) {
