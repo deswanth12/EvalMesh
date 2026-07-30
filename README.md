@@ -1,4 +1,4 @@
-# 🛡️ EvalMesh — AI Gateway for Secure & Reliable Agent Deployment
+# 🛡️ EvalMesh — The Control Plane for Production AI Applications
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/deswanth12/EvalMesh)
 [![System Verification](https://img.shields.io/badge/suite-41%2F41%20passing-brightgreen.svg)](https://github.com/deswanth12/EvalMesh)
@@ -9,17 +9,92 @@
 
 ![EvalMesh Banner](assets/evalmesh_banner.svg)
 
-> **Cloudflare + GitHub Actions for Autonomous AI Agents.**  
-> An ultra-low-latency (<15ms) reverse proxy gateway, real-time prompt injection WAF, PII DLP redactor, semantic prompt cache, AI session replay console ("Chrome DevTools for AI"), declarative policy engine, and 41-module enterprise governance framework for LLM applications.
-
+> **EvalMesh is the control plane for production AI applications.**  
+> It evaluates, secures, routes, monitors, and improves every AI request before it reaches your users — giving engineering teams the confidence to ship reliable AI systems faster while spending 90% less time on manual testing and troubleshooting.
 
 ```text
-                         EvalMesh Continuous AI Reliability Flywheel
+                        EvalMesh Continuous AI Control Plane Flywheel
 
-     Build AI Agents  ➔  Test & Evaluate  ➔  Secure & Govern AI  ➔  Monitor Production  ➔  Improve Continuously
+     Build AI Apps  ➔  Evaluate Automatically  ➔  Secure & Govern  ➔  Monitor Production  ➔  Improve Continuously
 ```
 
 📖 **[Read Complete Enterprise Documentation & Developer Guide](DOCUMENTATION.md)**
+
+---
+
+## 🎯 What Problem Does EvalMesh Solve?
+
+Imagine a team building a production AI assistant. Every single day, engineers ask:
+* *Is the AI still accurate after today's prompt edit?*
+* *Did a provider model update introduce new hallucinations or regressions?*
+* *Which AI model provider is faster, cheaper, and more reliable for this task?*
+* *Are user prompts safe, or are attackers trying prompt injection attacks?*
+* *Are we accidentally leaking sensitive customer PII to external API providers?*
+
+Without EvalMesh, engineers spend **hours every week manually testing prompts in spreadsheets**.  
+With EvalMesh, **the entire lifecycle is automated in real-time**.
+
+```text
+ ┌─────────────┐        ┌────────────────────────────────────────────────────────┐        ┌──────────────────┐
+ │ Client App  │ ─────> │                 EvalMesh Control Plane                 │ ─────> │ Upstream Models  │
+ │ (SDK / API) │        │ (Auth ➔ WAF ➔ PII ➔ Cache ➔ Router ➔ Evals ➔ Telemetry)│        │ OpenAI, Claude… │
+ └─────────────┘        └────────────────────────────────────────────────────────┘        └──────────────────┘
+```
+
+---
+
+## ⚡ 10-Step Request Processing Pipeline
+
+Every request routed through EvalMesh passes through an automated 10-tier safety and evaluation pipeline:
+
+```text
+Client Request
+      │
+      ▼
+ 1. Authentication        (JWT, API Keys, PATs, Service Accounts)
+      │
+      ▼
+ 2. Rate Limiter          (Token & Request Rate Buckets)
+      │
+      ▼
+ 3. WAF Security          (Prompt Injection & Jailbreak Defense)
+      │
+      ▼
+ 4. PII DLP Engine        (Redacts Emails, Credit Cards, SSNs)
+      │
+      ▼
+ 5. Policy Engine         (Declarative RBAC & Custom Governance Rules)
+      │
+      ▼
+ 6. Semantic Cache        (Sub-5ms Cache Response @ $0 Token Cost)
+      │
+      ▼
+ 7. Prompt Versioning     (Tracks Prompt Hashes & Version History)
+      │
+      ▼
+ 8. Smart Cost Router     (Auto-Downgrades Simple Tasks to Cheaper Models)
+      │
+      ▼
+ 9. Provider Gateway      (Failover Engine across OpenAI, Anthropic, Gemini, DeepSeek, Ollama)
+      │
+      ▼
+ 10. Auto Evaluation      (Calculates Accuracy, Hallucination Score, & Reliability Index)
+      │
+      ▼
+  Dashboard & Telemetry   (Streams OpenTelemetry Spans & Real-Time Alerts)
+```
+
+---
+
+## ⏱️ ROI & Time Saved
+
+| Capability | Without EvalMesh | With EvalMesh | Time / Cost Saved |
+|---|---|---|---|
+| **AI Prompt Evaluation** | Manual testing of 100+ cases across 2–4 hours | 1-Click Automated Evaluation Suite | **Hours saved per release** |
+| **Multi-Model Comparison** | Copying outputs into spreadsheets across OpenAI, Anthropic, Gemini | Side-by-Side Model Benchmark Comparison | **30–60 mins per test run** |
+| **Prompt Versioning** | Searching Git commit history for working prompts | Complete Prompt Registry linked to eval scores | **Instant prompt rollback** |
+| **Security & PII Shield** | Vulnerabilities discovered by users in production | Real-Time WAF & PII Redactor block attacks inline | **Prevents costly security incidents** |
+| **Drift Monitoring** | Customers report broken chatbot behavior first | Real-Time Drift & Regression Alerts | **Instant detection & diagnosis** |
 
 ---
 

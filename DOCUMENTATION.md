@@ -1,6 +1,8 @@
 # 📚 EvalMesh — Complete Enterprise Documentation & Developer Guide
 
-Welcome to the official developer and enterprise documentation for **EvalMesh** — the AI Gateway for Secure & Reliable Agent Deployment.
+Welcome to the official developer and enterprise documentation for **EvalMesh** — the Control Plane for Production AI Applications.
+
+> *"EvalMesh is the control plane for production AI applications. It evaluates, secures, routes, monitors, and improves every AI request before it reaches your users."*
 
 ---
 
