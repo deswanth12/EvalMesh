@@ -1251,20 +1251,20 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                 <!-- STEP 2: CHOOSE AI PROVIDERS -->
                 <div id="wizardStep2" class="panel-card" style="display:none;">
                     <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🤖 Step 2 — Select AI Model Providers</div>
-                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Select the LLM providers your application uses. EvalMesh will unify them under one endpoint.</p>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Select the LLM providers your application uses. Step 3 will show key inputs for your selected providers.</p>
 
                     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
                         <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--accent-blue); border-radius:8px; cursor:pointer;">
-                            <input type="checkbox" checked style="accent-color:var(--accent-blue);"> <strong>OpenAI</strong>
+                            <input type="checkbox" id="chk_provider_openai" checked onchange="syncProviderKeyBoxes()" style="accent-color:var(--accent-blue);"> <strong>OpenAI</strong>
                         </label>
                         <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
-                            <input type="checkbox" checked style="accent-color:var(--accent-purple);"> <strong>Anthropic</strong>
+                            <input type="checkbox" id="chk_provider_anthropic" onchange="syncProviderKeyBoxes()" style="accent-color:var(--accent-purple);"> <strong>Anthropic</strong>
                         </label>
                         <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
-                            <input type="checkbox" checked style="accent-color:var(--accent-green);"> <strong>Google Gemini</strong>
+                            <input type="checkbox" id="chk_provider_gemini" onchange="syncProviderKeyBoxes()" style="accent-color:var(--accent-green);"> <strong>Google Gemini</strong>
                         </label>
                         <label style="display:flex; align-items:center; gap:0.6rem; padding:0.75rem; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
-                            <input type="checkbox" style="accent-color:var(--accent-orange);"> <strong>DeepSeek</strong>
+                            <input type="checkbox" id="chk_provider_deepseek" onchange="syncProviderKeyBoxes()" style="accent-color:var(--accent-orange);"> <strong>DeepSeek / Grok</strong>
                         </label>
                     </div>
 
@@ -1277,32 +1277,32 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                 <!-- STEP 3: VAULT KEYS & CONNECTION TEST -->
                 <div id="wizardStep3" class="panel-card" style="display:none;">
                     <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🔑 Step 3 — Encrypted Vault Credentials & Connection Test</div>
-                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Store master API keys securely in AES-256-GCM Vault and verify upstream connectivity.</p>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Store master API keys securely in AES-256-GCM Vault for your selected providers.</p>
 
                     <!-- MULTI-PROVIDER VAULT KEYS -->
                     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-bottom:1rem;">
-                        <div>
+                        <div id="box_key_openai">
                             <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟩 OPENAI API KEY</label>
                             <div style="display:flex; gap:0.4rem;">
                                 <input type="password" id="wizardOpenAIKey" placeholder="sk-proj-xxxxxxxxxxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
                                 <button class="btn btn-secondary" onclick="testWizardProviderConn('OpenAI')" style="font-size:0.75rem;"><i class="fa-solid fa-plug"></i> Test</button>
                             </div>
                         </div>
-                        <div>
+                        <div id="box_key_anthropic" style="display:none;">
                             <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟪 ANTHROPIC CLAUDE KEY</label>
                             <div style="display:flex; gap:0.4rem;">
                                 <input type="password" id="wizardAnthropicKey" placeholder="sk-ant-api03-xxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
                                 <button class="btn btn-secondary" onclick="testWizardProviderConn('Anthropic')" style="font-size:0.75rem;"><i class="fa-solid fa-plug"></i> Test</button>
                             </div>
                         </div>
-                        <div>
+                        <div id="box_key_gemini" style="display:none;">
                             <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟦 GOOGLE GEMINI KEY</label>
                             <div style="display:flex; gap:0.4rem;">
                                 <input type="password" id="wizardGeminiKey" placeholder="AIzaSyxxxxxxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
                                 <button class="btn btn-secondary" onclick="testWizardProviderConn('Google Gemini')" style="font-size:0.75rem;"><i class="fa-solid fa-plug"></i> Test</button>
                             </div>
                         </div>
-                        <div>
+                        <div id="box_key_deepseek" style="display:none;">
                             <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟧 DEEPSEEK / GROK KEY</label>
                             <div style="display:flex; gap:0.4rem;">
                                 <input type="password" id="wizardDeepSeekKey" placeholder="sk-xxxxxxxxxxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
@@ -1465,6 +1465,23 @@ client = OpenAI(
             }
         }
 
+        function syncProviderKeyBoxes() {
+            const showOpenAI = (document.getElementById('chk_provider_openai') || {}).checked ?? true;
+            const showAnthropic = (document.getElementById('chk_provider_anthropic') || {}).checked ?? false;
+            const showGemini = (document.getElementById('chk_provider_gemini') || {}).checked ?? false;
+            const showDeepSeek = (document.getElementById('chk_provider_deepseek') || {}).checked ?? false;
+
+            const boxOpenAI = document.getElementById('box_key_openai');
+            const boxAnthropic = document.getElementById('box_key_anthropic');
+            const boxGemini = document.getElementById('box_key_gemini');
+            const boxDeepSeek = document.getElementById('box_key_deepseek');
+
+            if (boxOpenAI) boxOpenAI.style.display = showOpenAI ? 'block' : 'none';
+            if (boxAnthropic) boxAnthropic.style.display = showAnthropic ? 'block' : 'none';
+            if (boxGemini) boxGemini.style.display = showGemini ? 'block' : 'none';
+            if (boxDeepSeek) boxDeepSeek.style.display = showDeepSeek ? 'block' : 'none';
+        }
+
         function setWizardStep(stepNum) {
             // Validation Guard: Ensure at least 1 provider key is entered or tested in Step 3
             if (currentWizardStep === 3 && stepNum > 3) {
@@ -1489,6 +1506,10 @@ client = OpenAI(
             for (let i = 1; i <= 7; i++) {
                 const stepCard = document.getElementById(`wizardStep${i}`);
                 if (stepCard) stepCard.style.display = (i === stepNum) ? 'block' : 'none';
+            }
+
+            if (stepNum === 3) {
+                syncProviderKeyBoxes();
             }
 
             if (stepNum === 4 && (!activeGeneratedKey || activeGeneratedKey.includes('xxxx'))) {
