@@ -578,6 +578,7 @@
         <aside>
             <div class="nav-category">Overview</div>
             <button class="nav-item active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Executive Dashboard</button>
+            <button class="nav-item" onclick="switchTab('vision_workflow')" style="color:var(--accent-purple); font-weight:700;"><i class="fa-solid fa-compass"></i> Why EvalMesh (10-Step Workflow)</button>
             <button class="nav-item" onclick="switchTab('live_playground')" style="color:var(--accent-green); font-weight:700;"><i class="fa-solid fa-terminal"></i> Live Interactive Playground</button>
 
             <div class="nav-category">Pillar 1: Security & Guardrails</div>
@@ -851,19 +852,146 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                 </div>
             </section>
 
-            <section id="pillar_enterprise_vault" class="view-section">
+            </section>
+
+            <!-- WHY EVALMESH (10-STEP WORKFLOW & POSITIONING) -->
+            <section id="vision_workflow" class="view-section">
                 <div class="page-header">
                     <div>
-                        <h1 class="page-title"><i class="fa-solid fa-vault" style="color:var(--accent-orange)"></i> SSO, SCIM & Encrypted Secrets Vault</h1>
-                        <p class="page-desc">Okta/Auth0 SSO, SCIM v2.0 user provisioning, and AES-256 encrypted key vault.</p>
+                        <h1 class="page-title"><i class="fa-solid fa-compass" style="color:var(--accent-purple)"></i> Why EvalMesh — The AI Control Plane</h1>
+                        <p class="page-desc">Automates AI evaluations, security guardrails, cost routing, drift monitoring, and CI/CD quality gates.</p>
                     </div>
                 </div>
-                <div class="panel-card">
-                    <div class="code-box" style="color:#fde047">
-[SSO / SAML]: Okta SAML 2.0 Connected
-[SCIM PROVISIONING]: User directory sync active
-[SECRETS VAULT]: OpenAI, Anthropic, Stripe keys encrypted (AES-256-GCM)
+
+                <!-- POSITIONING HERO BANNER -->
+                <div style="background:linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(59, 130, 246, 0.15)); border:1px solid rgba(147, 51, 234, 0.3); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem;">
+                    <div style="font-size:0.75rem; font-weight:700; color:var(--accent-purple); text-transform:uppercase; margin-bottom:0.3rem;">PRODUCT POSITIONING & VISION</div>
+                    <div style="font-size:1.2rem; font-weight:800; color:var(--text-primary); margin-bottom:0.5rem;">
+                        "EvalMesh is the control plane for production AI applications. It evaluates, secures, routes, monitors, and improves every AI request before it reaches your users."
                     </div>
+                    <div style="font-size:0.85rem; color:var(--text-secondary);">
+                        Developers don't just get another proxy — they get a unified control plane that eliminates hours of manual testing, spreadsheet comparisons, and unexpected security incidents.
+                    </div>
+                </div>
+
+                <!-- TIME SAVED & ROI COMPARISON GRID -->
+                <h3 style="font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:1rem;"><i class="fa-solid fa-clock" style="color:var(--accent-blue)"></i> Key Problems Solved & Time Saved</h3>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-bottom:2rem;">
+
+                    <div class="panel-card" style="border-left:4px solid var(--accent-green);">
+                        <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-bottom:0.4rem;">1. AI Evaluation (Hours → Minutes)</div>
+                        <div style="font-size:0.78rem; color:var(--accent-red); margin-bottom:0.3rem;">❌ Without: Manual testing of 100+ cases taking 2–4 hours.</div>
+                        <div style="font-size:0.78rem; color:var(--accent-green); margin-bottom:0.4rem;">✅ With: 1-Click automated evaluation showing pass/fail & hallucination metrics.</div>
+                        <span class="badge badge-success">Saves 3+ Hours / Release</span>
+                    </div>
+
+                    <div class="panel-card" style="border-left:4px solid var(--accent-blue);">
+                        <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-bottom:0.4rem;">2. Multi-Model Comparison</div>
+                        <div style="font-size:0.78rem; color:var(--accent-red); margin-bottom:0.3rem;">❌ Without: Copying outputs from OpenAI, Claude, Gemini into spreadsheets.</div>
+                        <div style="font-size:0.78rem; color:var(--accent-green); margin-bottom:0.4rem;">✅ With: Single evaluation runs side-by-side across all models automatically.</div>
+                        <span class="badge badge-blue">Saves 60 Mins / Comparison</span>
+                    </div>
+
+                    <div class="panel-card" style="border-left:4px solid var(--accent-purple);">
+                        <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-bottom:0.4rem;">3. Prompt Version Tracking</div>
+                        <div style="font-size:0.78rem; color:var(--accent-red); margin-bottom:0.3rem;">❌ Without: Searching Git commit history for working prompts.</div>
+                        <div style="font-size:0.78rem; color:var(--accent-green); margin-bottom:0.4rem;">✅ With: Every prompt version stored with its exact evaluation scores.</div>
+                        <span class="badge badge-purple">Instant 1-Click Rollback</span>
+                    </div>
+
+                    <div class="panel-card" style="border-left:4px solid var(--accent-orange);">
+                        <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary); margin-bottom:0.4rem;">4. Security & Data Protection</div>
+                        <div style="font-size:0.78rem; color:var(--accent-red); margin-bottom:0.3rem;">❌ Without: Users discover prompt leaks in production.</div>
+                        <div style="font-size:0.78rem; color:var(--accent-green); margin-bottom:0.4rem;">✅ With: Real-Time WAF & PII DLP redact data & block jailbreaks inline.</div>
+                        <span class="badge badge-warning">Zero Production Vulnerabilities</span>
+                    </div>
+
+                </div>
+
+                <!-- 10-STEP INTERACTIVE WORKFLOW PIPELINE -->
+                <h3 style="font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:1rem;"><i class="fa-solid fa-diagram-project" style="color:var(--accent-purple)"></i> The 10-Step Automated Pipeline</h3>
+                <div style="display:flex; flex-direction:column; gap:0.75rem;">
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-purple); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">1</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 1 — Connect AI Providers</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Securely connect OpenAI, Anthropic, Gemini, Grok, DeepSeek, Ollama, & custom models into Encrypted Vault.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-blue); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">2</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 2 — Connect the Application</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Change single base URL endpoint to EvalMesh Gateway (<code style="color:var(--accent-blue)">http://localhost:8000/v1/chat/completions</code>).</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-green); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">3</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 3 — 10-Tier Request Pipeline Processing</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Auth ➔ Rate Limiter ➔ WAF ➔ PII Redactor ➔ Policy Engine ➔ Semantic Cache ➔ Smart Router ➔ Provider.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-orange); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">4</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 4 — Automatic Evaluation</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Records Input/Output, Latency, Cost, Tokens, Model, Safety Score, & Hallucination Metrics automatically.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-red); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">5</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 5 — Regression Detection</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Detects accuracy drops (e.g. 97% ➔ 84%) instantly before customers notice.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-purple); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">6</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 6 — Side-by-Side Multi-Model Comparison</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Run one benchmark evaluation across GPT-5, Claude, Gemini, Llama, & DeepSeek simultaneously.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-cyan); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">7</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 7 — Deployment Protection (CI/CD Quality Gate)</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">GitHub Actions integration: Prompt changes undergo automated evaluation suite; blocks broken prompts from deploying.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-green); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">8</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 8 — Continuous Executive Monitoring</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Real-time monitoring of requests, latency, cache hit rate, blocked injections, and estimated spend.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-orange); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">9</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 9 — Multi-Channel Alerts</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Instant alerts via Slack, Email, Discord, & PagerDuty when latency spikes or provider errors occur.</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="display:flex; gap:1rem; align-items:center;">
+                        <div style="background:var(--accent-blue); color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0;">10</div>
+                        <div>
+                            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Step 10 — Automated Governance & Quality Reports</div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Generates automated weekly PDF/HTML reports detailing AI Quality, Cost Analysis, Security Incidents, & Hallucination Trends.</div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
         </main>
