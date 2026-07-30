@@ -1466,6 +1466,25 @@ client = OpenAI(
         }
 
         function setWizardStep(stepNum) {
+            // Validation Guard: Ensure at least 1 provider key is entered or tested in Step 3
+            if (currentWizardStep === 3 && stepNum > 3) {
+                const openaiVal = (document.getElementById('wizardOpenAIKey') || {}).value || '';
+                const anthropicVal = (document.getElementById('wizardAnthropicKey') || {}).value || '';
+                const geminiVal = (document.getElementById('wizardGeminiKey') || {}).value || '';
+                const deepseekVal = (document.getElementById('wizardDeepSeekKey') || {}).value || '';
+                const statusBox = document.getElementById('wizardConnStatus');
+                const isVerified = statusBox && statusBox.style.display !== 'none' && statusBox.textContent.includes('Verified');
+
+                if (!openaiVal.trim() && !anthropicVal.trim() && !geminiVal.trim() && !deepseekVal.trim() && !isVerified) {
+                    if (statusBox) {
+                        statusBox.style.display = 'block';
+                        statusBox.textContent = '⚠️ Please enter at least one Provider API key (or click "Test") to verify connectivity before generating your EvalMesh key.';
+                        statusBox.style.color = 'var(--accent-orange)';
+                    }
+                    return;
+                }
+            }
+
             currentWizardStep = stepNum;
             for (let i = 1; i <= 7; i++) {
                 const stepCard = document.getElementById(`wizardStep${i}`);
