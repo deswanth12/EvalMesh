@@ -16,25 +16,16 @@ from evalmesh.db import hash_password, EvalMeshDatabase
 SECRET_KEY = "evalmesh_enterprise_jwt_secret_key_2026"
 security = HTTPBearer(auto_error=False)
 
-class APIKeyManager:
-    """Enterprise API Key Manager for EvalMesh."""
-    def __init__(self):
-        self.keys = {
-            "em_live_1234567890abcdef": {"name": "Default Key", "role": "developer", "rate_limit": 60}
-        }
+db_engine_auth = EvalMeshDatabase()
 
-    def generate_key(self, name: str, role: str = "developer", rate_limit: int = 60) -> str:
-        key = f"em_live_{hashlib.sha256(f'{name}_{time.time()}'.encode('utf-8')).hexdigest()[:20]}"
-        self.keys[key] = {"name": name, "role": role, "rate_limit": rate_limit}
-        return key
+class APIKeyManager:
+    """Enterprise Persistent API Key Manager for EvalMesh."""
+    def generate_key(self, name: str, role: str = "developer", rate_limit: int = 120, organization_id: str = "org_acme_01") -> str:
+        record = db_engine_auth.create_api_key(name, role, rate_limit, organization_id)
+        return record["api_key"]
 
     def validate_key(self, api_key: str):
-        if api_key in self.keys:
-            return True, None, self.keys[api_key]
-        if api_key and isinstance(api_key, str) and api_key.startswith("em_live_"):
-            self.keys[api_key] = {"name": "Enterprise Live Key", "role": "developer", "rate_limit": 120}
-            return True, None, self.keys[api_key]
-        return False, "Invalid or Revoked API Key", None
+        return db_engine_auth.validate_api_key(api_key)
 
 
 ROLE_PERMISSIONS: Dict[str, List[str]] = {

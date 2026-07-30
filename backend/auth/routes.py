@@ -270,29 +270,30 @@ async def get_security_summary(authorization: Optional[str] = Header(None)):
 
 # ── API Keys ──────────────────────────────────────────────────────────────────
 
+from evalmesh.db import EvalMeshDatabase
+db_engine_auth_routes = EvalMeshDatabase()
+
 @router.post("/api-keys", status_code=201)
 async def create_api_key(payload: ApiKeyCreatePayload, authorization: Optional[str] = Header(None)):
-    """Creates a new scoped API key. Returns plaintext key only once."""
+    """Creates a new scoped API key using real cryptographic generation and database persistence."""
     if not authorization:
         raise HTTPException(status_code=401, detail="Missing Authorization header")
+    record = db_engine_auth_routes.create_api_key(name=payload.name, role="developer", rate_limit=120)
     return {
-        "id": "key_101",
-        "name": payload.name,
-        "api_key": f"em_live_{int(time.time())}abcd",
-        "scopes": payload.scopes,
-        "created_at": time.time(),
+        "id": record["id"],
+        "name": record["name"],
+        "api_key": record["api_key"],
+        "scopes": payload.scopes or ["chat:*", "evaluate:run"],
+        "created_at": record["created_at"],
         "message": "Store this key securely. It will only be shown once."
     }
 
 @router.get("/api-keys", status_code=200)
 async def list_api_keys(authorization: Optional[str] = Header(None)):
-    """Lists all active API keys."""
+    """Lists all active persistent API keys from the database."""
     if not authorization:
         raise HTTPException(status_code=401, detail="Missing Authorization header")
-    return [
-        {"id": "key_101", "name": "Production Key", "scopes": ["chat:*", "evaluate:run"], "last_used": time.time() - 120},
-        {"id": "key_102", "name": "Dev Key", "scopes": ["chat:read"], "last_used": time.time() - 3600}
-    ]
+    return db_engine_auth_routes.list_api_keys()
 
 @router.patch("/api-keys/{key_id}", status_code=200)
 async def update_api_key(key_id: str, payload: ApiKeyUpdatePayload, authorization: Optional[str] = Header(None)):
@@ -303,10 +304,11 @@ async def update_api_key(key_id: str, payload: ApiKeyUpdatePayload, authorizatio
 
 @router.delete("/api-keys/{key_id}", status_code=200)
 async def revoke_api_key(key_id: str, authorization: Optional[str] = Header(None)):
-    """Revokes an API key immediately."""
+    """Revokes an API key immediately in the database."""
     if not authorization:
         raise HTTPException(status_code=401, detail="Missing Authorization header")
-    return {"status": "SUCCESS", "message": f"API key {key_id} revoked."}
+    success = db_engine_auth_routes.revoke_api_key(key_id)
+    return {"status": "SUCCESS" if success else "NOT_FOUND", "message": f"API key {key_id} revoked."}
 
 
 # ── Organizations ─────────────────────────────────────────────────────────────
