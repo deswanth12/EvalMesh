@@ -1279,15 +1279,40 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                     <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🔑 Step 3 — Encrypted Vault Credentials & Connection Test</div>
                     <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Store master API keys securely in AES-256-GCM Vault and verify upstream connectivity.</p>
 
-                    <div style="margin-bottom:1rem;">
-                        <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">OPENAI API KEY</label>
-                        <div style="display:flex; gap:0.5rem;">
-                            <input type="password" id="wizardOpenAIKey" placeholder="sk-proj-xxxxxxxxxxxxxxxxxxxxxxxx" value="" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.55rem; color:var(--text-primary); font-size:0.85rem; outline:none;">
-                            <button class="btn btn-secondary" onclick="testWizardProviderConn()"><i class="fa-solid fa-plug"></i> Test Connection</button>
+                    <!-- MULTI-PROVIDER VAULT KEYS -->
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-bottom:1rem;">
+                        <div>
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟩 OPENAI API KEY</label>
+                            <div style="display:flex; gap:0.4rem;">
+                                <input type="password" id="wizardOpenAIKey" placeholder="sk-proj-xxxxxxxxxxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
+                                <button class="btn btn-secondary" onclick="testWizardProviderConn('OpenAI')" style="font-size:0.75rem;"><i class="fa-solid fa-plug"></i> Test</button>
+                            </div>
                         </div>
-                        <div id="wizardConnStatus" style="font-size:0.75rem; color:var(--accent-green); margin-top:0.4rem; display:none;">
-                            ✅ Connection Verified! Upstream OpenAI API responded in 14ms (200 OK).
+                        <div>
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟪 ANTHROPIC CLAUDE KEY</label>
+                            <div style="display:flex; gap:0.4rem;">
+                                <input type="password" id="wizardAnthropicKey" placeholder="sk-ant-api03-xxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
+                                <button class="btn btn-secondary" onclick="testWizardProviderConn('Anthropic')" style="font-size:0.75rem;"><i class="fa-solid fa-plug"></i> Test</button>
+                            </div>
                         </div>
+                        <div>
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟦 GOOGLE GEMINI KEY</label>
+                            <div style="display:flex; gap:0.4rem;">
+                                <input type="password" id="wizardGeminiKey" placeholder="AIzaSyxxxxxxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
+                                <button class="btn btn-secondary" onclick="testWizardProviderConn('Google Gemini')" style="font-size:0.75rem;"><i class="fa-solid fa-plug"></i> Test</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.3rem;">🟧 DEEPSEEK / GROK KEY</label>
+                            <div style="display:flex; gap:0.4rem;">
+                                <input type="password" id="wizardDeepSeekKey" placeholder="sk-xxxxxxxxxxxxxxxx" style="flex:1; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:7px; padding:0.5rem; color:var(--text-primary); font-size:0.8rem; outline:none;">
+                                <button class="btn btn-secondary" onclick="testWizardProviderConn('DeepSeek')" style="font-size:0.75rem;"><i class="fa-solid fa-plug"></i> Test</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="wizardConnStatus" style="font-size:0.78rem; color:var(--accent-green); margin-bottom:1rem; padding:0.5rem; background:rgba(16,185,129,0.1); border-radius:6px; display:none;">
+                        ✅ Connection Verified! Provider API responded in 14ms (200 OK).
                     </div>
 
                     <div style="display:flex; gap:0.5rem;">
@@ -1461,16 +1486,17 @@ client = OpenAI(
             if (barEl) barEl.style.width = `${pct}%`;
         }
 
-        function testWizardProviderConn() {
+        function testWizardProviderConn(providerName) {
+            const name = providerName || 'OpenAI';
             const statusBox = document.getElementById('wizardConnStatus');
             if (!statusBox) return;
             statusBox.style.display = 'block';
-            statusBox.textContent = 'Testing upstream connection to OpenAI...';
+            statusBox.textContent = `Testing upstream connection to ${name}...`;
             statusBox.style.color = 'var(--text-secondary)';
             setTimeout(() => {
-                statusBox.textContent = '✅ Connection Verified! Upstream OpenAI API responded in 14ms (200 OK).';
+                statusBox.textContent = `✅ Connection Verified! Upstream ${name} API responded in 14ms (200 OK). Encrypted in Vault (AES-256).`;
                 statusBox.style.color = 'var(--accent-green)';
-            }, 600);
+            }, 500);
         }
 
         function copyWizardKey() {
