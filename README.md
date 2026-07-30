@@ -51,37 +51,34 @@ Every request routed through EvalMesh passes through an automated 10-tier safety
 Client Request
       │
       ▼
- 1. Authentication        (JWT, API Keys, PATs, Service Accounts)
+ 1. Authentication & Rate Limit (JWT, API Keys, PATs, Bucket Rate Limiter)
       │
       ▼
- 2. Rate Limiter          (Token & Request Rate Buckets)
+ 2. Semantic Cache              (Sub-5ms Cache Response @ $0 Token Cost)
       │
       ▼
- 3. WAF Security          (Prompt Injection & Jailbreak Defense)
+ 3. Smart Cost Router           (Auto-Downgrades Simple Prompts to Cheaper Models)
       │
       ▼
- 4. PII DLP Engine        (Redacts Emails, Credit Cards, SSNs)
+ 4. Circuit Breaker & Loop Check(Halts Infinite Agent Loops & Budget Spikes)
       │
       ▼
- 5. Policy Engine         (Declarative RBAC & Custom Governance Rules)
+ 5. WAF Security Firewall       (Prompt Injection & Jailbreak Defense)
       │
       ▼
- 6. Semantic Cache        (Sub-5ms Cache Response @ $0 Token Cost)
+ 6. PII DLP Redactor            (Sanitizes Emails, Credit Cards, SSNs)
       │
       ▼
- 7. Prompt Versioning     (Tracks Prompt Hashes & Version History)
+ 7. Tool Permission (RBAC)      (Enforces Per-Agent-Role Tool Execution Limits)
       │
       ▼
- 8. Smart Cost Router     (Auto-Downgrades Simple Tasks to Cheaper Models)
+ 8. Upstream Provider Gateway   (Failover Engine: OpenAI, Anthropic, Gemini, DeepSeek, Ollama)
       │
       ▼
- 9. Provider Gateway      (Failover Engine across OpenAI, Anthropic, Gemini, DeepSeek, Ollama)
+ 9. Auto Evaluation             (Calculates Accuracy, Hallucination, & Reliability Index)
       │
       ▼
- 10. Auto Evaluation      (Calculates Accuracy, Hallucination Score, & Reliability Index)
-      │
-      ▼
-  Dashboard & Telemetry   (Streams OpenTelemetry Spans & Real-Time Alerts)
+ 10. Dashboard & Telemetry      (Streams OpenTelemetry Spans & Real-Time Alerts)
 ```
 
 ---
