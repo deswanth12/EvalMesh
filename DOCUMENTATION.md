@@ -224,12 +224,81 @@ console.log(response.choices[0].message.content);
 
 ### 🔑 Quickstart & Security Testing Guide with API Keys (`em_live_...`)
 
-Once you generate an EvalMesh API key (`em_live_...`), you can start routing, securing, and testing requests immediately using any of the following examples:
+#### 🗺️ Onboarding & Setup Workflow
+```text
+  Sign Up  ➔  Create Org  ➔  Add Upstream Keys (Vault)  ➔  Connection Verified ✅  ➔  Generate EvalMesh Key  ➔  Start SDK
+```
+
+#### 🌐 Environment Endpoint Separation
+* **Development (Local)**: `http://localhost:8000/v1`
+* **Production (Cloud)**: `https://api.evalmesh.ai/v1`
+
+---
+
+### ⚡ 2-Line SDK Drop-in Migration
+Swap 2 lines of configuration code to route all AI traffic through EvalMesh:
+
+```python
+# BEFORE (Direct to Provider)
+client = OpenAI(
+    api_key="sk-proj-xxxxxxxxxxxxxxxxx"
+)
+
+# AFTER (Routed through EvalMesh Control Plane)
+client = OpenAI(
+    api_key="em_live_xxxxxxxxxxxxxxxxx",
+    base_url="https://api.evalmesh.ai/v1"  # Dev: http://localhost:8000/v1
+)
+
+# 👉 No other code changes required!
+```
+
+---
+
+### 🔍 Internal Pipeline Execution
+
+Every request sent through the EvalMesh SDK automatically executes this internal safety pipeline:
+
+```text
+Application
+    │
+    ▼
+ EvalMesh Gateway
+    ├── 1. Authentication ✅      (Validates Bearer em_live_xxxxxxxxxxxxxxxxx)
+    ├── 2. Rate Limiter ✅        (Checks token & request rate buckets)
+    ├── 3. WAF Scan ✅            (Blocks jailbreak & prompt injections inline)
+    ├── 4. PII Detection ✅       (Sanitizes credit cards, SSNs, & emails)
+    ├── 5. Cache Check ✅         (Sub-5ms lookup for duplicate prompts @ $0 cost)
+    ├── 6. Smart Router ✅        (Auto-downgrades simple prompts to 15x cheaper models)
+    ├── 7. Upstream Provider      (Executes via OpenAI / Anthropic / Gemini / DeepSeek)
+    └── 8. Telemetry & Evals ✅   (Logs latency, tokens, cost, & reliability metrics)
+```
+
+---
+
+### 📊 First Request Telemetry Inspector
+
+After sending your first request, EvalMesh returns full observability telemetry:
+
+```text
+Request ID          : req_01HXYZ991823
+Provider            : OpenAI (gpt-4o-mini)
+Latency             : 242 ms
+Prompt Injection    : Not Detected (Clean)
+PII Leakage         : None (Clean)
+Semantic Cache      : Miss (First Execution)
+Estimated Cost      : $0.0012
+Evaluation Score    : 97/100 (Reliable)
+```
+
+---
+
+### 💻 Code Examples (cURL, Python, TypeScript)
 
 #### 1. cURL Quickstart Command
 ```bash
-curl http://localhost:8000/v1/chat/completions \
-  -H "Authorization: Bearer em_live_891273912837abcd" \
+curl https://api.evalmesh.ai/v1/chat/completions \
+  -H "Authorization: Bearer em_live_xxxxxxxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-4o",
@@ -243,8 +312,8 @@ from openai import OpenAI
 
 # Initialize client using your EvalMesh API key & endpoint
 client = OpenAI(
-    api_key="em_live_891273912837abcd",
-    base_url="http://localhost:8000/v1"
+    api_key="em_live_xxxxxxxxxxxxxxxxx",
+    base_url="https://api.evalmesh.ai/v1" # Local Dev: http://localhost:8000/v1
 )
 
 # Send request — EvalMesh automatically secures, caches, and routes it!
@@ -254,6 +323,7 @@ response = client.chat.completions.create(
 )
 
 print(response.choices[0].message.content)
+# 👉 No other code changes required!
 ```
 
 #### 3. TypeScript / Node.js Code
@@ -261,8 +331,8 @@ print(response.choices[0].message.content)
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: 'em_live_891273912837abcd',
-  baseURL: 'http://localhost:8000/v1',
+  apiKey: 'em_live_xxxxxxxxxxxxxxxxx',
+  baseURL: 'https://api.evalmesh.ai/v1', // Local Dev: http://localhost:8000/v1
 });
 
 async function main() {

@@ -1304,7 +1304,7 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                     <div style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:1rem; margin-bottom:1.25rem;">
                         <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); margin-bottom:0.4rem;">YOUR SCOPED EVALMESH API KEY</div>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <code style="font-size:0.9rem; font-family:var(--font-mono); color:var(--accent-green);" id="wizardGeneratedKey">em_live_891273912837abcd</code>
+                            <code style="font-size:0.9rem; font-family:var(--font-mono); color:var(--accent-green);" id="wizardGeneratedKey">em_live_xxxxxxxxxxxxxxxxx</code>
                             <button class="btn btn-secondary" onclick="copyWizardKey()" style="font-size:0.75rem;"><i class="fa-solid fa-copy"></i> Copy Key</button>
                         </div>
                     </div>
@@ -1317,27 +1317,22 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
 
                 <!-- STEP 5: SDK INSTALLATION & CODE CHANGE -->
                 <div id="wizardStep5" class="panel-card" style="display:none;">
-                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">📦 Step 5 — SDK Integration (1 Line Code Change)</div>
-                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Install the lightweight SDK and swap your base URL endpoint. Zero business logic rewrite required.</p>
+                    <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">📦 Step 5 — SDK Integration (2 Line Code Change)</div>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Install the lightweight SDK and swap your API key & base URL endpoint. Zero business logic rewrite required.</p>
 
                     <div class="code-box" style="margin-bottom:1.25rem;">
-# 1. Install via Pip
-pip install evalmesh
-
-# 2. Python Code (Swap 1 Line)
-from evalmesh import EvalMesh
-
-# OLD: client = OpenAI(api_key="...")
-# NEW:
-client = EvalMesh(
-    base_url="http://localhost:8000/v1",
-    api_key="em_live_891273912837abcd"
+# BEFORE (Direct to Provider)
+client = OpenAI(
+    api_key="sk-proj-xxxxxxxxxxxxxxxxx"
 )
 
-response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Summarize customer feedback"}]
+# AFTER (Routed through EvalMesh Control Plane)
+client = OpenAI(
+    api_key="em_live_xxxxxxxxxxxxxxxxx",
+    base_url="https://api.evalmesh.ai/v1" # Local Dev: http://localhost:8000/v1
 )
+
+# 👉 No other code changes required!
                     </div>
 
                     <div style="display:flex; gap:0.5rem;">
@@ -1441,15 +1436,16 @@ response = client.chat.completions.create(
             const outputBox = document.getElementById('wizardTelemetryOutput');
             if (!outputBox) return;
             outputBox.style.display = 'block';
-            outputBox.textContent = 'Routing request through EvalMesh Gateway (http://localhost:8000/v1)...';
+            outputBox.textContent = 'Routing request through EvalMesh Gateway (https://api.evalmesh.ai/v1)...';
             setTimeout(() => {
-                outputBox.textContent = `[STATUS]: 200 OK | Request Received
-[SMART ROUTER]: Selected Provider: OpenAI (gpt-4o-mini) — Auto-downgraded (Saved ~90% cost)
-[LATENCY]: 12.4 ms (p95: 14.8 ms)
-[SECURITY SCAN]: WAF Clean (0 Injections) | PII DLP Clean (0 Leaks)
-[EVALUATION SCORE]: 96/100 (Accuracy: 98%, Hallucination: 0%)
-[TOKENS / COST]: 42 Tokens | $0.000006
-[TRACE SPAN ID]: otel_span_9918239a01`;
+                outputBox.textContent = `Request ID          : req_01HXYZ991823
+Provider            : OpenAI (gpt-4o-mini) — Auto-downgraded (Saved ~90% cost)
+Latency             : 242 ms
+Prompt Injection    : Not Detected (Clean)
+PII Leakage         : None (Clean)
+Semantic Cache      : Miss (First Execution)
+Estimated Cost      : $0.0012
+Evaluation Score    : 97/100 (Reliable)`;
             }, 800);
         }
 
