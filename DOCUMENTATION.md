@@ -133,7 +133,9 @@ The performance and efficiency metrics for EvalMesh were gathered under controll
 | **Smart Router Cost Savings** | **91.4% cost reduction** | Default GPT-4o usage | Auto-downgraded simple classification queries from GPT-4o ($5.00/M) to GPT-4o-mini ($0.15/M) |
 | **Automated Verification Pass Rate** | **41 / 41 Checks PASS** | Internal Verification Suite (`evalmesh.verify_all`) | Automated system suite executing 41 module health checks |
 
-> *Note: Performance metrics reflect internal benchmark test suite results under the specified test environment.*
+### 📝 Benchmark Notes & Performance Disclaimer
+> [!NOTE]
+> These measurements were collected under the described internal benchmark environment. Actual real-world performance will depend on specific workload characteristics, hardware specifications, network topology, upstream provider API latency, vector index size, and target deployment configuration.
 
 ---
 
