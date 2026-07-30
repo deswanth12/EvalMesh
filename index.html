@@ -1528,9 +1528,24 @@ client = OpenAI(
 
         function testWizardProviderConn(providerName) {
             const name = providerName || 'OpenAI';
+            let inputId = 'wizardOpenAIKey';
+            if (name.includes('Anthropic')) inputId = 'wizardAnthropicKey';
+            else if (name.includes('Gemini')) inputId = 'wizardGeminiKey';
+            else if (name.includes('DeepSeek')) inputId = 'wizardDeepSeekKey';
+
+            const inputEl = document.getElementById(inputId);
+            const keyVal = inputEl ? inputEl.value.trim() : '';
             const statusBox = document.getElementById('wizardConnStatus');
             if (!statusBox) return;
+
             statusBox.style.display = 'block';
+
+            if (!keyVal) {
+                statusBox.textContent = `⚠️ Please enter your ${name} API key in the input field above before testing connection.`;
+                statusBox.style.color = 'var(--accent-orange)';
+                return;
+            }
+
             statusBox.textContent = `Testing upstream connection to ${name}...`;
             statusBox.style.color = 'var(--text-secondary)';
             setTimeout(() => {
