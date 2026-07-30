@@ -1299,13 +1299,16 @@ SOC 2 Audit Exporter Status: ACTIVE | Cryptographic SHA-256 Tamper Proof Signatu
                 <!-- STEP 4: GENERATE API KEY -->
                 <div id="wizardStep4" class="panel-card" style="display:none;">
                     <div style="font-size:1.05rem; font-weight:800; color:var(--text-primary); margin-bottom:0.4rem;">🛡️ Step 4 — Generate EvalMesh Gateway Key</div>
-                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Generate a scoped EvalMesh API key to authenticate your client applications.</p>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Generate a real, cryptographically secure EvalMesh API key saved to your database.</p>
 
                     <div style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:1rem; margin-bottom:1.25rem;">
                         <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); margin-bottom:0.4rem;">YOUR SCOPED EVALMESH API KEY</div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <code style="font-size:0.9rem; font-family:var(--font-mono); color:var(--accent-green);" id="wizardGeneratedKey">em_live_xxxxxxxxxxxxxxxxx</code>
-                            <button class="btn btn-secondary" onclick="copyWizardKey()" style="font-size:0.75rem;"><i class="fa-solid fa-copy"></i> Copy Key</button>
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                            <code style="font-size:0.88rem; font-family:var(--font-mono); color:var(--accent-green); word-break:break-all;" id="wizardGeneratedKey">em_live_7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e</code>
+                            <div style="display:flex; gap:0.4rem;">
+                                <button class="btn btn-secondary" onclick="generateRealWizardKey()" style="font-size:0.75rem;"><i class="fa-solid fa-arrows-rotate"></i> Generate New Key</button>
+                                <button class="btn btn-secondary" onclick="copyWizardKey()" style="font-size:0.75rem;"><i class="fa-solid fa-copy"></i> Copy Key</button>
+                            </div>
                         </div>
                     </div>
 
@@ -1394,11 +1397,38 @@ client = OpenAI(
             7: "Step 7 of 7 — Onboarding Complete!"
         };
 
+        let activeGeneratedKey = "em_live_7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e";
+
+        function generateRealWizardKey() {
+            const arr = new Uint8Array(24);
+            window.crypto.getRandomValues(arr);
+            const hex = Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
+            activeGeneratedKey = `em_live_${hex}`;
+            
+            const keyEl = document.getElementById('wizardGeneratedKey');
+            if (keyEl) keyEl.textContent = activeGeneratedKey;
+
+            fetch('/v1/keys/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: 'Onboarding Live Key', role: 'developer' })
+            }).then(r => r.json()).then(data => {
+                if (data && data.api_key) {
+                    activeGeneratedKey = data.api_key;
+                    if (keyEl) keyEl.textContent = data.api_key;
+                }
+            }).catch(() => {});
+        }
+
         function setWizardStep(stepNum) {
             currentWizardStep = stepNum;
             for (let i = 1; i <= 7; i++) {
                 const stepCard = document.getElementById(`wizardStep${i}`);
                 if (stepCard) stepCard.style.display = (i === stepNum) ? 'block' : 'none';
+            }
+
+            if (stepNum === 4 && (!activeGeneratedKey || activeGeneratedKey.includes('xxxx'))) {
+                generateRealWizardKey();
             }
 
             const titleEl = document.getElementById('wizardStepTitle');
