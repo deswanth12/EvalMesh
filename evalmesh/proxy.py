@@ -146,17 +146,52 @@ async def prometheus_metrics():
 
 
 @app.get("/api/reliability")
-async def get_reliability_scorecard():
-    """Returns real-time signature AI Reliability Score card metrics."""
+async def get_reliability_scorecard(organization_id: Optional[str] = None):
+    """Returns real-time signature AI Reliability Score card metrics computed from real database telemetry."""
+    summary = db_engine.get_summary_analytics(organization_id)
+    total = summary["total_requests"]
+    
+    if total == 0:
+        return {
+            "score": 0,
+            "accuracy": 0.0,
+            "hallucination": 0.0,
+            "safety_waf": 100.0,
+            "cost_score": 0.0,
+            "latency_score": 0.0,
+            "tool_success": 100.0,
+            "status": "No Requests Processed",
+            "total_requests": 0,
+            "avg_latency_ms": 0.0,
+            "total_blocked_injections": 0,
+            "total_pii_redacted": 0,
+            "estimated_savings_usd": 0.0,
+            "message": "No AI requests have been processed yet. Send your first request to begin collecting telemetry."
+        }
+    
+    blocked = summary["total_blocked_injections"]
+    successful = total - blocked
+    accuracy = round((successful / total) * 100.0, 1) if total > 0 else 100.0
+    avg_lat = summary["avg_latency_ms"]
+    latency_score = 100.0 if avg_lat < 100 else max(50.0, round(100.0 - (avg_lat / 10), 1))
+    
+    overall_score = round((accuracy * 0.4) + (latency_score * 0.3) + (100.0 * 0.3), 1)
+    status_label = "Grade A+ Enterprise" if overall_score >= 90 else ("Grade B Good" if overall_score >= 75 else "Needs Attention")
+    
     return {
-        "score": 94,
-        "accuracy": 98.4,
-        "hallucination": 99.8,
+        "score": overall_score,
+        "accuracy": accuracy,
+        "hallucination": round(max(0.0, 100.0 - (blocked / total * 100.0)), 1),
         "safety_waf": 100.0,
-        "cost_score": 92.0,
-        "latency_score": 95.0,
+        "cost_score": round(min(100.0, summary["estimated_savings_usd"] + 80), 1),
+        "latency_score": latency_score,
         "tool_success": 100.0,
-        "status": "Grade A+ Enterprise"
+        "status": status_label,
+        "total_requests": total,
+        "avg_latency_ms": avg_lat,
+        "total_blocked_injections": blocked,
+        "total_pii_redacted": summary["total_pii_redacted"],
+        "estimated_savings_usd": summary["estimated_savings_usd"]
     }
 
 @app.post("/api/v1/operator/evaluate")
@@ -221,28 +256,42 @@ async def handle_mcp_request(payload: dict):
 
 
 @app.get("/api/incidents")
-async def get_active_incidents():
-    """Returns active AI Incident Center entries."""
-    return [
-        {
-            "id": "INC-104",
-            "severity": "HIGH",
-            "description": "Jailbreak prompt injection attempt on Sales Agent v2",
-            "root_cause": "System override pattern matched in user egress prompt",
-            "owner": "@sarah_dev",
-            "status": "Mitigated by WAF",
-            "timestamp": time.time() - 3600
-        }
-    ]
+async def get_active_incidents(organization_id: Optional[str] = None):
+    """Returns active AI Incident Center entries computed from real database audit logs."""
+    logs = db_engine.get_recent_logs(limit=50, organization_id=organization_id)
+    blocked_logs = [l for l in logs if l.get("status_code") == 403 or (l.get("redactions_count") or 0) > 0]
+    
+    if not blocked_logs:
+        return []
+        
+    incidents = []
+    for l in blocked_logs:
+        incidents.append({
+            "id": f"INC-{l.get('id')}",
+            "severity": "HIGH" if l.get("status_code") == 403 else "MEDIUM",
+            "description": f"Blocked: {l.get('blocked_reason') or 'PII Data Sanitized'}",
+            "root_cause": f"WAF/DLP Security Rule Matched for model {l.get('model', 'LLM')}",
+            "owner": f"@{l.get('agent_role', 'security_team')}",
+            "status": "Mitigated by WAF" if l.get("status_code") == 403 else "Redacted by DLP",
+            "timestamp": l.get("timestamp", time.time())
+        })
+    return incidents
 
 @app.get("/api/agents")
-async def list_registered_agents():
-    """Returns list of registered AI agents in ecosystem."""
-    return [
-        {"name": "Support Bot v2", "environment": "Production", "model": "GPT-4o", "status": "Active"},
-        {"name": "Financial Agent", "environment": "Staging", "model": "Claude 3.5 Sonnet", "status": "Human Approval Req"},
-        {"name": "Code Reviewer", "environment": "Production", "model": "DeepSeek-V3", "status": "Active"}
-    ]
+async def list_registered_agents(organization_id: Optional[str] = None):
+    """Returns list of registered AI agents in ecosystem from database."""
+    projects = db_engine.list_projects(organization_id or "org_acme_01")
+    if not projects:
+        return []
+    agents = []
+    for p in projects:
+        agents.append({
+            "name": p.get("name"),
+            "environment": "Production",
+            "model": "GPT-4o Gateway",
+            "status": p.get("status", "Active")
+        })
+    return agents
 
 @app.post("/api/upload")
 async def upload_dataset_file(payload: dict):
